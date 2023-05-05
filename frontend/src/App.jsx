@@ -13,6 +13,11 @@ const STREAM_PLAYBACK_URL_2 = ''
 const App = () => {
   return (
     <div className="App">
+
+      <h1>Crowd-Sourced Livestreaming</h1>
+      <p>A project by clean-sweep code</p>
+
+
       <MiniPlayer
         streamUrl={STREAM_PLAYBACK_URL}
         controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
