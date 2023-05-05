@@ -5,27 +5,24 @@ RTMP_LOC = f"{STREAM_INGEST_ENDPOINT}/{STREAM_KEY}"
 
 # Load video file to ffmpeg
 import subprocess
-import cv2
 import numpy as np
+import argparse
 
 class LiveStream(subprocess.Popen):
-	def __init__(self, rtmp_loc, method='cast_mp4'):
+	def __init__(self, rtmp_loc, method='mp4', mp4_loc=''):
 
 		self.rtmp_loc = rtmp_loc
 
 		self.method = method
 
-		if method == 'cast_webcam':
+		if method == 'webcam':
 			cmd = self.cast_webcam() # Stream webcam
 
-		elif method == 'cast_mp4':
-			cmd = self.cast_mp4('ball-spinning.mp4', num_loops=-1) # loop ball spinning indefinitely
-
-		elif method == 'write_live':
-			cmd = self.cast_upload_frames()
+		elif method == 'mp4':
+			cmd = self.cast_mp4(mp4_loc, num_loops=-1) # loop ball spinning indefinitely
 
 		else:
-			raise NotImplementedError
+			raise NotImplementedError(f"Method {method} not implemented.")
 
 		super().__init__(cmd, stdin=subprocess.PIPE)
 
@@ -72,17 +69,15 @@ class LiveStream(subprocess.Popen):
 		"""Write numpy frame to buffer"""
 		self.stdin.write(frame.tobytes())
 
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--method', type=str, default='mp4', help='Method to use to stream video')
+	parser.add_argument('--mp4_loc', type=str, default='video_uploading/ball-spinning.mp4', help='If `method` is mp4, location of mp4 file to stream')
 
-livestream = LiveStream(RTMP_LOC, method='cast_webcam')
+	args = parser.parse_args()
 
-if livestream.method != 'write_live':
+	livestream = LiveStream(RTMP_LOC, method=args.method, mp4_loc = args.mp4_loc)
 	livestream.wait() # loading video from another source, wait for stream (CTRL-C to force exit)
-
-else:
-	# write frame at a time
-	while 1: # infinite loop
-		img = np.random.uniform(0, 255, (400, 400, 3)).astype(np.uint8)
-		livestream.write_frame(img)
 
 
 
