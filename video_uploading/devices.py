@@ -10,7 +10,7 @@ def get_webcam_name_windows():
     # Define regex patterns to match video devices and webcam devices
     device_pattern = re.compile(r'\[dshow @ \w+\] "(.*)"')
 
-    webcam_pattern = re.compile(r'camera', re.IGNORECASE)
+    webcam_pattern = re.compile(r'cam', re.IGNORECASE)
 
     # Iterate through lines of the output
     for line in result.stderr.split('\n'):
