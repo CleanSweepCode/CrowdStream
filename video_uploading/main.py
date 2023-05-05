@@ -8,6 +8,11 @@ import subprocess
 import numpy as np
 import argparse
 
+# check if device is windows or PC
+import platform
+
+
+
 class LiveStream(subprocess.Popen):
 	def __init__(self, rtmp_loc, method='mp4', mp4_loc=''):
 
@@ -16,7 +21,11 @@ class LiveStream(subprocess.Popen):
 		self.method = method
 
 		if method == 'webcam':
-			cmd = self.cast_webcam() # Stream webcam
+			# Stream webcam
+			if platform == 'Darwin':
+				cmd = self.cast_webcam_mac()
+			else:
+				cmd = self.cast_webcam_windows()
 
 		elif method == 'mp4':
 			cmd = self.cast_mp4(mp4_loc, num_loops=-1) # loop ball spinning indefinitely
@@ -26,9 +35,31 @@ class LiveStream(subprocess.Popen):
 
 		super().__init__(cmd, stdin=subprocess.PIPE)
 
-	def cast_webcam(self, device_id = 0, audio_device_id=0, fps=30, width=640, height=480):
+	def cast_webcam_mac(self, device_id = 0, audio_device_id=0, fps=30, width=640, height=480):
 		return ["ffmpeg",
 			"-f", "avfoundation",
+		   "-video_size", f"{width}x{height}",
+			"-framerate", f"{fps}",
+			"-i", f"{device_id}:{audio_device_id}",
+			"-c:v", "libx264",
+			"-b:v", "6000K",
+			"-maxrate", "6000K",
+			"-pix_fmt", "yuv420p",
+			"-r", "30",
+			"-s", f"{width}x{height}",
+			"-profile:v", "main",
+			"-preset", "veryfast",
+			"-g", "120",
+			"-x264opts", "nal-hrd=cbr:no-scenecut",
+			"-acodec", "aac",
+			"-ab", "160k",
+			"-ar", "44100",
+			"-f", "flv",
+			f"{self.rtmp_loc}"]
+
+	def cast_webcam_windows(self, device_id = 0, audio_device_id=0, fps=30, width=640, height=480):
+		return ["ffmpeg",
+			"-f", "dshow",
 		   "-video_size", f"{width}x{height}",
 			"-framerate", f"{fps}",
 			"-i", f"{device_id}:{audio_device_id}",
