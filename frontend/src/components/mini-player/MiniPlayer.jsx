@@ -41,7 +41,7 @@ const MiniPlayer = (props) => {
   useEffect(() => {
     if (!player.current) return;
 
-    setMuted(player.current.isMuted());
+    //setMuted(player.current.isMuted());
   }, [loading]);
 
   const updatePlayer = useCallback(

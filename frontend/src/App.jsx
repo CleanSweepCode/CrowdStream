@@ -27,6 +27,12 @@ const App = () => {
         transition
       />
 
+      <MiniPlayer
+        streamUrl={STREAM_PLAYBACK_URL_2}
+        controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
+        position={POSITION.bottomRight}
+        transition
+      />
      
     </div>
   );
