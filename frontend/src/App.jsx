@@ -15,7 +15,7 @@ const App = () => {
     <div className="App">
 
       <h1>Crowd-Sourced Livestreaming</h1>
-      <p>A project by clean-sweep code</p>
+      <p>A project by Clean-Sweep Code</p>
 
 
       <MiniPlayer
