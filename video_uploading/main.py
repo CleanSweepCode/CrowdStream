@@ -7,11 +7,10 @@ RTMP_LOC = f"{STREAM_INGEST_ENDPOINT}/{STREAM_KEY}"
 import subprocess
 import numpy as np
 import argparse
+from devices import get_webcam_name_windows, get_audio_name_windows
 
 # check if device is windows or PC
 import platform
-
-
 
 class LiveStream(subprocess.Popen):
 	def __init__(self, rtmp_loc, method='mp4', mp4_loc=''):
@@ -22,7 +21,7 @@ class LiveStream(subprocess.Popen):
 
 		if method == 'webcam':
 			# Stream webcam
-			if platform == 'Darwin':
+			if 'macos' in platform.platform().lower():
 				cmd = self.cast_webcam_mac()
 			else:
 				cmd = self.cast_webcam_windows()
@@ -57,12 +56,12 @@ class LiveStream(subprocess.Popen):
 			"-f", "flv",
 			f"{self.rtmp_loc}"]
 
-	def cast_webcam_windows(self, device_id = 0, audio_device_id=0, fps=30, width=640, height=480):
+	def cast_webcam_windows(self, fps=30, width=640, height=480):
 		return ["ffmpeg",
 			"-f", "dshow",
 		   "-video_size", f"{width}x{height}",
 			"-framerate", f"{fps}",
-			"-i", f"{device_id}:{audio_device_id}",
+			"-i", f"{get_webcam_name_windows()}:{get_audio_name_windows()}",
 			"-c:v", "libx264",
 			"-b:v", "6000K",
 			"-maxrate", "6000K",

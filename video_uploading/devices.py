@@ -48,16 +48,17 @@ def get_audio_name_windows():
     return None
 
 
-webcam_device_name = get_webcam_name_windows()
-audio_device_name = get_audio_name_windows()
+if __name__ == '__main__':
+    webcam_device_name = get_webcam_name_windows()
+    audio_device_name = get_audio_name_windows()
 
-if webcam_device_name:
-    print(f"Webcam device name: {webcam_device_name}")
-else:
-    
-    print("No webcam device found.")
+    if webcam_device_name:
+        print(f"Webcam device name: {webcam_device_name}")
+    else:
 
-if audio_device_name:
-    print(f"Audio device name: {audio_device_name}")
-else:
-    print("No audio device found.")
+        print("No webcam device found.")
+
+    if audio_device_name:
+        print(f"Audio device name: {audio_device_name}")
+    else:
+        print("No audio device found.")
