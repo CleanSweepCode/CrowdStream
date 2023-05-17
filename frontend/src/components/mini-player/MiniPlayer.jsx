@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useCallback, useEffect, useRef, useState } from 'react';
 
 import Placeholder from './placeholder';
 import PlayerControls from './PlayerControls';
@@ -12,7 +12,7 @@ const CORNER_SPACE = 32;
 const DEFAULT_POSITION = 'auto';
 const TRANSITION = '200ms ease-in-out';
 
-const MiniPlayer = (props) => {
+const MiniPlayer = forwardRef((props, ref) => {
   const { IVSPlayer } = window;
   const { isPlayerSupported } = IVSPlayer;
 
@@ -37,6 +37,12 @@ const MiniPlayer = (props) => {
   const videoEl = useRef(null);
   const visibleRef = useRef(null);
 
+  useImperativeHandle(ref, () => ({
+    log() {
+      console.log("Reloaded");
+      reload();
+    }
+  }));
   // handle case when autoplay with sound is blocked by browser
   useEffect(() => {
     if (!player.current) return;
@@ -197,6 +203,12 @@ const MiniPlayer = (props) => {
     });
   };
 
+  // function to reload miniplayer
+  const reload = () => {
+    player.current.load(streamUrl);
+    player.current.play();
+  };
+
   const toggleMute = () => {
     const shouldMute = !player.current.isMuted();
 
@@ -245,6 +257,6 @@ const MiniPlayer = (props) => {
       </div>
     </div>
   );
-};
+});
 
 export default MiniPlayer;
