@@ -5,10 +5,10 @@ import { CONTROLS, POSITION } from './components/mini-player';
 
 import './App.css';
 
-const STREAM_PLAYBACK_URL =
-  'https://6547df1ee2a7.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.832590881550.channel.zuXw8aqr1sZO.m3u8'
+const STREAM_PLAYBACK_URL = 'https://6547df1ee2a7.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.832590881550.channel.zuXw8aqr1sZO.m3u8'
 
-const STREAM_PLAYBACK_URL_2 = ''
+const STREAM_PLAYBACK_URL_2 = 'https://6547df1ee2a7.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.832590881550.channel.tKR5llXiZtd1.m3u8'
+
 
 const App = () => {
   return (
