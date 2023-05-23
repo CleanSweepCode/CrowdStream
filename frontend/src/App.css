@@ -5,6 +5,31 @@
   row-gap: 35px;
   padding: 16px;
   place-items: center;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button {
+  padding: 20px 34px;
+  margin: 10px;
+  border-radius: 8px;
+  border: none;
+  background-color: #0197F6;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.red {
+  background-color: #F44336;
 }
 
 @media screen and (min-width: 768px) {

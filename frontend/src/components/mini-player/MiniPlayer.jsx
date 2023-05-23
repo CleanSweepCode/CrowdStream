@@ -26,7 +26,7 @@ const MiniPlayer = forwardRef((props, ref) => {
   } = props;
 
   const [loading, setLoading] = useState(true);
-  const [isMiniPlayer, setIsMiniPlayer] = useState(false);
+  const [isMiniPlayer, setIsMiniPlayer] = useState(true);
   const [muted, setMuted] = useState(false);
 
   const [playerPosition, setPlayerPosition] = useState({});
@@ -145,7 +145,7 @@ const MiniPlayer = forwardRef((props, ref) => {
 
   useEffect(() => {
     const onVisibilityChange = () => {
-      const visible = isElementInViewport(playerBaseEl.current);
+      const visible = true
 
       if (visible === visibleRef.current) return;
 
@@ -175,11 +175,11 @@ const MiniPlayer = forwardRef((props, ref) => {
     onVisibilityChange();
     updatePlayer(visibleRef.current);
 
-    window.addEventListener('scroll', onVisibilityChange);
+    //window.addEventListener('scroll', onVisibilityChange);
     window.addEventListener('resize', onVisibilityChange);
 
     return () => {
-      window.removeEventListener('scroll', onVisibilityChange);
+      //window.removeEventListener('scroll', onVisibilityChange);
       window.removeEventListener('resize', onVisibilityChange);
     };
   }, [isPlayerSupported, updatePlayer]);
@@ -228,7 +228,7 @@ const MiniPlayer = forwardRef((props, ref) => {
         <Placeholder loading={loading} />
 
         <div
-          className={`MinPlayer-video${isMiniPlayer ? ' small' : ''}`}
+          className={`MinPlayer-video`}
           style={{
             top,
             right,
@@ -244,15 +244,6 @@ const MiniPlayer = forwardRef((props, ref) => {
         >
           <video ref={videoEl} playsInline></video>
 
-          {isMiniPlayer && (
-            <PlayerControls
-              controls={controls}
-              muted={muted}
-              onClose={close}
-              onResize={resize}
-              onMute={toggleMute}
-            />
-          )}
         </div>
       </div>
     </div>
