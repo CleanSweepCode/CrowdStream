@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "aws-sdk": "^2.1382.0",
     "react-helmet": "^6.1.0"
   }
 }
