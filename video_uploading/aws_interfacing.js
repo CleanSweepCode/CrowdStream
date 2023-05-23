@@ -3,10 +3,27 @@ var AWS = require('aws-sdk');
 
 
 // set config from config file
-AWS.config.loadFromPath('C:\\Users\\ollie\\Documents\\LivestreamApp\\video_uploading\\.aws\\config.json');
+AWS.config.loadFromPath('C:\\Users\\Thomas\\source\\repos\\LivestreamApp\\video_uploading\\.aws\\config.json');
 
 
 var ivs = new AWS.IVS();
+
+function createChannel(name, type) {
+  const params = {
+    name, // Name of the channel
+    type, // Type of the channel: 'BASIC' | 'STANDARD'
+  };
+
+  return new Promise((resolve, reject) => {
+    ivs.createChannel(params, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
 
 function listChannels() {
     return new Promise((resolve, reject) => {
@@ -22,6 +39,12 @@ function listChannels() {
   }
   
   async function main() {
+
+    // Create a channel
+    createChannel('MyChannelTest1', 'BASIC')
+    .then(data => console.log(data)) // successful response
+    .catch(err => console.error(err)); // an error occurred
+  
     try {
       var channels = await listChannels();
       var arns = channels.map(channel => channel.arn);
