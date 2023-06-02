@@ -9,10 +9,53 @@ import IVSBroadcastClient, {
   Errors,
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
-
+import { GoogleMap, LoadScript, Marker} from '@react-google-maps/api';
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import NewPage from "./components/NewPage";  // Make sure the path to NewPage.jsx is correct
 import './App.css';
 
-const STREAM_PLAYBACK_URL = 'https://c6d0b5e2ec90.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.449365895007.channel.YMQwDQyyYa0W.m3u8'//'https://6547df1ee2a7.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.832590881550.channel.zuXw8aqr1sZO.m3u8'
+<Router>
+  <Route exact path="/NewPage" component={NewPage} />
+</Router>
+
+const STREAM_PLAYBACK_URL = 'https://c6d0b5e2ec90.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.449365895007.channel.YMQwDQyyYa0W.m3u8';
+//'https://6547df1ee2a7.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.832590881550.channel.zuXw8aqr1sZO.m3u8'
+const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
+
+const containerStyle = {
+  width: '100%',
+  height: '400px'
+};
+const center = {
+  lat: 51.46931506612955,
+  lng: -0.21997342925326427
+};
+
+const markerPosition = {
+  lat: 51.46931506612955,
+  lng: -0.21997342925326427
+};
+
+<Marker position={markerPosition} />
+
+// Custom Map Component
+function MapWithMarker() {
+  const navigate = useNavigate();
+
+  return (
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={10}
+    >
+      <Marker 
+        position={center} 
+        onClick={() => navigate('/NewPage')} 
+      />
+    </GoogleMap>
+  )
+}
 
 // https://codepen.io/amazon-ivs/pen/poLRoPp
 // Set initial config for our broadcast
@@ -51,6 +94,7 @@ async function fetchGeolocationData() {
 
 const App = () => {
   const ref = useRef();
+  const history = useNavigate();
 
   async function handlePermissions() {
     let permissions = {
@@ -159,7 +203,12 @@ const App = () => {
       <h1>Crowd-Sourced Livestreaming</h1>
       <p>A project by Clean-Sweep Code</p>
 
-      <MiniPlayer
+      <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+        <MapWithMarker />
+      </LoadScript>
+
+
+      {/* <MiniPlayer
         ref={ref}
         streamUrl={STREAM_PLAYBACK_URL}
         controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
@@ -178,11 +227,10 @@ const App = () => {
 
         <button className="button" onClick={handleStream}>
           Stream
-        </button>
+        </button> 
+      </div>*/}
 
 
-
-      </div>
     </div>
   );
 };
