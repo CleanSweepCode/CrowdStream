@@ -22,6 +22,10 @@ const STREAM_PLAYBACK_URL = 'https://c6d0b5e2ec90.eu-west-1.playback.live-video.
   logLevel: window.IVSBroadcastClient.LOG_LEVEL.DEBUG
 };*/
 
+
+
+
+
 function getCurrentPosition() {
   return new Promise((resolve, reject) => {
     if (navigator.geolocation) {
@@ -46,6 +50,17 @@ async function fetchGeolocationData() {
     console.error('Error retrieving geolocation:', error);
   }
 }
+
+
+const containerStyle = {
+  width: '100%',
+  height: '400px'
+};
+
+const center = {
+  lat: -3.745,
+  lng: -38.523
+};
 
 
 
@@ -111,7 +126,7 @@ const App = () => {
       },
     });
 
-    window.microphoneStream = navigator.mediaDevices.getUserMedia({
+    window.microphoneStream = await navigator.mediaDevices.getUserMedia({
       audio: { deviceId: window.audioDevices[0].deviceId },
     });
     console.log(window.microphoneStream)
@@ -122,6 +137,17 @@ const App = () => {
 
   Initialize()
 
+  const fetchData = async () => {
+    try {
+      console.log("API REQUEST")
+      const response = await fetch('http://localhost:3001/channels');
+      const data = await response.json();
+      console.log("API RESPONSE INcomming")
+      console.log(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
 
   const handleStream = async () => {
     handlePermissions()
@@ -132,8 +158,11 @@ const App = () => {
     //   client.current, // `client.current`
     //   handleError
     // );
-    client
-      .startBroadcast("sk_eu-west-1_Ooyab7a0i7Z3_BuUAqkJoyeQsdi6lOEf4gfdRtGDYDL")
+
+
+    fetchData()
+
+    client.startBroadcast("sk_eu-west-1_Ooyab7a0i7Z3_BuUAqkJoyeQsdi6lOEf4gfdRtGDYDL")
       .then((result) => {
         console.log('I am successfully broadcasting!');
         //ref.current.log();
