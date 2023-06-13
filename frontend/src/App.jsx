@@ -23,9 +23,6 @@ const STREAM_PLAYBACK_URL = 'https://c6d0b5e2ec90.eu-west-1.playback.live-video.
 };*/
 
 
-
-
-
 function getCurrentPosition() {
   return new Promise((resolve, reject) => {
     if (navigator.geolocation) {
@@ -106,7 +103,17 @@ const App = () => {
 
     // Get geolocation as .json
     const position = await fetchGeolocationData();
-    const position_dict = { "latitude": position.coords.latitude, "longitude": position.coords.longitude };
+    const position_dict = {
+      "latitude": position.coords.latitude.toString(),
+      "longitude": position.coords.longitude.toString()
+    };
+    window.position_dict = position_dict;
+
+    function handleBeforeUnload() {
+      client.stopBroadcast();
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     const devices = await navigator.mediaDevices.enumerateDevices();
     window.videoDevices = devices.filter((d) => d.kind === 'videoinput');
@@ -137,16 +144,37 @@ const App = () => {
 
   Initialize()
 
-  const fetchData = async () => {
+  const listChannels = async () => {
     try {
       console.log("API REQUEST")
-      const response = await fetch('http://localhost:3001/channels');
+      const response = await fetch('http://localhost:3001/channels/list');
       const data = await response.json();
       console.log("API RESPONSE INcomming")
       console.log(data);
     } catch (error) {
       console.error('Error:', error);
     }
+  }
+
+  const makeRequest = async () => {
+
+    const data = {
+      channelName: 'channel-1', // replace with your channel name
+      tags: window.position_dict
+    };
+
+    fetch('http://localhost:3001/channels/tagByName', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   }
 
   const handleStream = async () => {
@@ -160,12 +188,12 @@ const App = () => {
     // );
 
 
-    fetchData()
-
+    listChannels()
+    makeRequest(position_dict)
     client.startBroadcast("sk_eu-west-1_Ooyab7a0i7Z3_BuUAqkJoyeQsdi6lOEf4gfdRtGDYDL")
       .then((result) => {
         console.log('I am successfully broadcasting!');
-        //ref.current.log();
+        ref.current.log();
       })
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
