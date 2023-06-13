@@ -9,13 +9,14 @@ import IVSBroadcastClient, {
   Errors,
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
-import { GoogleMap, LoadScript, Marker} from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import NewPage from "./pages/NewPage";
-import HomePage from "./pages/HomePage"; 
+import HomePage from "./pages/HomePage";
 import './App.css';
 
+const STREAM_PLAYBACK_URL = 'https://c6d0b5e2ec90.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.449365895007.channel.YMQwDQyyYa0W.m3u8'//'https://6547df1ee2a7.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.832590881550.channel.zuXw8aqr1sZO.m3u8'
 
 // https://codepen.io/amazon-ivs/pen/poLRoPp
 // Set initial config for our broadcast
@@ -51,35 +52,26 @@ async function fetchGeolocationData() {
 }
 
 
+const containerStyle = {
+  width: '100%',
+  height: '400px'
+};
+
+const center = {
+  lat: -3.745,
+  lng: -38.523
+};
+
+
+
 const App = () => {
   return (
     <div className="App">
       <Routes>
-        <Route path="/*" element={<HomePage/>} />
-        <Route path="/NewPage" element={<NewPage/>} />
+        <Route path="/*" element={<HomePage />} />
+        <Route path="/NewPage" element={<NewPage />} />
       </Routes>
 
-      {/* <MiniPlayer
-        ref={ref}
-        streamUrl={STREAM_PLAYBACK_URL}
-        controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
-        position={POSITION.topLeft}
-        transition
-      />
-
-      <div className="row">
-        <button className="button" onClick={refreshStream}>
-          Refresh Stream
-        </button>
-
-        <button className="button red" onClick={handleNoStream}>
-          End Stream
-        </button>
-
-        <button className="button" onClick={handleStream}>
-          Stream
-        </button> 
-      </div>*/}
     </div>
   );
 };
