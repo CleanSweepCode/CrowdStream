@@ -10,52 +10,12 @@ import IVSBroadcastClient, {
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
 import { GoogleMap, LoadScript, Marker} from '@react-google-maps/api';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import NewPage from "./components/NewPage";  // Make sure the path to NewPage.jsx is correct
+import NewPage from "./pages/NewPage";
+import HomePage from "./pages/HomePage"; 
 import './App.css';
 
-{/* <Router>
-  <Route exact path="/components/NewPage" component={NewPage} />
-</Router> */}
-
-const STREAM_PLAYBACK_URL = 'https://c6d0b5e2ec90.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.449365895007.channel.YMQwDQyyYa0W.m3u8';
-//'https://6547df1ee2a7.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.832590881550.channel.zuXw8aqr1sZO.m3u8'
-const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
-
-const containerStyle = {
-  width: '100%',
-  height: '400px'
-};
-const center = {
-  lat: 51.46931506612955,
-  lng: -0.21997342925326427
-};
-
-const markerPosition = {
-  lat: 51.46931506612955,
-  lng: -0.21997342925326427
-};
-
-<Marker position={markerPosition} />
-
-// Custom Map Component
-function MapWithMarker() {
-  const navigate = useNavigate();
-
-  return (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={center}
-      zoom={10}
-    >
-      <Marker 
-        position={center} 
-        onClick={() => navigate('/NewPage')} 
-      />
-    </GoogleMap>
-  )
-}
 
 // https://codepen.io/amazon-ivs/pen/poLRoPp
 // Set initial config for our broadcast
@@ -91,128 +51,13 @@ async function fetchGeolocationData() {
 }
 
 
-
 const App = () => {
-  const ref = useRef();
-  const history = useNavigate();
-
-  async function handlePermissions() {
-    let permissions = {
-      audio: false,
-      video: false,
-    };
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      for (const track of stream.getTracks()) {
-        track.stop();
-      }
-      permissions = { video: true, audio: true };
-    } catch (err) {
-      permissions = { video: false, audio: false };
-      console.error(err.message);
-    }
-    // If we still don't have permissions after requesting them display the error message
-    if (!permissions.video) {
-      console.error('Failed to get video permissions.');
-    } else if (!permissions.audio) {
-      console.error('Failed to get audio permissions.');
-    }
-  }
-
-  var client = null
-
-  async function Initialize() {
-
-    const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
-
-    client = IVSBroadcastClient.create({
-      // Enter the desired stream configuration
-      streamConfig: streamConfig,
-      // Enter the ingest endpoint from the AWS console or CreateChannel API
-      ingestEndpoint: "rtmps://c6d0b5e2ec90.global-contribute.live-video.net:443/app/",
-      streamKey: "sk_eu-west-1_Ooyab7a0i7Z3_BuUAqkJoyeQsdi6lOEf4gfdRtGDYDL",
-    });
-
-    // Get geolocation as .json
-    const position = await fetchGeolocationData();
-    const position_dict = { "latitude": position.coords.latitude, "longitude": position.coords.longitude };
-
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    window.videoDevices = devices.filter((d) => d.kind === 'videoinput');
-    window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
-
-    window.cameraStream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        deviceId: window.videoDevices[0].deviceId,
-        width: {
-          ideal: streamConfig.maxResolution.width,
-          max: streamConfig.maxResolution.width,
-        },
-        height: {
-          ideal: streamConfig.maxResolution.height,
-          max: streamConfig.maxResolution.height,
-        },
-      },
-    });
-
-    window.microphoneStream = navigator.mediaDevices.getUserMedia({
-      audio: { deviceId: window.audioDevices[0].deviceId },
-    });
-    console.log(window.microphoneStream)
-    console.log(window.cameraStream)
-    client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 }); // only 'index' is required for the position parameter
-    client.addAudioInputDevice(window.microphoneStream, 'mic1');
-  }
-
-  Initialize()
-
-
-  const handleStream = async () => {
-    handlePermissions()
-    // toggleStream(
-    //   client.ingestEndpoint,//TODO TO ingest Serbver
-    //   "", //TODO To streamKey 
-    //   'BASIC', // `channel.type`
-    //   client.current, // `client.current`
-    //   handleError
-    // );
-    client
-      .startBroadcast("sk_eu-west-1_Ooyab7a0i7Z3_BuUAqkJoyeQsdi6lOEf4gfdRtGDYDL")
-      .then((result) => {
-        console.log('I am successfully broadcasting!');
-        //ref.current.log();
-      })
-      .catch((error) => {
-        console.error('Something drastically failed while broadcasting!', error);
-      });
-
-  };
-
-  const handleNoStream = async () => {
-    client.stopBroadcast()
-    console.log("Ended stream");
-  }
-
-  const refreshStream = async () => {
-    ref.current.log();
-  }
-
   return (
     <div className="App">
-
-      <h1>Crowd-Sourced Livestreaming</h1>
-      <p>A project by Clean-Sweep Code</p>
-
-      <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-
-      </LoadScript>
-
-      <Router> 
-          <Routes>
-            <Route path="/" element={<MapWithMarker />} />
-            <Route path="/NewPage" element={<NewPage />} />
-          </Routes>
-      </Router>
+      <Routes>
+        <Route path="/*" element={<HomePage/>} />
+        <Route path="/NewPage" element={<NewPage/>} />
+      </Routes>
 
       {/* <MiniPlayer
         ref={ref}
@@ -235,8 +80,6 @@ const App = () => {
           Stream
         </button> 
       </div>*/}
-
-
     </div>
   );
 };
