@@ -10,14 +10,14 @@ import IVSBroadcastClient, {
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
 import { GoogleMap, LoadScript, Marker} from '@react-google-maps/api';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import NewPage from "./components/NewPage";  // Make sure the path to NewPage.jsx is correct
 import './App.css';
 
-<Router>
-  <Route exact path="/NewPage" component={NewPage} />
-</Router>
+{/* <Router>
+  <Route exact path="/components/NewPage" component={NewPage} />
+</Router> */}
 
 const STREAM_PLAYBACK_URL = 'https://c6d0b5e2ec90.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.449365895007.channel.YMQwDQyyYa0W.m3u8';
 //'https://6547df1ee2a7.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.832590881550.channel.zuXw8aqr1sZO.m3u8'
@@ -204,9 +204,15 @@ const App = () => {
       <p>A project by Clean-Sweep Code</p>
 
       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-        <MapWithMarker />
+
       </LoadScript>
 
+      <Router> 
+          <Routes>
+            <Route path="/" element={<MapWithMarker />} />
+            <Route path="/NewPage" element={<NewPage />} />
+          </Routes>
+      </Router>
 
       {/* <MiniPlayer
         ref={ref}
