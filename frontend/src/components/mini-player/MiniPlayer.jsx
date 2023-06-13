@@ -204,10 +204,23 @@ const MiniPlayer = forwardRef((props, ref) => {
   };
 
   // function to reload miniplayer
-  const reload = () => {
-    player.current.load(streamUrl);
-    player.current.play();
+  const reload = async () => {
+    var delaySeconds = 1;
+    var maxAttempts = 20;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      if (player.current.getState() == "Playing") {
+        console.log("NEVER CALL AGAIN");
+        return;
+      } else {
+        console.log("attempt: " + attempt);
+        console.log("player.current.getState: " + player.current.getState());
+        player.current.load(streamUrl);
+        player.current.play();
+        await new Promise(resolve => setTimeout(resolve, delaySeconds * 1000));
+      }
+    }
   };
+
 
   const toggleMute = () => {
     const shouldMute = !player.current.isMuted();
