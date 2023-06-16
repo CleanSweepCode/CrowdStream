@@ -1,4 +1,6 @@
 
+/*TEMP REMOVAL WHILE TRANSFERING
+
 var AWS = require('aws-sdk');
 const express = require('express');
 const cors = require('cors');
@@ -132,4 +134,4 @@ app.post('/channels/deleteByName', async (req, res) => {
     return;
   }
   deleteChannelARN(channelArn, res);
-});
+});*/
