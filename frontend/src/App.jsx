@@ -10,6 +10,7 @@ const App = () => {
       <Routes>
         <Route path="/*" element={<HomePage />} />
         <Route path="/NewPage" element={<NewPage />} />
+        <Route path="/NewPage/:channel_name" element={<NewPage />} />
       </Routes>
 
     </div>

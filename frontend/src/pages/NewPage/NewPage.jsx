@@ -1,6 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import MiniPlayer from '../../components/mini-player';
 import { CONTROLS, POSITION } from '../../components/mini-player';
+import { useParams } from 'react-router-dom';
 import Button from 'react';
 import useStream from '../../components/Stream';
 import { getConfigFromResolution } from '../../components/Helpers';
@@ -8,13 +9,8 @@ import IVSBroadcastClient, {
   Errors,
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import '../../App.css';
-
-const STREAM_PLAYBACK_URL = 'https://c6d0b5e2ec90.eu-west-1.playback.live-video.net/api/video/v1/eu-west-1.449365895007.channel.YMQwDQyyYa0W.m3u8'
-
+import { listChannels, getStreamLinkFromName } from '../utils.jsx'
 
 
 function getCurrentPosition() {
@@ -35,8 +31,6 @@ async function fetchGeolocationData() {
     // Use latitude and longitude to perform further operations
     return position
 
-    // Continue with your code here
-    // ...
   } catch (error) {
     console.error('Error retrieving geolocation:', error);
   }
@@ -81,8 +75,14 @@ const NewPage = () => {
   }
 
   var client = null
+  let { channel_name } = useParams();
 
   async function Initialize() {
+
+    const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
+    console.log("REEEEEEEEFFFFFFFFFFFF  ")
+    console.log(ref.current);
+    ref.current.setURL(STREAM_PLAYBACK_URL);
 
     const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
 
@@ -135,19 +135,7 @@ const NewPage = () => {
     client.addAudioInputDevice(window.microphoneStream, 'mic1');
   }
 
-  Initialize()
 
-  const listChannels = async () => {
-    try {
-      console.log("API REQUEST")
-      const response = await fetch('http://localhost:3001/channels/list');
-      const data = await response.json();
-      console.log("API RESPONSE INcomming")
-      console.log(data);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
 
   const tagGeolocation = async (channelName) => {
 
@@ -180,7 +168,6 @@ const NewPage = () => {
     //   handleError
     // );
 
-
     listChannels()
     tagGeolocation('channel-1')
     client.startBroadcast("sk_eu-west-1_Ooyab7a0i7Z3_BuUAqkJoyeQsdi6lOEf4gfdRtGDYDL")
@@ -191,7 +178,6 @@ const NewPage = () => {
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
       });
-
   };
 
   const handleNoStream = async () => {
@@ -211,7 +197,10 @@ const NewPage = () => {
 
       <MiniPlayer
         ref={ref}
-        streamUrl={STREAM_PLAYBACK_URL}
+        // streamUrl={STREAM_PLAYBACK_URL}
+        onPlayerReady={() => {
+          Initialize();
+        }}
         controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
         position={POSITION.topLeft}
         transition
