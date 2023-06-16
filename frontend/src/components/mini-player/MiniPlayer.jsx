@@ -38,17 +38,31 @@ const MiniPlayer = forwardRef((props, ref) => {
   const visibleRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
+    setURL(streamUrl) {
+      console.log("Setting new player URL: " + streamUrl);
+      player.current.load(streamUrl);
+    },
     log() {
       console.log("Reloaded");
       reload();
     }
   }));
+
+
+
   // handle case when autoplay with sound is blocked by browser
   useEffect(() => {
     if (!player.current) return;
 
     //setMuted(player.current.isMuted());
   }, [loading]);
+
+  // start onPlayerReady function
+  useEffect(() => {
+    if (player.current !== null) {
+      props.onPlayerReady();
+    }
+  }, [player.current, props.onPlayerReady]);
 
   const updatePlayer = useCallback(
     (isMini) => {
