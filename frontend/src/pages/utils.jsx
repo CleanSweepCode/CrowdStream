@@ -1,5 +1,5 @@
 //For testing locally, use http://localhost:8080
-const LOCALTEST = 'http://localhost:3001';
+const LOCALTEST = 'http://localhost:8080';
 //For production, use https://backend-7r4nlien6a-og.a.run.app
 const REMOTETEST = 'https://backend-7r4nlien6a-og.a.run.app';
 
