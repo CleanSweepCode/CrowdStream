@@ -10,7 +10,7 @@ import IVSBroadcastClient, {
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
-import { listChannels, getStreamLinkFromName } from '../utils.jsx'
+import { listChannels, getStreamLinkFromName, tagGeoLocationFromUtil } from '../utils.jsx'
 
 
 function getCurrentPosition() {
@@ -142,18 +142,7 @@ const Viewer = () => {
       tags: window.position_dict
     };
 
-    fetch('http://localhost:8080/channels/tagByName', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+    tagGeoLocationFromUtil(data);
   }
 
   const handleStream = async () => {
