@@ -144,7 +144,7 @@ const NewPage = () => {
       tags: window.position_dict
     };
 
-    fetch('http://localhost:3001/channels/tagByName', {
+    fetch('http://localhost:8080/channels/tagByName', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
