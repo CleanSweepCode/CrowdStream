@@ -1,13 +1,13 @@
 export const listChannels = async () => {
     try {
-      const response = await fetch('http://localhost:3001/channels/list');
-      const data = await response.json();
-      return data;
+        const response = await fetch('http://localhost:8080/channels/list');
+        const data = await response.json();
+        return data;
     } catch (error) {
-      console.error('Error:', error);
-      return [];
+        console.error('Error:', error);
+        return [];
     }
-  }
+}
 
 
 export async function getStreamLinkFromName(channelName) {
@@ -17,14 +17,14 @@ export async function getStreamLinkFromName(channelName) {
     };
 
     try {
-        const response = await fetch('http://localhost:3001/channels/streamLinkByName', {
+        const response = await fetch('http://localhost:8080/channels/streamLinkByName', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         });
-        
+
         const responseData = await response.json();
         console.log(responseData);
         return responseData.playbackURL;
@@ -32,4 +32,4 @@ export async function getStreamLinkFromName(channelName) {
         console.error('Error in getStreamLinkFromName:', error);
     }
 }
-    
+
