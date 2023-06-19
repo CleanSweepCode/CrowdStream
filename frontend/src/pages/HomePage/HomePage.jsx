@@ -52,7 +52,7 @@ function MapWithMarker() {
                 lat: parseFloat(channel.tags.latitude),
                 lng: parseFloat(channel.tags.longitude)
               }} 
-              onClick={() => navigate(`/NewPage/${channel.name}`)} 
+              onClick={() => navigate(`/viewer/${channel.name}`)} 
             />
           ))}
 

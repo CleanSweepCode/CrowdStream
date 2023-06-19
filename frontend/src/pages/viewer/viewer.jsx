@@ -48,7 +48,7 @@ const center = {
 
 
 
-const NewPage = () => {
+const Viewer = () => {
   const ref = useRef();
 
   async function handlePermissions() {
@@ -80,8 +80,6 @@ const NewPage = () => {
   async function Initialize() {
 
     const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
-    console.log("REEEEEEEEFFFFFFFFFFFF  ")
-    console.log(ref.current);
     ref.current.setURL(STREAM_PLAYBACK_URL);
 
     const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
@@ -226,4 +224,4 @@ const NewPage = () => {
 
 }
 
-export default NewPage;
+export default Viewer;
