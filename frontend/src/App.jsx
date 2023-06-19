@@ -1,6 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import NewPage from "./pages/NewPage";
+import Viewer from "./pages/viewer";
 import HomePage from "./pages/HomePage";
 import './App.css';
 
@@ -9,8 +9,8 @@ const App = () => {
     <div className="App">
       <Routes>
         <Route path="/*" element={<HomePage />} />
-        <Route path="/NewPage" element={<NewPage />} />
-        <Route path="/NewPage/:channel_name" element={<NewPage />} />
+        <Route path="/viewer" element={<Viewer />} />
+        <Route path="/viewer/:channel_name" element={<Viewer />} />
       </Routes>
 
     </div>
