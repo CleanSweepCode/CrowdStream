@@ -1,4 +1,2 @@
-import './index.css';
-
-
+export * from './config';
 export { default } from './HomePage';
