@@ -1,9 +1,9 @@
 //For testing locally, use http://localhost:8080
-const LOCALTEST = 'http://localhost:8080';
+const LOCALTEST = 'http://localhost:3001';
 //For production, use https://backend-7r4nlien6a-og.a.run.app
 const REMOTETEST = 'https://backend-7r4nlien6a-og.a.run.app';
 
-const BACKEND_URL = REMOTETEST;
+const BACKEND_URL = LOCALTEST;
 
 
 export const listChannels = async () => {
@@ -56,11 +56,22 @@ export async function getStreamLinkFromName(channelName) {
     }
 }
 
-export async function createChannel(){
+export async function createChannel(tags = {}){
+
+    const data = {
+        tags: tags
+    };
+
     try {
-        const response = await fetch(`${BACKEND_URL}/channels/new`);
-        const data = await response.json();
-        return data;
+        const response = await fetch(`${BACKEND_URL}/channels/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        const channelData = await response.json();
+        return channelData;
     } catch (error) {
         console.error('Error:', error);
         return [];
@@ -88,4 +99,10 @@ export async function deleteChannelByName(channelName){
         console.error('Error in deleteChannelByName:', error);
     }
 
+}
+
+export function deleteChannelByNameSync(channelName){
+    // Synchronous version of deleteChannelByName, for us in beforeunload
+    const data = new Blob([JSON.stringify({ channelName })], { type : 'application/json' });
+    navigator.sendBeacon(`${BACKEND_URL}/channels/deleteByName`, data);
 }
