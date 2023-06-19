@@ -1,0 +1,10 @@
+.start-streaming-button {
+    background-color: yellow;
+    font-size: 20px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+  }

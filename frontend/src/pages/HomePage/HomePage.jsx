@@ -3,6 +3,7 @@ import { GoogleMap, LoadScript, Marker} from '@react-google-maps/api'
 import { useNavigate } from "react-router-dom";
 import '../../App.css';
 import { listChannels } from '../utils.jsx'
+import StartStreaming from '../../components/StartStreaming';  // adjust path based on your project structure
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
 
@@ -63,6 +64,7 @@ function MapWithMarker() {
       /> */}
 
     </GoogleMap>
+
   )
 }
 
@@ -79,7 +81,9 @@ function HomePage() {
         <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
           <MapWithMarker />
         </LoadScript>
-    
+
+        <StartStreaming />
+
       </div>
     );
 }
