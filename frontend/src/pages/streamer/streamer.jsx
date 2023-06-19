@@ -10,7 +10,7 @@ import IVSBroadcastClient, {
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
-import { listChannels, getStreamLinkFromName } from '../utils.jsx'
+import { listChannels, getStreamLinkFromName, createChannel, deleteChannelByNameSync } from '../utils.jsx'
 
 
 function getCurrentPosition() {
@@ -48,7 +48,7 @@ const center = {
 
 
 
-const Viewer = () => {
+const Streamer = () => {
   const ref = useRef();
 
   async function handlePermissions() {
@@ -79,25 +79,35 @@ const Viewer = () => {
 
   async function Initialize() {
 
-    const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
-    ref.current.setURL(STREAM_PLAYBACK_URL);
+    const position = await fetchGeolocationData();
+    const position_dict = {
+      "latitude": position.coords.latitude.toString(),
+      "longitude": position.coords.longitude.toString()
+    };
+
+    const stream_api_call = await createChannel(position_dict);
+    const stream_info = stream_api_call.data;
+
+    console.log(stream_info);
+    ref.current.setURL(stream_info.channel.playbackUrl);
+
+    function handleBeforeUnload() {
+      deleteChannelByNameSync(stream_info.channel.name)
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
 
     client = IVSBroadcastClient.create({
       // Enter the desired stream configuration
       streamConfig: streamConfig,
-      // Enter the ingest endpoint from the AWS console or CreateChannel API
-      ingestEndpoint: "rtmps://c6d0b5e2ec90.global-contribute.live-video.net:443/app/",
-      streamKey: "sk_eu-west-1_Ooyab7a0i7Z3_BuUAqkJoyeQsdi6lOEf4gfdRtGDYDL",
+      ingestEndpoint: stream_info.channel.ingestEndpoint,
+      streamKey: stream_info.streamKey.value,
     });
 
     // Get geolocation as .json
-    const position = await fetchGeolocationData();
-    const position_dict = {
-      "latitude": position.coords.latitude.toString(),
-      "longitude": position.coords.longitude.toString()
-    };
+
     window.position_dict = position_dict;
 
     function handleBeforeUnload() {
@@ -159,7 +169,7 @@ const Viewer = () => {
   const handleStream = async () => {
     handlePermissions()
     // toggleStream(
-    //   client.ingestEndpoint,//TODO TO ingest Serbver
+    //   client.ingestEndpoint,//TODO TO ingest Server
     //   "", //TODO To streamKey 
     //   'BASIC', // `channel.type`
     //   client.current, // `client.current`
@@ -168,7 +178,7 @@ const Viewer = () => {
 
     listChannels()
     tagGeolocation('channel-1')
-    client.startBroadcast("sk_eu-west-1_Ooyab7a0i7Z3_BuUAqkJoyeQsdi6lOEf4gfdRtGDYDL")
+    client.startBroadcast(stream_info.streamKey.value)
       .then((result) => {
         console.log('I am successfully broadcasting!');
         ref.current.log();
@@ -224,4 +234,4 @@ const Viewer = () => {
 
 }
 
-export default Viewer;
+export default Streamer;
