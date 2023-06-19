@@ -21,9 +21,9 @@ const MiniPlayer = forwardRef((props, ref) => {
     position = POSITION.bottomRight,
     height = 154,
     width = 274,
-    streamUrl,
     transition,
   } = props;
+  var streamURL = ""
 
   const [loading, setLoading] = useState(true);
   const [isMiniPlayer, setIsMiniPlayer] = useState(true);
@@ -38,9 +38,10 @@ const MiniPlayer = forwardRef((props, ref) => {
   const visibleRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
-    setURL(streamUrl) {
-      console.log("Setting new player URL: " + streamUrl);
-      player.current.load(streamUrl);
+    setURL(streamUrlFromChild) {
+      console.log("Setting new player URL: " + streamUrlFromChild);
+      streamURL = streamUrlFromChild;
+      player.current.load(streamUrlFromChild);
     },
     log() {
       console.log("Reloaded");
@@ -141,7 +142,7 @@ const MiniPlayer = forwardRef((props, ref) => {
 
     player.current = IVSPlayer.create();
     player.current.attachHTMLVideoElement(videoEl.current);
-    player.current.load(streamUrl);
+    player.current.load(streamURL);
     player.current.play();
 
     player.current.addEventListener(READY, onStateChange);
@@ -155,7 +156,7 @@ const MiniPlayer = forwardRef((props, ref) => {
       player.current.removeEventListener(ENDED, onStateChange);
       player.current.removeEventListener(ERROR, onError);
     };
-  }, [IVSPlayer, isPlayerSupported, streamUrl]);
+  }, [IVSPlayer, isPlayerSupported, streamURL]);
 
   useEffect(() => {
     const onVisibilityChange = () => {
@@ -228,7 +229,8 @@ const MiniPlayer = forwardRef((props, ref) => {
       } else {
         console.log("attempt: " + attempt);
         console.log("player.current.getState: " + player.current.getState());
-        player.current.load(streamUrl);
+        console.log(streamURL)
+        player.current.load(streamURL);
         player.current.play();
         await new Promise(resolve => setTimeout(resolve, delaySeconds * 1000));
       }
