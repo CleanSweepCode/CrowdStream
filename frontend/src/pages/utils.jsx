@@ -3,7 +3,7 @@ const LOCALTEST = 'http://localhost:8080';
 //For production, use https://backend-7r4nlien6a-og.a.run.app
 const REMOTETEST = 'https://backend-7r4nlien6a-og.a.run.app';
 
-const BACKEND_URL = LOCALTEST;
+const BACKEND_URL = REMOTETEST;
 
 
 export const listChannels = async () => {
