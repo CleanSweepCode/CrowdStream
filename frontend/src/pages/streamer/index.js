@@ -1,2 +1,2 @@
-export { default } from './viewer';
+export { default } from './streamer';
 export * from './config';
