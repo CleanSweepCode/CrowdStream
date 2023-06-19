@@ -3,10 +3,12 @@ const LOCALTEST = 'http://localhost:8080';
 //For production, use https://backend-7r4nlien6a-og.a.run.app
 const REMOTETEST = 'https://backend-7r4nlien6a-og.a.run.app';
 
+const BACKEND_URL = REMOTETEST;
+
 
 export const listChannels = async () => {
     try {
-        const response = await fetch(`${LOCALTEST}/channels/list`);
+        const response = await fetch(`${BACKEND_URL}/channels/list`);
         const data = await response.json();
         return data;
     } catch (error) {
@@ -17,7 +19,7 @@ export const listChannels = async () => {
 
 export async function tagGeoLocationFromUtil(data) {
 
-    fetch(`${LOCALTEST}/channels/tagByName`, {
+    fetch(`${BACKEND_URL}/channels/tagByName`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -38,7 +40,7 @@ export async function getStreamLinkFromName(channelName) {
     };
 
     try {
-        const response = await fetch(`${LOCALTEST}/channels/streamLinkByName`, {
+        const response = await fetch(`${BACKEND_URL}/channels/streamLinkByName`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -54,3 +56,36 @@ export async function getStreamLinkFromName(channelName) {
     }
 }
 
+export async function createChannel(){
+    try {
+        const response = await fetch(`${BACKEND_URL}/channels/new`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        return [];
+    }
+}
+
+export async function deleteChannelByName(channelName){
+    const data = {
+        channelName: channelName
+    };
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/channels/deleteByName`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const responseData = await response.json();
+        console.log(responseData);
+        return responseData;
+    } catch (error) {
+        console.error('Error in deleteChannelByName:', error);
+    }
+
+}
