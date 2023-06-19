@@ -108,7 +108,6 @@ const Streamer = () => {
     });
 
     // Get geolocation as .json
-
     window.position_dict = position_dict;
 
     function handleBeforeUnload() {

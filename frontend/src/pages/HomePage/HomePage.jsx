@@ -24,14 +24,15 @@ var markerPosition = {
 // initialize marker position as channel 0 
 let channel_info = await listChannels();
 console.log(channel_info);
+if (channel_info.length > 0) {
+  const channel0 = {
+    lat: parseFloat(channel_info[0].tags.latitude),
+    lng: parseFloat(channel_info[0].tags.longitude)
+  };
 
-const channel0 = {
-  lat: parseFloat(channel_info[0].tags.latitude),
-  lng: parseFloat(channel_info[0].tags.longitude)
-};
-
-center = channel0;
-markerPosition = channel0;
+  center = channel0;
+  markerPosition = channel0;
+}
 
 // Custom Map Component
 function MapWithMarker() {
