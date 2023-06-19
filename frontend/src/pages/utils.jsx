@@ -71,6 +71,7 @@ export async function createChannel(tags = {}){
             body: JSON.stringify(data)
         });
         const channelData = await response.json();
+        console.log("New channel created: ", channelData)
         return channelData;
     } catch (error) {
         console.error('Error:', error);

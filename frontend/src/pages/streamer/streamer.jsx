@@ -76,6 +76,7 @@ const Streamer = () => {
 
   var client = null
   let { channel_name } = useParams();
+  var stream_info = null;
 
   async function Initialize() {
 
@@ -86,7 +87,7 @@ const Streamer = () => {
     };
 
     const stream_api_call = await createChannel(position_dict);
-    const stream_info = stream_api_call.data;
+    stream_info = stream_api_call.data;
 
     console.log(stream_info);
     ref.current.setURL(stream_info.channel.playbackUrl);
@@ -144,40 +145,9 @@ const Streamer = () => {
   }
 
 
-
-  const tagGeolocation = async (channelName) => {
-
-    const data = {
-      channelName: channelName, // replace with your channel name
-      tags: window.position_dict
-    };
-
-    fetch('http://localhost:8080/channels/tagByName', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  }
-
   const handleStream = async () => {
     handlePermissions()
-    // toggleStream(
-    //   client.ingestEndpoint,//TODO TO ingest Server
-    //   "", //TODO To streamKey 
-    //   'BASIC', // `channel.type`
-    //   client.current, // `client.current`
-    //   handleError
-    // );
-
     listChannels()
-    tagGeolocation('channel-1')
     client.startBroadcast(stream_info.streamKey.value)
       .then((result) => {
         console.log('I am successfully broadcasting!');
