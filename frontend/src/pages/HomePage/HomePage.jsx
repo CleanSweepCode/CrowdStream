@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { GoogleMap, LoadScript, Marker} from '@react-google-maps/api'
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
 import { useNavigate } from "react-router-dom";
 import '../../App.css';
 import { listChannels } from '../utils.jsx'
@@ -47,16 +47,16 @@ function MapWithMarker() {
       zoom={8}
     >
 
-    {channel_info.map((channel, index) => (
-            <Marker 
-              key={index}
-              position={{
-                lat: parseFloat(channel.tags.latitude),
-                lng: parseFloat(channel.tags.longitude)
-              }} 
-              onClick={() => navigate(`/viewer/${channel.name}`)} 
-            />
-          ))}
+      {channel_info.map((channel, index) => (
+        <Marker
+          key={index}
+          position={{
+            lat: parseFloat(channel.tags.latitude),
+            lng: parseFloat(channel.tags.longitude)
+          }}
+          onClick={() => navigate(`/viewer/${channel.name}`)}
+        />
+      ))}
 
       {/* <Marker 
         position={center} 
@@ -70,22 +70,22 @@ function MapWithMarker() {
 
 
 function HomePage() {
-    const ref = useRef();
-    const history = useNavigate();
-  
-    return (
-      <div>
-        <h1>Crowd-Sourced Livestreaming</h1>
-        <p>A project by Clean-Sweep Code</p>
-  
-        <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-          <MapWithMarker />
-        </LoadScript>
+  const ref = useRef();
+  const history = useNavigate();
 
-        <StartStreaming />
+  return (
+    <div>
+      <h1>Crowd-Sourced Livestreaming</h1>
+      <p>A project by Clean-Sweep Code</p>
 
-      </div>
-    );
+      <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+        <MapWithMarker />
+      </LoadScript>
+
+      <StartStreaming />
+
+    </div>
+  );
 }
-  
+
 export default HomePage;
