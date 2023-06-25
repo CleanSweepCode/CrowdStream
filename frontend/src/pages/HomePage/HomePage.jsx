@@ -4,7 +4,25 @@ import { useNavigate } from "react-router-dom";
 import '../../App.css';
 import { listChannels } from '../utils.jsx'
 import StartStreaming from '../../components/StartStreaming';  // adjust path based on your project structure
-import { Switch } from '@material-ui/core';  // Importing Material UI Slider for this example
+import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
+import { makeStyles } from '@material-ui/core/styles';
+
+// Styling to position the switch as an overlay
+const useStyles = makeStyles((theme) => ({
+  switchContainer: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+    left: theme.spacing(2),
+    backgroundColor: 'rgba(255,255,255,0.95)', // white with 80% opacity
+    padding: theme.spacing(1),
+    borderRadius: theme.shape.borderRadius,
+    zIndex: 2,
+  },
+  mapContainer: {
+    position: 'relative',
+  }
+}));
+
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
 
@@ -21,6 +39,7 @@ var defaultCenter = {
 
 // Custom Map Component
 function MapWithMarker() {
+  const classes = useStyles();
   const navigate = useNavigate();
   const [activeOnly, setActiveOnly] = useState(true);  // This is the new piece of state
   const [channelInfo, setChannelInfo] = useState([]);
@@ -44,38 +63,43 @@ function MapWithMarker() {
   }, []);
 
   const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo;
-  
+
   return (
     <div>
-
-    <label>
-        Show Active Channels Only
-        <Switch 
-          checked={activeOnly} 
-          onChange={e => setActiveOnly(e.target.checked)}
-          color="primary" 
+      <div className={classes.mapContainer}>
+        <FormControlLabel
+          control={
+            <Switch 
+              checked={activeOnly} 
+              onChange={e => setActiveOnly(e.target.checked)}
+              color="primary" 
+            />
+          }
+          // Label should be 'Active channels' if activeOnly else 'All channels'
+          label= {activeOnly ? 'Only active channels' : 'All channels'}
+          className={classes.switchContainer}
         />
-      </label>
 
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={center}
-      zoom={8}
-    >
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={center}
+        zoom={8}
+      >
 
-      {displayedChannels.map((channel, index) => (
-        <Marker
-          key={index}
-          position={{
-            lat: parseFloat(channel.tags.latitude),
-            lng: parseFloat(channel.tags.longitude)
-          }}
-          onClick={() => navigate(`/viewer/${channel.name}`)}
-        />
-      ))}
+        {displayedChannels.map((channel, index) => (
+          <Marker
+            key={index}
+            position={{
+              lat: parseFloat(channel.tags.latitude),
+              lng: parseFloat(channel.tags.longitude)
+            }}
+            onClick={() => navigate(`/viewer/${channel.name}`)}
+          />
+        ))}
 
 
-    </GoogleMap>
+      </GoogleMap>
+      </div>
     </div>
   )
 }
