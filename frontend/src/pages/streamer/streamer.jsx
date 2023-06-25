@@ -10,8 +10,9 @@ import IVSBroadcastClient, {
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
-import { listChannels, getStreamLinkFromName, createChannel, deleteChannelByNameSync } from '../utils.jsx'
+import { listChannels, getStreamLinkFromName, createChannel, channelHeartbeat } from '../utils.jsx'
 
+const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
 
 function getCurrentPosition() {
   return new Promise((resolve, reject) => {
@@ -81,22 +82,17 @@ const Streamer = () => {
   async function Initialize() {
 
     const position = await fetchGeolocationData();
-    const position_dict = {
+    const tags = {
       "latitude": position.coords.latitude.toString(),
-      "longitude": position.coords.longitude.toString()
+      "longitude": position.coords.longitude.toString(),
+      "active": "true",
     };
 
-    const stream_api_call = await createChannel(position_dict);
+    const stream_api_call = await createChannel(tags);
     stream_info = stream_api_call.data;
 
     console.log(stream_info);
     ref.current.setURL(stream_info.channel.playbackUrl);
-
-    function handleBeforeUnload() {
-      deleteChannelByNameSync(stream_info.channel.name)
-    }
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
 
     const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
 
@@ -107,8 +103,13 @@ const Streamer = () => {
       streamKey: stream_info.streamKey.value,
     });
 
-    // Get geolocation as .json
-    window.position_dict = position_dict;
+    // set channel heartbeat every X seconds while active
+    async function sendHeartbeat() {
+      const heartbeat = await channelHeartbeat(stream_info.channel.name);
+    }
+
+    sendHeartbeat(); // send initial heartbeat
+    setInterval(sendHeartbeat, HEARTBEAT_FREQUENCY); // send heartbeat every X seconds
 
     function handleBeforeUnload() {
       client.stopBroadcast();
@@ -120,27 +121,36 @@ const Streamer = () => {
     window.videoDevices = devices.filter((d) => d.kind === 'videoinput');
     window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
 
-    window.cameraStream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        deviceId: window.videoDevices[0].deviceId,
-        width: {
-          ideal: streamConfig.maxResolution.width,
-          max: streamConfig.maxResolution.width,
+    try {
+      window.cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          deviceId: window.videoDevices[0].deviceId,
+          width: {
+            ideal: streamConfig.maxResolution.width,
+            max: streamConfig.maxResolution.width,
+          },
+          height: {
+            ideal: streamConfig.maxResolution.height,
+            max: streamConfig.maxResolution.height,
+          },
         },
-        height: {
-          ideal: streamConfig.maxResolution.height,
-          max: streamConfig.maxResolution.height,
-        },
-      },
-    });
+      });
+      console.log(window.cameraStream);
+      client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });
+    } catch (error) {
+      console.warn('Unable to access camera:', error);
+    }
 
-    window.microphoneStream = await navigator.mediaDevices.getUserMedia({
-      audio: { deviceId: window.audioDevices[0].deviceId },
-    });
-    console.log(window.microphoneStream)
-    console.log(window.cameraStream)
-    client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 }); // only 'index' is required for the position parameter
-    client.addAudioInputDevice(window.microphoneStream, 'mic1');
+    try {
+      window.microphoneStream = await navigator.mediaDevices.getUserMedia({
+        audio: { deviceId: window.audioDevices[0].deviceId },
+      });
+      console.log(window.microphoneStream);
+      client.addAudioInputDevice(window.microphoneStream, 'mic1');
+    } catch (error) {
+      console.warn('Unable to access microphone:', error);
+    }
+
   }
 
 
