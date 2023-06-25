@@ -103,7 +103,31 @@ export async function deleteChannelByName(channelName){
 }
 
 export function deleteChannelByNameSync(channelName){
-    // Synchronous version of deleteChannelByName, for us in beforeunload
+    // Synchronous version of deleteChannelByName, for use in beforeunload
     const data = new Blob([JSON.stringify({ channelName })], { type : 'application/json' });
     navigator.sendBeacon(`${BACKEND_URL}/channels/deleteByName`, data);
+}
+
+export async function channelHeartbeat(channelName){
+    const data = {
+        channelName: channelName
+    };
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/channels/heartbeatByName`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const responseData = await response.json();
+        console.log(responseData);
+        return responseData;
+    }
+    catch (error) {
+        console.error('Error in channelHeartbeat:', error);
+    }
+
 }
