@@ -1,9 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
+import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api'
 import { useNavigate } from "react-router-dom";
 import '../../App.css';
 import { listChannels } from '../utils.jsx'
-import StartStreaming from '../../components/StartStreaming';  // adjust path based on your project structure
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -11,16 +10,51 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   switchContainer: {
     position: 'absolute',
-    bottom: theme.spacing(2),
+    top: theme.spacing(2),
     left: theme.spacing(2),
     backgroundColor: 'rgba(255,255,255,0.95)', // white with 80% opacity
     padding: theme.spacing(1),
     borderRadius: theme.shape.borderRadius,
     zIndex: 2,
   },
+  startStreamingContainer: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+    left: theme.spacing(2),
+    padding: theme.spacing(1),
+    borderRadius: theme.shape.borderRadius,
+    zIndex: 2,
+    
+    // centre
+    left: '50%',
+    transform: 'translate(-50%, 0%)',
+
+    padding: '10px 20px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textDecoration: 'none',
+    textTransform: 'uppercase',
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: '#3498db',
+    color: '#ffffff',
+    transition: 'background-color 0.3s ease',
+    margin: '8px auto',
+    '&:hover': {
+      backgroundColor: '#2980b9',
+    },
+    '&:focus': {
+      outline: 'none',
+    },
+    '&:active': {
+      backgroundColor: '#1f618d',
+    },
+  },
+
   mapContainer: {
     position: 'relative',
-  }
+  },
 }));
 
 
@@ -44,6 +78,7 @@ function MapWithMarker() {
   const [activeOnly, setActiveOnly] = useState(true);  // This is the new piece of state
   const [channelInfo, setChannelInfo] = useState([]);
   const [center, setCenter] = useState(defaultCenter);
+  const [selectedChannel, setSelectedChannel] = useState(null);
 
   
   useEffect(() => {
@@ -80,10 +115,20 @@ function MapWithMarker() {
           className={classes.switchContainer}
         />
 
+    <button className={classes.startStreamingContainer}
+       onClick={() => navigate(`/streamer`)}>
+      Start Streaming
+    </button>
+
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
         zoom={8}
+        options={{
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false,
+        }}
       >
 
         {displayedChannels.map((channel, index) => (
@@ -94,11 +139,29 @@ function MapWithMarker() {
               lng: parseFloat(channel.tags.longitude)
             }}
             onClick={() => navigate(`/viewer/${channel.name}`)}
+            onMouseOver={() => setSelectedChannel(channel)}
+            onMouseOut={() => setSelectedChannel(null)}
           />
         ))}
 
+        {/* {selectedChannel && (
+            <InfoWindow
+              position={{
+                lat: parseFloat(selectedChannel.tags.latitude),
+                lng: parseFloat(selectedChannel.tags.longitude)
+              }}
+              onCloseClick={() => setSelectedChannel(null)}
+            >
+              <div className={classes.infoWindow}>
+                <h2>{selectedChannel.name}</h2>
+                <p>Current viewers: {selectedChannel.viewerCount}</p>
+              </div>
+            </InfoWindow>
+        )} */}
+
 
       </GoogleMap>
+
       </div>
     </div>
   )
@@ -117,8 +180,6 @@ function HomePage() {
       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
         <MapWithMarker />
       </LoadScript>
-
-      <StartStreaming />
 
     </div>
   );
