@@ -5,7 +5,7 @@ import '../../App.css';
 import { listChannels } from '../utils.jsx'
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
 import { makeStyles } from '@material-ui/core/styles';
-
+import iconMarker from '../../assets/marker64.png';
 // Styling to position the switch as an overlay
 const useStyles = makeStyles((theme) => ({
   switchContainer: {
@@ -54,6 +54,8 @@ const useStyles = makeStyles((theme) => ({
 
   mapContainer: {
     position: 'relative',
+    width: '100%',
+    height: '100%',
   },
 }));
 
@@ -61,8 +63,8 @@ const useStyles = makeStyles((theme) => ({
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
 
 const containerStyle = {
-  width: '100%',
-  height: '400px'
+  width: '100vh',
+  height: '100vh'
 };
 
 var defaultCenter = {
@@ -134,6 +136,8 @@ function MapWithMarker() {
         {displayedChannels.map((channel, index) => (
           <Marker
             key={index}
+            icon={iconMarker}
+            scaledSize={2000}
             position={{
               lat: parseFloat(channel.tags.latitude),
               lng: parseFloat(channel.tags.longitude)

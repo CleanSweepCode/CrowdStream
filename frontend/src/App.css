@@ -1,54 +1,47 @@
-/* These are styles scoped to the App component, which is essentially the same as a global styles. Most code is pulled the MiniPlayer boilerplate code. */
+/* These are styles scoped to the App component, which is essentially the same as a global styles.*/
+/* Often-reused styles for buttons,  */
 
 .App {
-  width: 100%;
-  height: 100vh;
-  display: grid;
-  row-gap: 35px;
-  padding: 16px;
-  place-items: center;
-  background-color: #ffffff;
-  font-family: Arial, sans-serif;
+  width: 100vw;   /* Width of .App set to 100% of viewport width. */
+  height: 100vh;  /* Height of .App set to 100% of viewport height. */
+  display: grid;  /* Using CSS Grid for layout inside .App. */
+  row-gap: 0px;   /* No gap between the rows in the grid. */
+  padding: 0px;   /* No padding around the .App element. */
+  place-items: center;  /* Centers grid items both vertically and horizontally. */
+  background-color: #ffffff; /* Sets background color of .App to white. */
 }
 
 .row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  display: flex;  /* Using Flexbox for layout inside .row. */
+  flex-direction: row;  /* Elements in the .row are aligned in a row. */
+  justify-content: space-between;  /* Space distributed evenly between flex items. */
+  align-items: center;  /* Centers items vertically if the row doesn't take up the full height. */
 }
 
 .button {
-  padding: 20px 34px;
-  margin: 10px;
-  border-radius: 8px;
-  border: none;
-  background-color: #0197F6;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
+  padding: 20px 34px; /* Padding around the text in the button. */
+  margin: 10px; /* Space around the button. */
+  border-radius: 8px;  /* Rounded corners on the button. */
+  border: none;  /* No border on the button. */
+  background-color: #0197F6;  /* Background color of the button. */
+  cursor: pointer;  /* The cursor will look like a pointer when over the button. */
+  font-size: 14px;  /* Size of the text in the button. */
+  font-weight: 600;  /* Thickness of the text in the button. */
+  color: #fff; /* Color of the text in the button. */
 }
 
 .red {
-  background-color: #F44336;
+  background-color: #F44336;  /* Overrides the background color for elements also with the class 'red'. */
 }
 
 .button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+  background-color: #cccccc;  /* The background color of the button when it is disabled. */
+  cursor: not-allowed;  /* The cursor will look like 'not-allowed' when over the disabled button. */
 }
 
+/* Changes padding around .App for screens that are at least 768px wide. */
 @media screen and (min-width: 768px) {
   .App {
-    padding: 35px 100px;
+    padding: 35px 100px;  
   }
 }
-
-/* .App-contentPlaceholder {
-  height: 200px;
-  width: 100%;
-  max-width: 900px;
-  background-color: #ccc;
-  border-radius: 8px;
-}  */
