@@ -25,9 +25,15 @@ function getCurrentPosition() {
 }
 
 async function fetchGeolocationData() {
+  //  check permissions
+  // let permission = await navigator.permissions.query({name: 'geolocation'});
+  // if (permission.state === 'denied') {
+  //   window.alert('You have denied location access. Please enable: go to your browser settings, find this website, and allow geolocation.');
+  //   return;
+  // }
+
   try {
     const position = await getCurrentPosition();
-    const { latitude, longitude } = position.coords;
 
     // Use latitude and longitude to perform further operations
     return position
@@ -60,6 +66,7 @@ const Streamer = () => {
     client.removeVideoInputDevice('camera1');
     window.cameraStream = await getCameraStream(useFrontCamera);  // Fetch the new stream
     client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });  // Add the new stream to the client
+    console.log("Camera switched to " + (useFrontCamera ? "front" : "back") + " camera successfully")
   }
 
     // Fetch camera stream according to the current value of useFrontCamera
@@ -106,6 +113,12 @@ const Streamer = () => {
   async function Initialize() {
 
     const position = await fetchGeolocationData();
+
+    // if we don't have a position, end page here
+    if (!position) {
+      return;
+    }
+
     const tags = {
       "latitude": position.coords.latitude.toString(),
       "longitude": position.coords.longitude.toString(),

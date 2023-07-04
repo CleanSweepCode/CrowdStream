@@ -1,3 +1,5 @@
+/* This is the main component of the application. It is responsible for routing between pages. */
+
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Viewer from "./pages/viewer";

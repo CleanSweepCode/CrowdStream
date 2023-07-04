@@ -34,39 +34,3 @@
   position: fixed;
 }
 
-.PlayerControls {
-  position: absolute;
-  z-index: 99;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  padding: 0 15px;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s linear var(--controls-transition-duration),
-    opacity var(--controls-transition-duration);
-}
-
-.MinPlayer-video.small:hover .PlayerControls {
-  opacity: 1;
-  visibility: visible;
-  transition: visibility 0s linear 0s,
-    opacity var(--controls-transition-duration);
-}
-
-.PlayerControls-button {
-  width: 50px;
-  height: 50px;
-  background-color: rgba(0, 0, 0, 0.9);
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  cursor: pointer;
-}
