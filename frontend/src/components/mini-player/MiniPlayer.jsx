@@ -1,7 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useCallback, useEffect, useRef, useState } from 'react';
 
 import Placeholder from './placeholder';
-import PlayerControls from './PlayerControls';
 
 import { CONTROLS, POSITION } from './config';
 import { isElementInViewport } from './utils';

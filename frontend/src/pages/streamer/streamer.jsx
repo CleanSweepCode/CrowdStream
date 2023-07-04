@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import MiniPlayer from '../../components/mini-player';
 import { CONTROLS, POSITION } from '../../components/mini-player';
 import { useParams } from 'react-router-dom';
@@ -10,7 +10,7 @@ import IVSBroadcastClient, {
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
-import { listChannels, getStreamLinkFromName, createChannel, channelHeartbeat } from '../utils.jsx'
+import { listChannels, createChannel, channelHeartbeat } from '../utils.jsx'
 
 const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
 
@@ -25,9 +25,15 @@ function getCurrentPosition() {
 }
 
 async function fetchGeolocationData() {
+  //  check permissions
+  // let permission = await navigator.permissions.query({name: 'geolocation'});
+  // if (permission.state === 'denied') {
+  //   window.alert('You have denied location access. Please enable: go to your browser settings, find this website, and allow geolocation.');
+  //   return;
+  // }
+
   try {
     const position = await getCurrentPosition();
-    const { latitude, longitude } = position.coords;
 
     // Use latitude and longitude to perform further operations
     return position
@@ -37,20 +43,49 @@ async function fetchGeolocationData() {
   }
 }
 
-const containerStyle = {
-  width: '100%',
-  height: '400px'
-};
-
-const center = {
-  lat: -3.745,
-  lng: -38.523
-};
-
-
 
 const Streamer = () => {
   const ref = useRef();
+  const [useFrontCamera, setUseFrontCamera] = useState(true);  // Add this line
+  const [streamConfig, setStreamConfig] = useState(IVSBroadcastClient.BASIC_LANDSCAPE); // Add this line
+  const [isClientReady, setIsClientReady] = useState(false);
+  const [hasMultipleCameras, setHasMultipleCameras] = useState(false); // Add this state
+
+  var client = null
+  var stream_info = null;
+
+  // Function to toggle the camera
+  async function toggleCamera() {
+    if (!isClientReady){
+      console.log("Client not ready")
+      return;
+    }
+
+    setUseFrontCamera(!useFrontCamera);  // Switch the camera mode
+    window.cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
+    client.removeVideoInputDevice('camera1');
+    window.cameraStream = await getCameraStream(useFrontCamera);  // Fetch the new stream
+    client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });  // Add the new stream to the client
+    console.log("Camera switched to " + (useFrontCamera ? "front" : "back") + " camera successfully")
+  }
+
+    // Fetch camera stream according to the current value of useFrontCamera
+    async function getCameraStream(useFrontCamera = true) {
+      const facingMode = useFrontCamera ? 'user' : 'environment';
+      return navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode,
+          width: {
+            ideal: streamConfig.maxResolution.width,
+            max: streamConfig.maxResolution.width,
+          },
+          height: {
+            ideal: streamConfig.maxResolution.height,
+            max: streamConfig.maxResolution.height,
+          },
+        },
+      });
+    }
 
   async function handlePermissions() {
     let permissions = {
@@ -75,13 +110,15 @@ const Streamer = () => {
     }
   }
 
-  var client = null
-  let { channel_name } = useParams();
-  var stream_info = null;
-
   async function Initialize() {
 
     const position = await fetchGeolocationData();
+
+    // if we don't have a position, end page here
+    if (!position) {
+      return;
+    }
+
     const tags = {
       "latitude": position.coords.latitude.toString(),
       "longitude": position.coords.longitude.toString(),
@@ -94,14 +131,14 @@ const Streamer = () => {
     console.log(stream_info);
     ref.current.setURL(stream_info.channel.playbackUrl);
 
-    const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
-
     client = IVSBroadcastClient.create({
       // Enter the desired stream configuration
       streamConfig: streamConfig,
       ingestEndpoint: stream_info.channel.ingestEndpoint,
       streamKey: stream_info.streamKey.value,
     });
+
+    setIsClientReady(true);
 
     // set channel heartbeat every X seconds while active
     async function sendHeartbeat() {
@@ -121,20 +158,12 @@ const Streamer = () => {
     window.videoDevices = devices.filter((d) => d.kind === 'videoinput');
     window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
 
+    setHasMultipleCameras(window.videoDevices.length > 1);
+    console.log("Has multiple cameras: " + hasMultipleCameras);
+    console.log("Cameras", window.videoDevices);
+
     try {
-      window.cameraStream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          deviceId: window.videoDevices[0].deviceId,
-          width: {
-            ideal: streamConfig.maxResolution.width,
-            max: streamConfig.maxResolution.width,
-          },
-          height: {
-            ideal: streamConfig.maxResolution.height,
-            max: streamConfig.maxResolution.height,
-          },
-        },
-      });
+      window.cameraStream = await getCameraStream(useFrontCamera);
       console.log(window.cameraStream);
       client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });
     } catch (error) {
@@ -202,8 +231,12 @@ const Streamer = () => {
           End Stream
         </button>
 
-        <button className="button" onClick={handleStream}>
+        <button className="button" onClick={handleStream} disabled={!isClientReady}>
           Stream
+        </button>
+
+        <button className="button" onClick={toggleCamera} disabled={!hasMultipleCameras}>
+          Toggle Camera
         </button>
 
       </div>
