@@ -1,18 +1,12 @@
+/* Global styles; called first */
+
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  margin: 0;  /* All elements start with no margins. */
+  padding: 0;  /* All elements start with no padding. */
+  box-sizing: border-box;  /* Width and height properties include content, padding, and border, but not the margin. */
 }
 
-button {
-  border: none;
-  background: none;
-  outline: none;
-  cursor: pointer;
-}
-
-body {
-  min-width: 320px;
-  background-color: #fff;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+html, body {
+  background-color: #ffffff;  /* Background color of html and body elements set to white. */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  /* Default font for html and body elements. */
 }
