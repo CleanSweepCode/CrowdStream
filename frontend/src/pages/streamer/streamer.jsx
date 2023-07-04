@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import MiniPlayer from '../../components/mini-player';
 import { CONTROLS, POSITION } from '../../components/mini-player';
 import { useParams } from 'react-router-dom';
@@ -37,20 +37,12 @@ async function fetchGeolocationData() {
   }
 }
 
-const containerStyle = {
-  width: '100%',
-  height: '400px'
-};
-
-const center = {
-  lat: -3.745,
-  lng: -38.523
-};
-
-
 
 const Streamer = () => {
   const ref = useRef();
+  const [useFrontCamera, setUseFrontCamera] = useState(true);  // Add this line
+  const [streamConfig, setStreamConfig] = useState(IVSBroadcastClient.BASIC_LANDSCAPE); // Add this line
+
 
   async function handlePermissions() {
     let permissions = {
@@ -76,7 +68,6 @@ const Streamer = () => {
   }
 
   var client = null
-  let { channel_name } = useParams();
   var stream_info = null;
 
   async function Initialize() {
@@ -93,8 +84,6 @@ const Streamer = () => {
 
     console.log(stream_info);
     ref.current.setURL(stream_info.channel.playbackUrl);
-
-    const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
 
     client = IVSBroadcastClient.create({
       // Enter the desired stream configuration
@@ -122,19 +111,7 @@ const Streamer = () => {
     window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
 
     try {
-      window.cameraStream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          deviceId: window.videoDevices[0].deviceId,
-          width: {
-            ideal: streamConfig.maxResolution.width,
-            max: streamConfig.maxResolution.width,
-          },
-          height: {
-            ideal: streamConfig.maxResolution.height,
-            max: streamConfig.maxResolution.height,
-          },
-        },
-      });
+      window.cameraStream = await getCameraStream(useFrontCamera);
       console.log(window.cameraStream);
       client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });
     } catch (error) {
@@ -176,6 +153,32 @@ const Streamer = () => {
     ref.current.log();
   }
 
+    // Fetch camera stream according to the current value of useFrontCamera
+    async function getCameraStream(useFrontCamera = true) {
+      const facingMode = useFrontCamera ? 'user' : 'environment';
+      return navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode,
+          width: {
+            ideal: streamConfig.maxResolution.width,
+            max: streamConfig.maxResolution.width,
+          },
+          height: {
+            ideal: streamConfig.maxResolution.height,
+            max: streamConfig.maxResolution.height,
+          },
+        },
+      });
+    }
+
+    // Function to toggle the camera
+    async function toggleCamera() {
+      setUseFrontCamera(!useFrontCamera);  // Switch the camera mode
+      window.cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
+      window.cameraStream = await getCameraStream();  // Fetch the new stream
+      client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });  // Add the new stream to the client
+    }
+
   return (
     <div className="App">
 
@@ -204,6 +207,10 @@ const Streamer = () => {
 
         <button className="button" onClick={handleStream}>
           Stream
+        </button>
+
+        <button className="button" onClick={toggleCamera}>
+          Toggle Camera
         </button>
 
       </div>
