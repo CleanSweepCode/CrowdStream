@@ -6,8 +6,11 @@ import { listChannels } from '../utils.jsx'
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
 import { makeStyles } from '@material-ui/core/styles';
 import iconMarker from '../../assets/marker64.png';
+
 // Styling to position the switch as an overlay
 const useStyles = makeStyles((theme) => ({
+  
+  // styling for the switch
   switchContainer: {
     position: 'absolute',
     top: theme.spacing(2),
@@ -17,6 +20,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
     zIndex: 2,
   },
+
+  // styling for the StartStreaming button
   startStreamingContainer: {
     position: 'absolute',
     bottom: theme.spacing(2),
@@ -52,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+
   mapContainer: {
     position: 'relative',
     width: '100%',
@@ -62,8 +68,9 @@ const useStyles = makeStyles((theme) => ({
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
 
+// Google Map Styling
 const containerStyle = {
-  width: '100vh',
+  width: '100vw', 
   height: '100vh'
 };
 
@@ -117,21 +124,22 @@ function MapWithMarker() {
           className={classes.switchContainer}
         />
 
-    <button className={classes.startStreamingContainer}
-       onClick={() => navigate(`/streamer`)}>
-      Start Streaming
-    </button>
+        
+        <button className={classes.startStreamingContainer}
+          onClick={() => navigate(`/streamer`)}>
+          Start Streaming
+        </button>
 
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={8}
-        options={{
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false,
-        }}
-      >
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={center}
+          zoom={8}
+          options={{
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false,
+          }}
+        >
 
         {displayedChannels.map((channel, index) => (
           <Marker
@@ -164,7 +172,7 @@ function MapWithMarker() {
         )} */}
 
 
-      </GoogleMap>
+        </GoogleMap>
 
       </div>
     </div>
@@ -178,13 +186,9 @@ function HomePage() {
 
   return (
     <div>
-      <h1>Crowd-Sourced Livestreaming</h1>
-      <p>A project by Clean-Sweep Code</p>
-
       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
         <MapWithMarker />
       </LoadScript>
-
     </div>
   );
 }
