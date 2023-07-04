@@ -1,6 +1,8 @@
+/* These are styles scoped to the App component, which is essentially the same as a global styles. Most code is pulled the MiniPlayer boilerplate code. */
+
 .App {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: grid;
   row-gap: 35px;
   padding: 16px;
@@ -32,16 +34,21 @@
   background-color: #F44336;
 }
 
+.button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
 @media screen and (min-width: 768px) {
   .App {
     padding: 35px 100px;
   }
 }
 
-.App-contentPlaceholder {
+/* .App-contentPlaceholder {
   height: 200px;
   width: 100%;
   max-width: 900px;
   background-color: #ccc;
   border-radius: 8px;
-}
+}  */
