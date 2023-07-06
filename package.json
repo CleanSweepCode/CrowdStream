@@ -3,6 +3,7 @@
     "aws-sdk": "^2.1382.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "react-div-100vh": "^0.7.0",
     "react-helmet": "^6.1.0"
   }
 }
