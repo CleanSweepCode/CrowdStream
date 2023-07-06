@@ -125,8 +125,8 @@ const Streamer = () => {
       "active": "true",
     };
 
-    // const stream_api_call = await createChannel(tags);
-    // stream_info = stream_api_call.data;
+    const stream_api_call = await createChannel(tags);
+    stream_info = stream_api_call.data;
 
     // console.log(stream_info);
 
@@ -164,7 +164,7 @@ const Streamer = () => {
     try {
       window.cameraStream = await getCameraStream(useFrontCamera);
       ref.current.setStream(window.cameraStream);
-      // client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });
+      client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });
     } catch (error) {
       console.warn('Unable to access camera:', error);
     }
@@ -173,7 +173,7 @@ const Streamer = () => {
       window.microphoneStream = await navigator.mediaDevices.getUserMedia({
         audio: { deviceId: window.audioDevices[0].deviceId },
       });
-      // client.addAudioInputDevice(window.microphoneStream, 'mic1');
+      client.addAudioInputDevice(window.microphoneStream, 'mic1');
     } catch (error) {
       console.warn('Unable to access microphone:', error);
     }
