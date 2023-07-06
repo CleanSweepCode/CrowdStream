@@ -11,6 +11,20 @@ import IVSBroadcastClient, {
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
 import { listChannels, getStreamLinkFromName, tagGeoLocationFromUtil } from '../utils.jsx'
+import IconButton from '@material-ui/core/IconButton';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+  backButton: {
+    position: 'absolute',
+    top: theme.spacing(2),
+    left: theme.spacing(2),
+    zIndex: 100, // Make sure the back button is above other components
+  },
+  // ... rest of your styles
+}));
 
 
 const containerStyle = {
@@ -27,7 +41,11 @@ const center = {
 
 const Viewer = () => {
   const ref = useRef();
+  const navigate = useNavigate();
+  const classes = useStyles();
 
+
+  
   let { channel_name } = useParams();
 
   const refreshStream = async () => {
@@ -42,6 +60,12 @@ const Viewer = () => {
 
   return (
     <div className="App">
+
+    <div className={classes.backButton}>
+      <IconButton edge="start" color="inherit" aria-label="back" onClick={() => navigate('/')}>
+        <ArrowBackIcon />
+      </IconButton>
+    </div>
 
     <h1>CrowdStream</h1>
 
