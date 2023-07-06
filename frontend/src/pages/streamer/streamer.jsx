@@ -60,6 +60,7 @@ const Streamer = () => {
   const [streamConfig, setStreamConfig] = useState(IVSBroadcastClient.BASIC_LANDSCAPE); // Add this line
   const [isClientReady, setIsClientReady] = useState(true);
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false); // Add this state
+  const [isBroadcasting, setIsBroadcasting] = useState(false);
 
   var client = null
   var stream_info = null;
@@ -210,6 +211,7 @@ const Streamer = () => {
     client.startBroadcast(stream_info.streamKey.value)
       .then((result) => {
         console.log('I am successfully broadcasting!');
+        ref.current.setIsBroadcasting(true);
       })
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
@@ -219,6 +221,7 @@ const Streamer = () => {
   const handleNoStream = async () => {
     if (client) {
       client.stopBroadcast(); // Stop the stream
+      ref.current.setIsBroadcasting(false);
     }
     console.log(window.microphoneStream);
     if (window.microphoneStream) {
@@ -243,7 +246,10 @@ const Streamer = () => {
 
 
     <div className={classes.backButton}>
-      <IconButton edge="start" color="inherit" aria-label="back" onClick={() => navigate('/')}>
+      <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
+        handleNoStream();
+        navigate('/');
+      }}>
         <ArrowBackIcon />
       </IconButton>
     </div>

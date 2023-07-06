@@ -10,18 +10,28 @@ import { getConfigFromResolution } from '../../components/Helpers';
 import './streamerPlayer.css';
 
 const StreamerPlayer = forwardRef((props, ref) => {
-    const { height = 154, width = 274 } = props;
+    const { height = 400} = props;
+    var width = 0
 
     // Reference to the video element on the page
     const videoRef = useRef(null);
+    const [isBroadcasting, setIsBroadcasting] = useState(false);
 
     // Expose a method to allow setting the stream from the parent component
     useImperativeHandle(ref, () => ({
         setStream: async (stream) => {
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
+
+                // set height and width of player based on input properties
+                videoRef.current.height = height;
+                width = videoRef.current.width;
             }
         },
+        setIsBroadcasting: (isBroadcasting) => {
+            setIsBroadcasting(isBroadcasting);
+        }
+
     }));
 
     // Once the component is mounted, check if there is an initial stream to be set
@@ -37,7 +47,14 @@ const StreamerPlayer = forwardRef((props, ref) => {
 
     return (
         <div className="StreamerPlayer" style={{ width: `${width}px`, height: `${height}px` }}>
-             <video ref={videoRef} autoPlay playsInline />
+        <div className="player-wrapper">
+            {isBroadcasting && 
+                <div className="broadcasting-dot"></div>
+            }
+                <div className='video-container'>
+                    <video ref={videoRef} autoPlay playsInline />
+                </div>
+            </div>
         </div>
     );
 });
