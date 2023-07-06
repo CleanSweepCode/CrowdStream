@@ -176,22 +176,6 @@ function MapWithMarker() {
           />
         ))}
 
-        {/* {selectedChannel && (
-            <InfoWindow
-              position={{
-                lat: parseFloat(selectedChannel.tags.latitude),
-                lng: parseFloat(selectedChannel.tags.longitude)
-              }}
-              onCloseClick={() => setSelectedChannel(null)}
-            >
-              <div className={classes.infoWindow}>
-                <h2>{selectedChannel.name}</h2>
-                <p>Current viewers: {selectedChannel.viewerCount}</p>
-              </div>
-            </InfoWindow>
-        )} */}
-
-
         </GoogleMap>
 
       </div>
