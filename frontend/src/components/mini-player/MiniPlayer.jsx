@@ -62,7 +62,7 @@ const MiniPlayer = forwardRef((props, ref) => {
     if (player.current !== null) {
       props.onPlayerReady();
     }
-  }, [player.current, props.onPlayerReady]);
+  }, [player.current]);
 
   const updatePlayer = useCallback(
     (isMini) => {
