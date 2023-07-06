@@ -11,8 +11,22 @@ import IVSBroadcastClient, {
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
 import { listChannels, createChannel, channelHeartbeat } from '../utils.jsx'
+import IconButton from '@material-ui/core/IconButton';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { makeStyles } from '@material-ui/core/styles';
 
 const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
+
+const useStyles = makeStyles((theme) => ({
+  backButton: {
+    position: 'absolute',
+    top: theme.spacing(2),
+    left: theme.spacing(2),
+    zIndex: 100, // Make sure the back button is above other components
+  },
+  // ... rest of your styles
+}));
 
 function getCurrentPosition() {
   return new Promise((resolve, reject) => {
@@ -46,6 +60,9 @@ async function fetchGeolocationData() {
 
 const Streamer = () => {
   const ref = useRef();
+  const classes = useStyles();
+  const navigate = useNavigate();
+
   const [useFrontCamera, setUseFrontCamera] = useState(true);  // Add this line
   const [streamConfig, setStreamConfig] = useState(IVSBroadcastClient.BASIC_LANDSCAPE); // Add this line
   const [isClientReady, setIsClientReady] = useState(false);
@@ -208,6 +225,13 @@ const Streamer = () => {
 
   return (
     <div className="App">
+
+
+    <div className={classes.backButton}>
+      <IconButton edge="start" color="inherit" aria-label="back" onClick={() => navigate('/')}>
+        <ArrowBackIcon />
+      </IconButton>
+    </div>
 
       <h1>CrowdStream</h1>
 
