@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import MiniPlayer from '../../components/mini-player';
-import { CONTROLS, POSITION } from '../../components/mini-player';
+import StreamerPlayer from './streamerPlayer.jsx';
+// import { CONTROLS, POSITION } from '../../components/mini-player';
 import { useParams } from 'react-router-dom';
 import Button from 'react';
 import useStream from '../../components/Stream';
@@ -72,19 +72,26 @@ const Streamer = () => {
     // Fetch camera stream according to the current value of useFrontCamera
     async function getCameraStream(useFrontCamera = true) {
       const facingMode = useFrontCamera ? 'user' : 'environment';
-      return navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode,
-          width: {
-            ideal: streamConfig.maxResolution.width,
-            max: streamConfig.maxResolution.width,
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode,
+            width: {
+              ideal: streamConfig.maxResolution.width,
+              max: streamConfig.maxResolution.width,
+            },
+            height: {
+              ideal: streamConfig.maxResolution.height,
+              max: streamConfig.maxResolution.height,
+            },
           },
-          height: {
-            ideal: streamConfig.maxResolution.height,
-            max: streamConfig.maxResolution.height,
-          },
-        },
-      });
+        });
+    
+        ref.current.setStream(stream);
+        return stream;
+      } catch (err) {
+        console.error("Error accessing camera: ", err);
+      }
     }
 
   async function handlePermissions() {
@@ -111,7 +118,6 @@ const Streamer = () => {
   }
 
   async function Initialize() {
-
     const position = await fetchGeolocationData();
 
     // if we don't have a position, end page here
@@ -125,28 +131,27 @@ const Streamer = () => {
       "active": "true",
     };
 
-    const stream_api_call = await createChannel(tags);
-    stream_info = stream_api_call.data;
+    // const stream_api_call = await createChannel(tags);
+    // stream_info = stream_api_call.data;
 
-    console.log(stream_info);
-    ref.current.setURL(stream_info.channel.playbackUrl);
+    // console.log(stream_info);
 
-    client = IVSBroadcastClient.create({
-      // Enter the desired stream configuration
-      streamConfig: streamConfig,
-      ingestEndpoint: stream_info.channel.ingestEndpoint,
-      streamKey: stream_info.streamKey.value,
-    });
+    // client = IVSBroadcastClient.create({
+    //   // Enter the desired stream configuration
+    //   streamConfig: streamConfig,
+    //   ingestEndpoint: stream_info.channel.ingestEndpoint,
+    //   streamKey: stream_info.streamKey.value,
+    // });
 
-    setIsClientReady(true);
+    // setIsClientReady(true);
 
     // set channel heartbeat every X seconds while active
     async function sendHeartbeat() {
       const heartbeat = await channelHeartbeat(stream_info.channel.name);
     }
 
-    sendHeartbeat(); // send initial heartbeat
-    setInterval(sendHeartbeat, HEARTBEAT_FREQUENCY); // send heartbeat every X seconds
+    // sendHeartbeat(); // send initial heartbeat
+    // setInterval(sendHeartbeat, HEARTBEAT_FREQUENCY); // send heartbeat every X seconds
 
     function handleBeforeUnload() {
       client.stopBroadcast();
@@ -159,13 +164,11 @@ const Streamer = () => {
     window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
 
     setHasMultipleCameras(window.videoDevices.length > 1);
-    console.log("Has multiple cameras: " + hasMultipleCameras);
-    console.log("Cameras", window.videoDevices);
 
     try {
       window.cameraStream = await getCameraStream(useFrontCamera);
-      console.log(window.cameraStream);
-      client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });
+      ref.current.setStream(window.cameraStream);
+      // client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });
     } catch (error) {
       console.warn('Unable to access camera:', error);
     }
@@ -174,8 +177,7 @@ const Streamer = () => {
       window.microphoneStream = await navigator.mediaDevices.getUserMedia({
         audio: { deviceId: window.audioDevices[0].deviceId },
       });
-      console.log(window.microphoneStream);
-      client.addAudioInputDevice(window.microphoneStream, 'mic1');
+      // client.addAudioInputDevice(window.microphoneStream, 'mic1');
     } catch (error) {
       console.warn('Unable to access microphone:', error);
     }
@@ -189,7 +191,6 @@ const Streamer = () => {
     client.startBroadcast(stream_info.streamKey.value)
       .then((result) => {
         console.log('I am successfully broadcasting!');
-        ref.current.log();
       })
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
@@ -197,7 +198,7 @@ const Streamer = () => {
   };
 
   const handleNoStream = async () => {
-    client.stopBroadcast()
+    client.stopBroadcast();
     console.log("Ended stream");
   }
 
@@ -208,19 +209,15 @@ const Streamer = () => {
   return (
     <div className="App">
 
-      <h1>Crowd-Sourced Livestreaming</h1>
-      <p>A project by Clean-Sweep Code</p>
+      <h1>CrowdStream</h1>
 
-      <MiniPlayer
-        ref={ref}
-        // streamUrl={STREAM_PLAYBACK_URL}
+      <StreamerPlayer
+        ref = {ref}
         onPlayerReady={() => {
           Initialize();
         }}
-        controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
-        position={POSITION.topLeft}
-        transition
       />
+
 
       <div className="row">
         <button className="button" onClick={refreshStream}>
