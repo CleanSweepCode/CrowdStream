@@ -25,13 +25,6 @@ function getCurrentPosition() {
 }
 
 async function fetchGeolocationData() {
-  //  check permissions
-  // let permission = await navigator.permissions.query({name: 'geolocation'});
-  // if (permission.state === 'denied') {
-  //   window.alert('You have denied location access. Please enable: go to your browser settings, find this website, and allow geolocation.');
-  //   return;
-  // }
-
   try {
     const position = await getCurrentPosition();
 
@@ -48,7 +41,7 @@ const Streamer = () => {
   const ref = useRef();
   const [useFrontCamera, setUseFrontCamera] = useState(true);  // Add this line
   const [streamConfig, setStreamConfig] = useState(IVSBroadcastClient.BASIC_LANDSCAPE); // Add this line
-  const [isClientReady, setIsClientReady] = useState(false);
+  const [isClientReady, setIsClientReady] = useState(true);
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false); // Add this state
 
   var client = null
@@ -56,7 +49,7 @@ const Streamer = () => {
 
   // Function to toggle the camera
   async function toggleCamera() {
-    if (!isClientReady){
+    if (!isClientReady) {
       console.log("Client not ready")
       return;
     }
@@ -69,23 +62,23 @@ const Streamer = () => {
     console.log("Camera switched to " + (useFrontCamera ? "front" : "back") + " camera successfully")
   }
 
-    // Fetch camera stream according to the current value of useFrontCamera
-    async function getCameraStream(useFrontCamera = true) {
-      const facingMode = useFrontCamera ? 'user' : 'environment';
-      return navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode,
-          width: {
-            ideal: streamConfig.maxResolution.width,
-            max: streamConfig.maxResolution.width,
-          },
-          height: {
-            ideal: streamConfig.maxResolution.height,
-            max: streamConfig.maxResolution.height,
-          },
+  // Fetch camera stream according to the current value of useFrontCamera
+  async function getCameraStream(useFrontCamera = true) {
+    const facingMode = useFrontCamera ? 'user' : 'environment';
+    return navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode,
+        width: {
+          ideal: streamConfig.maxResolution.width,
+          max: streamConfig.maxResolution.width,
         },
-      });
-    }
+        height: {
+          ideal: streamConfig.maxResolution.height,
+          max: streamConfig.maxResolution.height,
+        },
+      },
+    });
+  }
 
   async function handlePermissions() {
     let permissions = {
@@ -96,6 +89,7 @@ const Streamer = () => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       for (const track of stream.getTracks()) {
         track.stop();
+
       }
       permissions = { video: true, audio: true };
     } catch (err) {
@@ -137,8 +131,9 @@ const Streamer = () => {
       ingestEndpoint: stream_info.channel.ingestEndpoint,
       streamKey: stream_info.streamKey.value,
     });
-
-    setIsClientReady(true);
+    console.log("Client created");
+    console.log(client);
+    //setIsClientReady(true);
 
     // set channel heartbeat every X seconds while active
     async function sendHeartbeat() {
@@ -146,10 +141,11 @@ const Streamer = () => {
     }
 
     sendHeartbeat(); // send initial heartbeat
-    setInterval(sendHeartbeat, HEARTBEAT_FREQUENCY); // send heartbeat every X seconds
-
+    const intervalId = setInterval(sendHeartbeat, HEARTBEAT_FREQUENCY); // send heartbeat every X seconds
+    window.intervalId = intervalId; // save intervalId to the window object
     function handleBeforeUnload() {
       client.stopBroadcast();
+      clearInterval(window.intervalId);
     }
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -180,12 +176,18 @@ const Streamer = () => {
       console.warn('Unable to access microphone:', error);
     }
 
+
   }
 
 
   const handleStream = async () => {
+    console.log("Client initialized");
+    console.log(client);
+    console.log("Starting stream");
     handlePermissions()
     listChannels()
+    console.log(client)
+    console.log(stream_info);
     client.startBroadcast(stream_info.streamKey.value)
       .then((result) => {
         console.log('I am successfully broadcasting!');
@@ -197,7 +199,20 @@ const Streamer = () => {
   };
 
   const handleNoStream = async () => {
-    client.stopBroadcast()
+    if (client) {
+      client.stopBroadcast();
+    }
+    console.log(window.microphoneStream);
+    if (window.microphoneStream) {
+      window.microphoneStream.getTracks().forEach((track) => track.stop());
+      window.microphoneStream = null;
+    }
+    if (window.cameraStream) {
+      window.cameraStream.getTracks().forEach((track) => track.stop());
+      window.cameraStream = null;
+    }
+    console.log(window.cameraStream);
+    clearInterval(window.intervalId);
     console.log("Ended stream");
   }
 
@@ -215,6 +230,7 @@ const Streamer = () => {
         ref={ref}
         // streamUrl={STREAM_PLAYBACK_URL}
         onPlayerReady={() => {
+          console.log('Player is ready!');
           Initialize();
         }}
         controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
