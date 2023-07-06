@@ -1,9 +1,14 @@
 /* These are styles scoped to the App component, which is essentially the same as a global styles.*/
 /* Often-reused styles for buttons,  */
 
+
+:root {
+  --vh: 100vh; /* Fallback for browsers that do not support CSS variables */
+}
+
 .App {
   width: 100vw;   /* Width of .App set to 100% of viewport width. */
-  height: 100vh;  /* Height of .App set to 100% of viewport height. */
+  height: 100svh; /* Height of .App set to 100% of SMALL viewport height. */
   display: grid;  /* Using CSS Grid for layout inside .App. */
   row-gap: 0px;   /* No gap between the rows in the grid. */
   padding: 0px;   /* No padding around the .App element. */
@@ -39,9 +44,11 @@
   cursor: not-allowed;  /* The cursor will look like 'not-allowed' when over the disabled button. */
 }
 
+
 /* Changes padding around .App for screens that are at least 768px wide. (can change if you want it to look different on Desktop) */
 @media screen and (min-width: 768px) {
   .App {
     padding: 0px 0px;
+    height: 100vh;  /* Changed 100vh to var(--vh) */
   }
 }

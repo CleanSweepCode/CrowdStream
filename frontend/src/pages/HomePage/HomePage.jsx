@@ -57,7 +57,22 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+  // styling for the overlaid title/logo
+  textOverlayContainer: {
+    position: 'absolute',
+    top: theme.spacing(2),
+    left: '50%', // positioned at the center of the parent
+    transform: 'translateX(-50%)', // to center the text itself
+    zIndex: 2,
+    color: '#000',
+    fontSize: '32px',
+    fontWeight: 'bold',
+    backgroundColor: 'rgba(255,255,255,0.5)', // white with 50% opacity
+    padding: theme.spacing(1),
+    borderRadius: theme.shape.borderRadius,
+  },
 
+  // container representing the full screen, for overlay purposes
   mapContainer: {
     position: 'relative',
     width: '100%',
@@ -71,7 +86,8 @@ const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
 // Google Map Styling
 const containerStyle = {
   width: '100vw', 
-  height: '100vh'
+  //height: 'calc(var(--vh) - 56px)'  // Assuming the height of the iOS Navbar is 56px
+  height: '100svh'
 };
 
 var defaultCenter = {
@@ -129,6 +145,10 @@ function MapWithMarker() {
           onClick={() => navigate(`/streamer`)}>
           Start Streaming
         </button>
+
+        <div className={classes.textOverlayContainer}>
+          CrowdStream
+        </div>
 
         <GoogleMap
           mapContainerStyle={containerStyle}
