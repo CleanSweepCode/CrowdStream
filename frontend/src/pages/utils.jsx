@@ -49,7 +49,6 @@ export async function getStreamLinkFromName(channelName) {
         });
 
         const responseData = await response.json();
-        console.log(responseData);
         return responseData.playbackURL;
     } catch (error) {
         console.error('Error in getStreamLinkFromName:', error);
@@ -71,7 +70,6 @@ export async function createChannel(tags = {}) {
             body: JSON.stringify(data)
         });
         const channelData = await response.json();
-        console.log("New channel created: ", channelData)
         return channelData;
     } catch (error) {
         console.error('Error:', error);
@@ -94,7 +92,6 @@ export async function deleteChannelByName(channelName) {
         });
 
         const responseData = await response.json();
-        console.log(responseData);
         return responseData;
     } catch (error) {
         console.error('Error in deleteChannelByName:', error);
@@ -123,7 +120,6 @@ export async function channelHeartbeat(channelName) {
         });
 
         const responseData = await response.json();
-        console.log(responseData);
         return responseData;
     }
     catch (error) {

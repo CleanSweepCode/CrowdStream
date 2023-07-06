@@ -7,7 +7,7 @@ import Streamer from "./pages/streamer";
 import HomePage from "./pages/HomePage";
 import './App.css';
 
-const App = () => {
+const App = () => {  
   return (
     <div className="App">
       <Routes>

@@ -43,8 +43,7 @@ const Viewer = () => {
   return (
     <div className="App">
 
-      <h1>Crowd-Sourced Livestreaming</h1>
-      <p>A project by Clean-Sweep Code</p>
+    <h1>CrowdStream</h1>
 
       <MiniPlayer
         ref={ref}
