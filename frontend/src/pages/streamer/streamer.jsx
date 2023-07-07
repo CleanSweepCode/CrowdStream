@@ -65,6 +65,15 @@ const Streamer = () => {
   var client = null
   var stream_info = null;
 
+  async function requestCameraPermissions() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+      console.log("Camera permissions granted");
+    } catch (err) {
+      console.error("No cameras available, so no camera permissions granted: ", err);
+    }
+  }
+
   // Function to toggle the camera
   async function toggleCamera() {
     if (!isClientReady) {
@@ -172,6 +181,8 @@ const Streamer = () => {
     }
 
     window.addEventListener('beforeunload', handleBeforeUnload);
+
+    await requestCameraPermissions(); // request camera permissions on page load
 
     const devices = await navigator.mediaDevices.enumerateDevices();
     window.videoDevices = devices.filter((d) => d.kind === 'videoinput');
