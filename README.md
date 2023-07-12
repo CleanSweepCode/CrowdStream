@@ -15,9 +15,9 @@ https://livestreamapp-backend-7r4nlien6a-od.a.run.app/
 If "Hello World Google Cloud Integration!" doesn't appear at the link above, the nodeJS server needs to be restarted. This can be done either locally or via Google Cloud by cloning the LivestreamApp-Backend repo and running `node aws_interfacing.js`.
 
 ### Getting Started (as a Developer)
-Clone this repo and open in your code editor. Change to the /frontend/ directory.
+Clone this repo and open in your code editor.
 
-Run `npm install` to install relevant modules. 
+From the LiveStream directory, run `npm install` to install relevant modules. 
 
 Then, run `npm start`. This opens a local version of the website which will auto-update as you make changes to the code. 
 
