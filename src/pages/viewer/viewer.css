@@ -77,3 +77,29 @@
     z-index: 100;
     /* Make sure the back button is above other components */
 }
+
+/* Styling for the left button */
+.leftButton {
+    position: absolute;
+    top: 50%;
+    left: 2rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    /* white with 50% opacity */
+    padding: 1rem;
+    border-radius: 4px;
+    z-index: 100;
+    /* Make sure the back button is above other components */
+}
+
+/* Styling for the right button */
+.rightButton {
+    position: absolute;
+    top: 50%;
+    right: 2rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    /* white with 50% opacity */
+    padding: 1rem;
+    border-radius: 4px;
+    z-index: 100;
+    /* Make sure the back button is above other components */
+}
