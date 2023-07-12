@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getConfigFromResolution } from '../Helpers';
+import { getConfigFromResolution } from '../Helpers/helpers.js';
 
 const useStream = () => {
   const [isLive, setIsLive] = useState(false);
@@ -40,8 +40,7 @@ const useStream = () => {
       switch (err.code) {
         case 10000:
           handleError(
-            `Error starting stream: Your stream settings are misconfigured. This is likely caused by mismatched channel types. The Channel type you selected: ${
-              channelType === 'STANDARD' ? 'Standard' : 'Basic'
+            `Error starting stream: Your stream settings are misconfigured. This is likely caused by mismatched channel types. The Channel type you selected: ${channelType === 'STANDARD' ? 'Standard' : 'Basic'
             }, must match the channel type of your Amazon IVS Channel.`
           );
           break;

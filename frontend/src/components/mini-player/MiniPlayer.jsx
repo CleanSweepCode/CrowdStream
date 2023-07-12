@@ -1,9 +1,9 @@
 import React, { forwardRef, useImperativeHandle, useCallback, useEffect, useRef, useState } from 'react';
 
-import Placeholder from './placeholder';
+import Placeholder from './placeholder/Placeholder.jsx';
 
-import { CONTROLS, POSITION } from './config';
-import { isElementInViewport } from './utils';
+import { CONTROLS, POSITION } from '../Helpers/config.js';
+import { isElementInViewport } from '../Helpers/utils.js';
 
 import './MiniPlayer.css';
 
@@ -42,7 +42,7 @@ const MiniPlayer = forwardRef((props, ref) => {
       streamURL = streamUrlFromChild;
       player.current.load(streamUrlFromChild);
     },
-    log() {
+    reloadRef() {
       console.log("Reloaded");
       reload();
     }
