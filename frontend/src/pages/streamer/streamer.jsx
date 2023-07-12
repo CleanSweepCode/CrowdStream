@@ -1,32 +1,20 @@
 import React, { useState, useRef } from 'react';
 import StreamerPlayer from './streamerPlayer.jsx';
-// import { CONTROLS, POSITION } from '../../components/mini-player';
 import { useParams } from 'react-router-dom';
 import Button from 'react';
-import useStream from '../../components/Stream';
-import { getConfigFromResolution } from '../../components/Helpers';
+import useStream from '../../components/Stream/useStream.js';
+import { getConfigFromResolution } from '../../components/Helpers/helpers.js';
 import IVSBroadcastClient, {
   Errors,
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
-import { listChannels, createChannel, channelHeartbeat } from '../utils.jsx'
+import { listChannels, createChannel, channelHeartbeat } from '../../components/Helpers/APIUtils.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { makeStyles } from '@material-ui/core/styles';
 
 const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
-
-const useStyles = makeStyles((theme) => ({
-  backButton: {
-    position: 'absolute',
-    top: theme.spacing(2),
-    left: theme.spacing(2),
-    zIndex: 100, // Make sure the back button is above other components
-  },
-  // ... rest of your styles
-}));
 
 function getCurrentPosition() {
   return new Promise((resolve, reject) => {
@@ -53,7 +41,6 @@ async function fetchGeolocationData() {
 
 const Streamer = () => {
   const ref = useRef();
-  const classes = useStyles();
   const navigate = useNavigate();
 
   const [useFrontCamera, setUseFrontCamera] = useState(true);  // Add this line
@@ -67,7 +54,7 @@ const Streamer = () => {
 
   async function requestCameraPermissions() {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       console.log("Camera permissions granted");
     } catch (err) {
       console.error("No cameras available, so no camera permissions granted: ", err);
@@ -248,22 +235,18 @@ const Streamer = () => {
     console.log("Ended stream");
   }
 
-  const refreshStream = async () => {
-    ref.current.log();
-  }
-
   return (
     <div className="App">
 
 
-    <div className={classes.backButton}>
-      <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
-        handleNoStream();
-        navigate('/');
-      }}>
-        <ArrowBackIcon />
-      </IconButton>
-    </div>
+      <div className="backButton">
+        <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
+          handleNoStream();
+          navigate('/');
+        }}>
+          <ArrowBackIcon />
+        </IconButton>
+      </div>
 
       <h1>CrowdStream</h1>
 
@@ -277,10 +260,6 @@ const Streamer = () => {
 
 
       <div className="row">
-        <button className="button" onClick={refreshStream}>
-          Refresh Stream
-        </button>
-
         <button className="button red" onClick={handleNoStream}>
           End Stream
         </button>

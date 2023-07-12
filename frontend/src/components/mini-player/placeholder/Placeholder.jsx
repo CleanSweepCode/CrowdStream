@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { hexToRgb } from '../utils';
+import { hexToRgb } from '../../Helpers/utils';
 import './Placeholder.css';
 
 const Placeholder = (props) => {

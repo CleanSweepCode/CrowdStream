@@ -9,6 +9,13 @@
   height: 100%;
 }
 
+.backButton {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  z-index: 100;
+}
+
 .video-container {
   display: flex;
   flex-direction: column;
@@ -19,23 +26,27 @@
 }
 
 
-  .broadcasting-dot {
-    position: absolute;
-    z-index: 10;
-    top: 10px;
-    width: 20px;
-    height: 20px;
-    background-color: red;
-    border-radius: 50%;
-    animation: blink 1s linear infinite;
+.broadcasting-dot {
+  position: absolute;
+  z-index: 10;
+  top: 10px;
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
   }
-  
-  @keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.1; }
-    100% { opacity: 1; }
+
+  50% {
+    opacity: 0.1;
   }
-  
-  
-  
-  
+
+  100% {
+    opacity: 1;
+  }
+}
