@@ -45,9 +45,8 @@ const Streamer = () => {
 
   const [useFrontCamera, setUseFrontCamera] = useState(true);  // Add this line
   const [streamConfig, setStreamConfig] = useState(IVSBroadcastClient.BASIC_LANDSCAPE); // Add this line
-  const [isClientReady, setIsClientReady] = useState(true);
+  const [isClientReady, setIsClientReady] = useState(false);
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false); // Add this state
-  const [isBroadcasting, setIsBroadcasting] = useState(false);
 
   var client = null
   var stream_info = null;
@@ -126,6 +125,7 @@ const Streamer = () => {
   }
 
   async function Initialize() {
+    console.log("INITIALIZING")
     const position = await fetchGeolocationData();
 
     // if we don't have a position, end page here
@@ -193,8 +193,7 @@ const Streamer = () => {
     } catch (error) {
       console.warn('Unable to access microphone:', error);
     }
-
-
+    setIsClientReady(true);
   }
 
 
@@ -253,8 +252,10 @@ const Streamer = () => {
       <StreamerPlayer
         ref={ref}
         onPlayerReady={() => {
+          if (!isClientReady) {
+            Initialize();
+          }
           console.log('Player is ready!');
-          Initialize();
         }}
       />
 

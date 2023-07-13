@@ -32,8 +32,10 @@ const Viewer = () => {
   }
 
   async function Initialize() {
+    console.log("Initializing STREAM_PLAYBACK_URL", channel_name);
     const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
     ref.current.setURL(STREAM_PLAYBACK_URL);
+    console.log("Set URL to: " + STREAM_PLAYBACK_URL);
     refreshStream();
   }
 
@@ -54,7 +56,7 @@ const Viewer = () => {
         <div className="playerContainer">
           <MiniPlayer
             ref={ref}
-            // streamUrl={STREAM_PLAYBACK_URL}
+            //streamUrl={STREAM_PLAYBACK_URL}
             onPlayerReady={() => {
               Initialize();
             }}
