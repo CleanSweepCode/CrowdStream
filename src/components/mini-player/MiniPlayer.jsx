@@ -222,7 +222,7 @@ const MiniPlayer = forwardRef((props, ref) => {
     var delaySeconds = 1;
     var maxAttempts = 20;
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      if (player.current.getState() == "Playing") {
+      if (player.current.getState() == "Playing" || player.current.getState() == "Buffering") {
         console.log("NEVER CALL AGAIN");
         return;
       } else {
