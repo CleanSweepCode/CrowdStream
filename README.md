@@ -1,6 +1,8 @@
-#Clean Sweep Code - CrowdShare
+### LivestreamApp
+This is the repo for CrowdShare. We host crowdsourced event livestreams. 
 
-Frontend MVP of decentralised livestream webapp.
+### Current Tech Stack (2023-07-12)
+The web app is hosted on Vercel at this link:
 
 [livestream-app-swart.vercel.app](livestream-app-swart.vercel.app)
 
