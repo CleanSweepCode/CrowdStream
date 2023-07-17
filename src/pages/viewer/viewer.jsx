@@ -38,6 +38,8 @@ const Viewer = () => {
       } else {
         channelsToSort = allChannels;
       }
+      
+      console.log('channelsToSort', channelsToSort);
 
       // Sort channels by longitude
       const sortedChannels = channelsToSort.sort((a, b) => parseFloat(a.tags.longitude) - parseFloat(b.tags.longitude));
