@@ -203,6 +203,26 @@ const Streamer = () => {
     listChannels()
     console.log(client)
     console.log(stream_info);
+
+    // If there isn't a camera and microphone stream (which occurs after clicking 'End Stream'), start one
+    if (!window.cameraStream) {
+      try {
+        window.cameraStream = await getCameraStream(useFrontCamera);
+        ref.current.setStream(window.cameraStream);
+      } catch (error) {
+        console.warn('Unable to access camera:', error);
+      }
+    }
+    if (!window.microphoneStream) {
+      try {
+        window.microphoneStream = await navigator.mediaDevices.getUserMedia({
+          audio: { deviceId: window.audioDevices[0].deviceId },
+        });
+      } catch (error) {
+        console.warn('Unable to access microphone:', error);
+      }
+    }
+
     client.startBroadcast(stream_info.streamKey.value)
       .then((result) => {
         console.log('I am successfully broadcasting!');
@@ -234,6 +254,7 @@ const Streamer = () => {
 
   return (
     <div className="App">
+
 
 
       <div className="backButton">
