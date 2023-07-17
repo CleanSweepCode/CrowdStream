@@ -125,6 +125,10 @@ const Streamer = () => {
 
   async function Initialize() {
     console.log("INITIALIZING")
+    if (client) {
+      console.log("Client already exists")
+      return;
+    }
     const position = await fetchGeolocationData();
 
     // if we don't have a position, end page here
