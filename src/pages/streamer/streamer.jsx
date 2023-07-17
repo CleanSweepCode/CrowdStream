@@ -151,7 +151,6 @@ const Streamer = () => {
     });
     console.log("Client created");
     console.log(client);
-    //setIsClientReady(true);
 
     // set channel heartbeat every X seconds while active
     async function sendHeartbeat() {
@@ -259,12 +258,12 @@ const Streamer = () => {
 
 
       <div className="row">
-        <button className="button" onClick={handleStream} disabled={!isClientReady}>
-          Start Stream
-        </button>        
-        
         <button className="button red" onClick={handleNoStream}>
           End Stream
+        </button>
+
+        <button className="button" onClick={handleStream} disabled={!isClientReady}>
+          Stream
         </button>
 
         <button className="button" onClick={toggleCamera} disabled={!hasMultipleCameras}>
