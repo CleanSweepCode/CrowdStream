@@ -38,6 +38,8 @@ async function fetchGeolocationData() {
   }
 }
 
+var client = null;
+var stream_info = null;
 
 const Streamer = () => {
   const ref = useRef();
@@ -47,9 +49,6 @@ const Streamer = () => {
   const [streamConfig, setStreamConfig] = useState(IVSBroadcastClient.BASIC_LANDSCAPE); // Add this line
   const [isClientReady, setIsClientReady] = useState(false);
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false); // Add this state
-
-  var client = null
-  var stream_info = null;
 
   async function requestCameraPermissions() {
     try {
@@ -255,7 +254,6 @@ const Streamer = () => {
           if (!isClientReady) {
             Initialize();
           }
-          console.log('Player is ready!');
         }}
       />
 
