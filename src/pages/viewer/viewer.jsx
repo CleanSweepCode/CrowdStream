@@ -32,7 +32,7 @@ const Viewer = () => {
       let channelsToSort;
       // If the current channel is active, filter for active channels only. If the current channel is inactive, filter for inactive channels only.
       if (currentChannel && currentChannel.tags.active) {
-        channelsToSort = allChannels.filter(channel => channel.tags.active);
+        channelsToSort = allChannels.filter(channel => channel.tags.active === "true");
       } else if (currentChannel && currentChannel.tags.active === "false") {
         channelsToSort = allChannels.filter(channel => channel.tags.active === "false");
       } else {
