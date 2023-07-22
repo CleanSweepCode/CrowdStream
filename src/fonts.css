@@ -1,0 +1,15 @@
+
+@font-face {
+    font-family: 'Coolvetica';
+    src: url('src/assets/fonts/coolvetica-rg.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Coolvetica';
+    src: url('src/assets/fonts/coolveticael-extra-light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
