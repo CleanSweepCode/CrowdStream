@@ -22,6 +22,11 @@
     border-radius: 4px;
     z-index: 2;
 }
+.switchContainer .MuiFormControlLabel-label {
+    font-family: 'Coolvetica', fallback, sans-serif;
+    font-weight: bold;
+}
+
 
 .startStreamingContainer {
     position: absolute;
@@ -40,7 +45,9 @@
     text-transform: none;
     border: none;
     background-color: #08B2E3;
-    color: #ffffff;
+    /* background-color: #E85D4A; */
+    color: #ffffff; 
+    /* color: #001308; */
     transition: background-color 0.3s ease;
     margin: 8px auto;
     font-family: 'Coolvetica', fallback, sans-serif;
@@ -83,7 +90,9 @@
     color: #000000;
     background-color: rgba(255, 255, 255, 1.0);
     font-size: 15px;
-    font-style: italic;
+    font-family: 'Coolvetica', fallback, sans-serif;
+    font-style: italic; 
+    font-weight: bold;
     padding: 0.25rem;
     border-radius: 4px;
     text-align: center; /* this is the new line */
@@ -97,4 +106,87 @@
 
 .highlight {
     color: #E85D4A;
+}
+
+
+@media screen and (max-width: 720px) {
+    .titleOverlayContainer {
+        font-size: 26px; /* or any size you prefer */
+        /* left: initial;  reset the left property */
+        /* right: 2rem;  move it to the right */
+        /* transform: none;  reset the transform property */
+    }
+    .helpTextOverlay {
+        top: 6.5rem;
+    }    
+    .switchContainer {
+        padding: 0.5rem;
+    }
+    .switchContainer .MuiFormControlLabel-label {
+        font-size: 15px; /* Adjust as needed */
+    }
+    .switchContainer .MuiSwitch-root {
+        transform: scale(0.75); /* adjust as needed */
+    }
+}
+
+@media screen and (max-width: 580px) {
+    .titleOverlayContainer {
+        left: 2rem;
+        transform: none;
+    }
+
+    .switchContainer {
+        left: initial;
+        right: 2rem;
+        top: 2.3rem;
+        display: flex;
+        justify-content: flex-end;
+        padding-left: 0.2rem;
+    }
+}
+
+@media screen and (max-width: 430px) {
+    .titleOverlayContainer {
+        left: 1rem;
+        transform: none;
+    }
+
+    .switchContainer {
+        left: initial;
+        right: 0.1rem;
+        padding-left: 0rem;
+        padding-right: 0.25rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+@media screen and (max-width: 365px) {
+    .titleOverlayContainer {
+        left: 1rem;
+        transform: none;
+    }
+
+    .switchContainer {
+        left: initial;
+        right: 0.1rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+
+@media (max-width: 365px) {
+    .titleOverlayContainer {
+        display: none;
+    }
+
+    .switchContainer {
+        left: 53.5%;
+        transform: translateX(-50%);
+        right: initial;
+        padding-left: 0rem;
+        padding-right: 0.25rem;
+    }
 }
