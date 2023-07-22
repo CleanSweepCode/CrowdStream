@@ -33,16 +33,18 @@
     left: 50%;
     transform: translate(-50%, 0%);
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
     text-align: center;
     text-decoration: none;
-    text-transform: uppercase;
+    text-transform: none;
     border: none;
-    background-color: #3498db;
+    background-color: #08B2E3;
     color: #ffffff;
     transition: background-color 0.3s ease;
     margin: 8px auto;
+    font-family: 'Coolvetica', fallback, sans-serif;
+    letter-spacing: 1px;
 }
 
 .startStreamingContainer:hover {
@@ -64,7 +66,7 @@
     transform: translateX(-50%);
     z-index: 2;
     color: #001308;
-    font-size: 32px;
+    font-size: 40px;
     font-weight: bold;
     background-color: rgba(255, 255, 255, 1.0);
     font-family: 'Coolvetica', fallback, sans-serif;
@@ -73,7 +75,7 @@
 }
 
 .helpTextOverlay {
-    top: 7rem;
+    top: 8rem;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
