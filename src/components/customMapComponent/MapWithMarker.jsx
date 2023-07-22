@@ -30,6 +30,16 @@ function MapWithMarker() {
     const [center, setCenter] = useState(defaultCenter);
     const [selectedChannel, setSelectedChannel] = useState(null);
 
+    // state to hold the map instance
+    const [map, setMap] = useState(null);    
+    // state to track initial load
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+
+    const onLoad = React.useCallback(function callback(map) {
+        setMap(map)
+    }, [])
+
 
     useEffect(() => {
         const fetchChannelInfo = async () => {
@@ -48,6 +58,30 @@ function MapWithMarker() {
     }, []);
 
     const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo;
+
+    // when the map or displayedChannels change, fit bounds
+    useEffect(() => {
+        if (map && isInitialLoad) {
+            if (displayedChannels.length === 0) {
+                map.setZoom(14); // Set a default zoom level when there are no markers
+                map.setCenter(defaultCenter); // Set a default center when there are no markers
+            } else if (displayedChannels.length === 1) {
+                map.setZoom(14); // Set zoom level to 8 when there is only one marker
+                map.setCenter({
+                    lat: parseFloat(displayedChannels[0].tags.latitude),
+                    lng: parseFloat(displayedChannels[0].tags.longitude)
+                }); // Center the map on the single marker
+            } else {
+                const bounds = new window.google.maps.LatLngBounds();
+                displayedChannels.forEach(channel => {
+                    bounds.extend({ lat: parseFloat(channel.tags.latitude), lng: parseFloat(channel.tags.longitude) });
+                });
+                map.fitBounds(bounds);
+            }
+            setIsInitialLoad(false); // Set isInitialLoad to false after the initial load
+        }
+    }, [map, displayedChannels]);
+
 
     return (
         <div>
@@ -81,7 +115,6 @@ function MapWithMarker() {
 
                 <GoogleMap
                     mapContainerStyle={containerStyle}
-                    center={center}
                     zoom={8}
                     options={{
                         mapTypeControl: false,
@@ -116,6 +149,8 @@ function MapWithMarker() {
                         ],
                 
                     }}
+                    onLoad={onLoad}
+
                 >
 
                     {displayedChannels.map((channel, index) => (
