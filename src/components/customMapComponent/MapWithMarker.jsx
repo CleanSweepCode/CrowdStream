@@ -68,7 +68,7 @@ function MapWithMarker() {
 
                 <button className="startStreamingContainer"
                     onClick={() => navigate(`/streamer`)}>
-                    Start Streaming
+                    Start Broadcasting
                 </button>
 
                 <div className="titleOverlayContainer">
