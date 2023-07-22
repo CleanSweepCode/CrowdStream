@@ -237,11 +237,12 @@ const Streamer = () => {
       });
   };
 
-  const handleNoStream = async () => {
+  const closeStream = async () => {
     if (client) {
       client.stopBroadcast(); // Stop the stream
       ref.current.setIsBroadcasting(false);
     }
+    console.log("Closing stream")
     console.log(window.microphoneStream);
     if (window.microphoneStream) {
       window.microphoneStream.getTracks().forEach((track) => track.stop());
@@ -263,7 +264,7 @@ const Streamer = () => {
 
       <div className="backButton">
         <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
-          handleNoStream();
+          closeStream();
           navigate('/');
         }}>
           <ArrowBackIcon />
@@ -287,7 +288,7 @@ const Streamer = () => {
           Start Stream
         </button>        
         
-        <button className="button red" onClick={handleNoStream}>
+        <button className="button red" onClick={closeStream}>
           End Stream
         </button>
 

@@ -51,9 +51,24 @@
     color: #000;
     font-size: 32px;
     font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 1.0);
     padding: 1rem;
     border-radius: 4px;
+}
+
+.helpTextOverlay {
+    top: 7rem;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: #000000;
+    background-color: rgba(255, 255, 255, 1.0);
+    font-size: 15px;
+    font-style: italic;
+    padding: 0.25rem;
+    border-radius: 4px;
+    text-align: center; /* this is the new line */
 }
 
 .mapContainer {
