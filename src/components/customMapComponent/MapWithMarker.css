@@ -1,3 +1,18 @@
+
+@font-face {
+    font-family: 'Coolvetica';
+    src: url('../../assets/fonts/coolvetica-rg.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Coolvetica';
+    src: url('../../assets/fonts/coolveticael-extra-light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
 .switchContainer {
     position: absolute;
     top: 2rem;
@@ -42,16 +57,17 @@
     background-color: #1f618d;
 }
 
-.textOverlayContainer {
+.titleOverlayContainer {
     position: absolute;
     top: 2rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2;
-    color: #000;
+    color: #001308;
     font-size: 32px;
     font-weight: bold;
     background-color: rgba(255, 255, 255, 1.0);
+    font-family: 'Coolvetica', fallback, sans-serif;
     padding: 1rem;
     border-radius: 4px;
 }
@@ -75,4 +91,8 @@
     position: relative;
     width: 100%;
     height: 100%;
+}
+
+.highlight {
+    color: #E85D4A;
 }

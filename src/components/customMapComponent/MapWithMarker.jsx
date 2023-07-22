@@ -71,8 +71,8 @@ function MapWithMarker() {
                     Start Streaming
                 </button>
 
-                <div className="textOverlayContainer">
-                    CrowdStream
+                <div className="titleOverlayContainer">
+                    Crowd<span class="highlight">Stream</span>
                 </div>
 
                 <div className="helpTextOverlay">
