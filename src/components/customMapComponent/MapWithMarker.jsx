@@ -41,6 +41,7 @@ function MapWithMarker() {
                 let totalLat = 0.0;
                 let totalLng = 0.0;
                 let numPoints = fetchedChannelInfo.length;
+                let numActiveChannels = 0;
 
                 for (let i = 0; i < numPoints; i++) {
                     if (fetchedChannelInfo[i].tags.active === "true") {
