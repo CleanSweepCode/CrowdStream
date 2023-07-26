@@ -134,9 +134,9 @@ function MapWithMarker() {
                     {displayedChannels.map((channel, index) => (
                         <Marker
                             key={index}
-                            icon={activeOnly ? liveIconMarker : oldIconMarker}
+                            icon={channel.tags.active === "true" ? liveIconMarker : oldIconMarker}
                             scaledSize={2000}
-                            clickable={activeOnly}
+                            clickable={channel.tags.active === "true"}
                             position={{
                                 lat: parseFloat(channel.tags.latitude),
                                 lng: parseFloat(channel.tags.longitude)
