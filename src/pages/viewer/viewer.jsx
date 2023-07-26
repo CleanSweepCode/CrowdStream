@@ -38,12 +38,12 @@ const Viewer = () => {
       } else {
         channelsToSort = allChannels;
       }
-      
+
       console.log('channelsToSort', channelsToSort);
 
       // Sort channels by longitude
       const sortedChannels = channelsToSort.sort((a, b) => parseFloat(a.tags.longitude) - parseFloat(b.tags.longitude));
-      
+
       setChannels(sortedChannels);
 
       // Find the index of the current channel
@@ -54,16 +54,24 @@ const Viewer = () => {
     fetchChannels();
   }, [channel_name]);
 
+  //Looping around for channels
   const goToNextChannel = () => {
     if (currentIndex < channels.length - 1) {
-        navigate(`/viewer/${channels[currentIndex + 1].name}`);
+      navigate(`/viewer/${channels[currentIndex + 1].name}`);
+    } else if (currentIndex === channels.length - 1) {
+      navigate(`/viewer/${channels[0].name}`);
     }
+    window.location.reload();
   };
-  
+
   const goToPreviousChannel = () => {
     if (currentIndex > 0) {
-        navigate(`/viewer/${channels[currentIndex - 1].name}`);
+      navigate(`/viewer/${channels[currentIndex - 1].name}`);
+      console.log("Navigating to: " + `/viewer/${channels[currentIndex - 1].name}`);
+    } else if (currentIndex === 0) {
+      navigate(`/viewer/${channels[channels.length - 1].name}`);
     }
+    window.location.reload();
   };
 
   const refreshStream = async () => {
