@@ -5,7 +5,7 @@
     font-weight: bold;
     font-style: normal;
   }
-  
+
   @font-face {
     font-family: 'Coolvetica';
     src: url('../../assets/fonts/coolveticael-extra-light.woff') format('woff');
@@ -76,7 +76,6 @@
     font-size: 40px;
     font-weight: bold;
     background-color: rgba(255, 255, 255, 1.0);
-    font-family: 'Coolvetica', fallback, sans-serif;
     padding: 1rem;
     border-radius: 4px;
 }

@@ -293,7 +293,12 @@ const Streamer = () => {
         </IconButton>
       </div>
 
-      <h1>CrowdStream</h1>
+      <h1 style={{fontSize: "4rem"}}>
+        <span class="CSFont">
+        <span class="CSBlack">Crowd</span>
+        <span class="CSRed">Stream</span>
+        </span>
+      </h1>
 
       <StreamerPlayer
         ref={ref}
