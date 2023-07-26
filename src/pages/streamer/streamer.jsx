@@ -129,6 +129,7 @@ const Streamer = () => {
       console.log("Client already exists")
       return;
     }
+
     const position = await fetchGeolocationData();
 
     // if we don't have a position, end page here
@@ -237,13 +238,7 @@ const Streamer = () => {
       });
   };
 
-  const closeStream = async () => {
-    if (client) {
-      client.stopBroadcast(); // Stop the stream
-      ref.current.setIsBroadcasting(false);
-    }
-    console.log("Closing stream")
-    console.log(window.microphoneStream);
+  const clearCameraStreams = async() => {
     if (window.microphoneStream) {
       window.microphoneStream.getTracks().forEach((track) => track.stop());
       window.microphoneStream = null;
@@ -252,10 +247,37 @@ const Streamer = () => {
       window.cameraStream.getTracks().forEach((track) => track.stop());
       window.cameraStream = null;
     }
-    console.log(window.cameraStream);
-    clearInterval(window.intervalId);
-    console.log("Ended stream");
+  
   }
+
+  const closeStream = async () => {
+    if (client) {
+      client.stopBroadcast(); // Stop the stream
+      if (ref.current){
+        ref.current.setIsBroadcasting(false);
+      }
+    }
+
+    clearCameraStreams();
+    clearInterval(window.intervalId);
+  }
+
+  const closeStreamAndChannel = async () => {
+    // Current behaviour on 'back', 'refresh' or 'quit' is to close the stream and channel,
+    // So creating a new channel each time
+    closeStream();
+    client = null;
+  }
+
+  // on back
+  window.addEventListener('popstate', function (event) {
+    closeStreamAndChannel()
+  });
+
+  // on refresh / quit
+  window.onbeforeunload = function () {
+    closeStreamAndChannel()
+  };
 
   return (
     <div className="App">
@@ -264,7 +286,7 @@ const Streamer = () => {
 
       <div className="backButton">
         <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
-          closeStream();
+          closeStreamAndChannel();
           navigate('/');
         }}>
           <ArrowBackIcon />
