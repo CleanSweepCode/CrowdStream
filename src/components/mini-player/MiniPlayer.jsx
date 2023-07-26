@@ -225,7 +225,6 @@ const MiniPlayer = forwardRef((props, ref) => {
     });
   };
 
-  //Function to reload miniplayer -- Trying with a useEffect instaed
   const reload = async () => {
     var delaySeconds = 1.5;
     const MAXATTEMPTS = 10;

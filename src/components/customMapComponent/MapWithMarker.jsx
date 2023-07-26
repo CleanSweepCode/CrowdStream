@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import './MapWithMarker.css';
 import { listChannels } from '../Helpers/APIUtils.jsx'
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
-import iconMarker from '../../assets/marker64.png';
+import liveIconMarker from '../../assets/marker64.png';
+import oldIconMarker from '../../assets/filmMarker64.png';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
 
@@ -40,15 +41,15 @@ function MapWithMarker() {
                 let totalLat = 0.0;
                 let totalLng = 0.0;
                 let numPoints = fetchedChannelInfo.length;
-            
+
                 for (let i = 0; i < numPoints; i++) {
                     totalLat += parseFloat(fetchedChannelInfo[i].tags.latitude);
                     totalLng += parseFloat(fetchedChannelInfo[i].tags.longitude);
                 }
-            
+
                 const averageLat = totalLat / numPoints;
                 const averageLng = totalLng / numPoints;
-            
+
                 setCenter({
                     lat: averageLat,
                     lng: averageLng
@@ -133,8 +134,9 @@ function MapWithMarker() {
                     {displayedChannels.map((channel, index) => (
                         <Marker
                             key={index}
-                            icon={iconMarker}
+                            icon={activeOnly ? liveIconMarker : oldIconMarker}
                             scaledSize={2000}
+                            clickable={activeOnly}
                             position={{
                                 lat: parseFloat(channel.tags.latitude),
                                 lng: parseFloat(channel.tags.longitude)
