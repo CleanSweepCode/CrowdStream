@@ -4,6 +4,10 @@
 
 :root {
   --vh: 100vh; /* Fallback for browsers that do not support CSS variables */
+  --CSblack: #001308;
+  --CSred: #E85D4A;
+  --CSblue: #08B2E3;
+  --CSwhite: #F5F5F5;
 }
 
 .App {
@@ -51,4 +55,24 @@
     padding: 0px 0px;
     height: 100vh;  /* Changed 100vh to var(--vh) */
   }
+}
+
+@font-face {
+  font-family: 'Coolvetica';
+  src: url('assets/fonts/coolvetica-rg.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+.CSFont {
+  font-family: 'Coolvetica', fallback, sans-serif;
+}
+
+.CSBlack {
+  color: var(--CSblack);
+}
+
+
+.CSRed {
+  color: var(--CSred);
 }

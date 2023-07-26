@@ -114,7 +114,10 @@ const Viewer = () => {
         }
 
         <div className="textOverlayContainer">
-          CrowdStream
+          <span class="CSFont">
+          <span class="CSBlack">Crowd</span>
+          <span class="CSRed">Stream</span>
+          </span>
         </div>
 
         <div className="playerContainer">

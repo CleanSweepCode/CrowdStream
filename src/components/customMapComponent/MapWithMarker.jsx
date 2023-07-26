@@ -95,7 +95,10 @@ function MapWithMarker() {
                 </button>
 
                 <div className="titleOverlayContainer">
-                    Crowd<span className="highlight">Stream</span>
+                    <span class="CSFont">
+                    <span class="CSBlack">Crowd</span>
+                    <span class="CSRed">Stream</span>
+                    </span>
                 </div>
 
                 <div className="helpTextOverlay">
