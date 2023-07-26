@@ -43,17 +43,26 @@ function MapWithMarker() {
                 let numPoints = fetchedChannelInfo.length;
 
                 for (let i = 0; i < numPoints; i++) {
-                    totalLat += parseFloat(fetchedChannelInfo[i].tags.latitude);
-                    totalLng += parseFloat(fetchedChannelInfo[i].tags.longitude);
+                    if (fetchedChannelInfo[i].tags.active === "true") {
+                        totalLat += parseFloat(fetchedChannelInfo[i].tags.latitude);
+                        totalLng += parseFloat(fetchedChannelInfo[i].tags.longitude);
+                        numActiveChannels++;
+                    }
                 }
-
-                const averageLat = totalLat / numPoints;
-                const averageLng = totalLng / numPoints;
-
-                setCenter({
-                    lat: averageLat,
-                    lng: averageLng
-                });
+            
+                if (numActiveChannels > 0) {
+                    const averageLat = totalLat / numActiveChannels;
+                    const averageLng = totalLng / numActiveChannels;
+            
+                    setCenter({
+                        lat: averageLat,
+                        lng: averageLng
+                    });
+                } else {
+                    // Handle case when no active channels found
+                    // For example, set a default center location
+                    setCenter(defaultCenter);
+                }
             }
 
         };
