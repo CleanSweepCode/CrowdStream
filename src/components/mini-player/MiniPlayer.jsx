@@ -35,6 +35,14 @@ const MiniPlayer = forwardRef((props, ref) => {
   const playerBaseEl = useRef(null);
   const videoEl = useRef(null);
   const visibleRef = useRef(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      // The cleanup function will be executed when the component unmounts
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useImperativeHandle(ref, () => ({
     setURL(streamUrlFromChild) {
@@ -217,22 +225,22 @@ const MiniPlayer = forwardRef((props, ref) => {
     });
   };
 
-  // function to reload miniplayer
+  //Function to reload miniplayer -- Trying with a useEffect instaed
   const reload = async () => {
-    var delaySeconds = 1;
-    var maxAttempts = 20;
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    var delaySeconds = 1.5;
+    const MAXATTEMPTS = 10;
+    let count = 0;
+    while (count < MAXATTEMPTS && isMountedRef.current) {
       if (player.current.getState() == "Playing" || player.current.getState() == "Buffering") {
         console.log("NEVER CALL AGAIN");
         return;
       } else {
-        console.log("attempt: " + attempt);
-        console.log("player.current.getState: " + player.current.getState());
-        console.log(streamURL)
+        console.log("Attempt " + count + " to reload");
         player.current.load(streamURL);
         player.current.play();
         await new Promise(resolve => setTimeout(resolve, delaySeconds * 1000));
       }
+      count++;
     }
   };
 

@@ -72,7 +72,7 @@ function MapWithMarker() {
                 </button>
 
                 <div className="titleOverlayContainer">
-                    Crowd<span class="highlight">Stream</span>
+                    Crowd<span className="highlight">Stream</span>
                 </div>
 
                 <div className="helpTextOverlay">
@@ -114,7 +114,7 @@ function MapWithMarker() {
                                 stylers: [{ visibility: 'off' }]
                             }
                         ],
-                
+
                     }}
                 >
 
