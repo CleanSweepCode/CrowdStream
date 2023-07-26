@@ -37,9 +37,21 @@ function MapWithMarker() {
             setChannelInfo(fetchedChannelInfo);
 
             if (fetchedChannelInfo.length > 0) {
+                let totalLat = 0.0;
+                let totalLng = 0.0;
+                let numPoints = fetchedChannelInfo.length;
+            
+                for (let i = 0; i < numPoints; i++) {
+                    totalLat += parseFloat(fetchedChannelInfo[i].tags.latitude);
+                    totalLng += parseFloat(fetchedChannelInfo[i].tags.longitude);
+                }
+            
+                const averageLat = totalLat / numPoints;
+                const averageLng = totalLng / numPoints;
+            
                 setCenter({
-                    lat: parseFloat(fetchedChannelInfo[0].tags.latitude),
-                    lng: parseFloat(fetchedChannelInfo[0].tags.longitude)
+                    lat: averageLat,
+                    lng: averageLng
                 });
             }
 
