@@ -56,6 +56,7 @@ const Viewer = () => {
 
   //Looping around for channels
   const goToNextChannel = () => {
+    //console.log("channels", channels);
     if (currentIndex < channels.length - 1) {
       navigate(`/viewer/${channels[currentIndex + 1].name}`);
     } else if (currentIndex === channels.length - 1) {
@@ -65,6 +66,7 @@ const Viewer = () => {
   };
 
   const goToPreviousChannel = () => {
+    //console.log("channels", channels);
     if (currentIndex > 0) {
       navigate(`/viewer/${channels[currentIndex - 1].name}`);
       console.log("Navigating to: " + `/viewer/${channels[currentIndex - 1].name}`);
@@ -95,17 +97,21 @@ const Viewer = () => {
             <ArrowBackIcon />
           </IconButton>
         </div>
+        {channels.length > 1 &&
+          <div className="rightButton">
+            <IconButton edge="start" color="inherit" aria-label="next" onClick={goToNextChannel}>
+              <ArrowForwardIosIcon />
+            </IconButton>
+          </div>
+        }
 
-        <div className="rightButton">
-          <IconButton edge="start" color="inherit" aria-label="next" onClick={goToNextChannel}>
-            <ArrowForwardIosIcon />
-          </IconButton>
-        </div>
-        <div className="leftButton">
-          <IconButton edge="start" color="inherit" aria-label="previous" onClick={goToPreviousChannel}>
-            <ArrowBackIosIcon />
-          </IconButton>
-        </div>
+        {channels.length > 1 &&
+          <div className="leftButton">
+            <IconButton edge="start" color="inherit" aria-label="previous" onClick={goToPreviousChannel}>
+              <ArrowBackIosIcon />
+            </IconButton>
+          </div>
+        }
 
         <div className="textOverlayContainer">
           CrowdStream
