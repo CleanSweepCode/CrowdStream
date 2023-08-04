@@ -1,7 +1,5 @@
 import React, { useState, useRef } from 'react';
 import StreamerPlayer from './streamerPlayer.jsx';
-import { useParams } from 'react-router-dom';
-import Button from 'react';
 import useStream from '../../components/Stream/useStream.js';
 import { getConfigFromResolution } from '../../components/Helpers/helpers.js';
 import IVSBroadcastClient, {
@@ -9,7 +7,7 @@ import IVSBroadcastClient, {
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
-import { listChannels, createChannel, channelHeartbeat } from '../../components/Helpers/APIUtils.jsx'
+import { listChannels, createChannel, channelHeartbeat, tagChannelsInactivecationFromUtil } from '../../components/Helpers/APIUtils.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -238,7 +236,7 @@ const Streamer = () => {
       });
   };
 
-  const clearCameraStreams = async() => {
+  const clearCameraStreams = async () => {
     if (window.microphoneStream) {
       window.microphoneStream.getTracks().forEach((track) => track.stop());
       window.microphoneStream = null;
@@ -247,13 +245,14 @@ const Streamer = () => {
       window.cameraStream.getTracks().forEach((track) => track.stop());
       window.cameraStream = null;
     }
-  
+
   }
 
   const closeStream = async () => {
     if (client) {
       client.stopBroadcast(); // Stop the stream
-      if (ref.current){
+      tagChannelsInactivecationFromUtil(stream_info.channel.name);
+      if (ref.current) {
         ref.current.setIsBroadcasting(false);
       }
     }
@@ -293,10 +292,10 @@ const Streamer = () => {
         </IconButton>
       </div>
 
-      <h1 style={{fontSize: "4rem"}}>
+      <h1 style={{ fontSize: "4rem" }}>
         <span class="CSFont">
-        <span class="CSBlack">Crowd</span>
-        <span class="CSRed">Stream</span>
+          <span class="CSBlack">Crowd</span>
+          <span class="CSRed">Stream</span>
         </span>
       </h1>
 
@@ -313,8 +312,8 @@ const Streamer = () => {
       <div className="row">
         <button className="button" onClick={handleStream} disabled={!isClientReady}>
           Start Stream
-        </button>        
-        
+        </button>
+
         <button className="button red" onClick={closeStream}>
           End Stream
         </button>
