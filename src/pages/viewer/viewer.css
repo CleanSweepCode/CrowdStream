@@ -17,36 +17,13 @@
 }
 
 /* Styling for the refresh button */
-.startStreamingContainer {
+.refreshStreamDiv {
     position: absolute;
     bottom: 2rem;
     left: 2rem;
-    padding: 1rem;
-    border-radius: 4px;
     z-index: 2;
     left: 50%;
     transform: translate(-50%, 0%);
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    text-transform: uppercase;
-    border: none;
-    background-color: #3498db;
-    color: #ffffff;
-    transition: background-color 0.3s ease;
-}
-
-.startStreamingContainer:hover {
-    background-color: #2980b9;
-}
-
-.startStreamingContainer:focus {
-    outline: none;
-}
-
-.startStreamingContainer:active {
-    background-color: #1f618d;
 }
 
 /* Container representing the full screen, for overlay purposes */
