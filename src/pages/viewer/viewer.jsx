@@ -114,9 +114,9 @@ const Viewer = () => {
         }
 
         <div className="textOverlayContainer">
-          <span className="CSFont">
-          <span className="CSBlack">Crowd</span>
-          <span className="CSRed">Stream</span>
+          <span class="CSFont">
+            <span class="CSBlack">Crowd</span>
+            <span class="CSRed">Stream</span>
           </span>
         </div>
 
@@ -133,7 +133,7 @@ const Viewer = () => {
           />
         </div>
 
-        <div className="startStreamingContainer">
+        <div className="refreshStreamDiv">
           <button className="button" onClick={refreshStream}>
             Refresh Stream
           </button>

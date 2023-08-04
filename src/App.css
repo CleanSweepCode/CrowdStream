@@ -3,7 +3,8 @@
 
 
 :root {
-  --vh: 100vh; /* Fallback for browsers that do not support CSS variables */
+  --vh: 100vh;
+  /* Fallback for browsers that do not support CSS variables */
   --CSblack: #001308;
   --CSred: #E85D4A;
   --CSblue: #08B2E3;
@@ -11,41 +12,90 @@
 }
 
 .App {
-  width: 100vw;   /* Width of .App set to 100% of viewport width. */
-  height: 100svh; /* Height of .App set to 100% of SMALL viewport height. */
-  display: grid;  /* Using CSS Grid for layout inside .App. */
-  row-gap: 0px;   /* No gap between the rows in the grid. */
-  padding: 0px;   /* No padding around the .App element. */
-  place-items: center;  /* Centers grid items both vertically and horizontally. */
-  background-color: #ffffff; /* Sets background color of .App to white. */
+  width: 100vw;
+  /* Width of .App set to 100% of viewport width. */
+  height: 100svh;
+  /* Height of .App set to 100% of SMALL viewport height. */
+  display: grid;
+  /* Using CSS Grid for layout inside .App. */
+  row-gap: 0px;
+  /* No gap between the rows in the grid. */
+  padding: 0px;
+  /* No padding around the .App element. */
+  place-items: center;
+  /* Centers grid items both vertically and horizontally. */
+  background-color: #ffffff;
+  /* Sets background color of .App to white. */
 }
 
 .row {
-  display: flex;  /* Using Flexbox for layout inside .row. */
-  flex-direction: row;  /* Elements in the .row are aligned in a row. */
-  justify-content: space-between;  /* Space distributed evenly between flex items. */
-  align-items: center;  /* Centers items vertically if the row doesn't take up the full height. */
+  display: flex;
+  /* Using Flexbox for layout inside .row. */
+  flex-direction: row;
+  /* Elements in the .row are aligned in a row. */
+  justify-content: space-between;
+  /* Space distributed evenly between flex items. */
+  align-items: center;
+  /* Centers items vertically if the row doesn't take up the full height. */
 }
 
 .button {
-  padding: 20px 34px; /* Padding around the text in the button. */
-  margin: 10px; /* Space around the button. */
-  border-radius: 8px;  /* Rounded corners on the button. */
-  border: none;  /* No border on the button. */
-  background-color: #0197F6;  /* Background color of the button. */
-  cursor: pointer;  /* The cursor will look like a pointer when over the button. */
-  font-size: 14px;  /* Size of the text in the button. */
-  font-weight: 600;  /* Thickness of the text in the button. */
-  color: #fff; /* Color of the text in the button. */
+  padding: 20px 34px;
+  /* Padding around the text in the button. */
+  margin: 10px;
+  /* Space around the button. */
+  border-radius: 8px;
+  /* Rounded corners on the button. */
+  border: none;
+  /* No border on the button. */
+  background-color: #0197F6;
+  /* Background color of the button. */
+  cursor: pointer;
+  /* The cursor will look like a pointer when over the button. */
+  font-size: 14px;
+  /* Size of the text in the button. */
+  font-weight: 600;
+  /* Thickness of the text in the button. */
+  color: #fff;
+  /* Color of the text in the button. */
+  font-family: 'Coolvetica', fallback, sans-serif;
+  letter-spacing: 1px;
+  font-size: 20px;
+}
+
+.button:hover {
+  background-color: #2980b9;
+}
+
+.button:focus {
+  outline: none;
+}
+
+.button:active {
+  background-color: #1f618d;
 }
 
 .red {
-  background-color: #F44336;  /* Overrides the background color for elements also with the class 'red'. */
+  background-color: #F44336;
+  /* Overrides the background color for elements also with the class 'red'. */
 }
 
+.red:hover {
+  background-color: #E91B0C;
+  /* Overrides the background color for elements also with the class 'red'. */
+}
+
+.red:active {
+  background-color: #C2160A;
+  /* Overrides the background color for elements also with the class 'red'. */
+}
+
+
 .button:disabled {
-  background-color: #cccccc;  /* The background color of the button when it is disabled. */
-  cursor: not-allowed;  /* The cursor will look like 'not-allowed' when over the disabled button. */
+  background-color: #cccccc;
+  /* The background color of the button when it is disabled. */
+  cursor: not-allowed;
+  /* The cursor will look like 'not-allowed' when over the disabled button. */
 }
 
 
@@ -53,7 +103,8 @@
 @media screen and (min-width: 768px) {
   .App {
     padding: 0px 0px;
-    height: 100vh;  /* Changed 100vh to var(--vh) */
+    height: 100vh;
+    /* Changed 100vh to var(--vh) */
   }
 }
 
