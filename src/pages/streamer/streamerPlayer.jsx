@@ -34,12 +34,12 @@ const StreamerPlayer = forwardRef((props, ref) => {
 
     return (
         <div className="StreamerPlayer">
-            <div className="player-wrapper">
+            <div className="StreamerPlayer-videoBox">
                 {isBroadcasting &&
                     <div className="broadcasting-dot"></div>
                 }
-                <div className='video-container'>
-                    <video ref={videoRef} autoPlay playsInline style={{maxWidth: '100%', maxHeight: '100%'}}/>
+                <div className='StreamerPlayer-video'>
+                    <video ref={videoRef} autoPlay playsInline style={{ maxWidth: '100%', maxHeight: '100%' }} />
                 </div>
             </div>
         </div>

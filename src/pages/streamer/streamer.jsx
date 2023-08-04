@@ -7,6 +7,7 @@ import IVSBroadcastClient, {
   BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
+import './streamerPlayer.css';
 import { listChannels, createChannel, channelHeartbeat, tagChannelsInactivecationFromUtil } from '../../components/Helpers/APIUtils.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
@@ -300,6 +301,7 @@ const Streamer = () => {
       </h1>
 
       <StreamerPlayer
+        className="playerContainer"
         ref={ref}
         onPlayerReady={() => {
           if (!isClientReady) {
