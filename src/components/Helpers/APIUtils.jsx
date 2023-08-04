@@ -17,6 +17,24 @@ export const listChannels = async () => {
     }
 }
 
+export async function tagChannelsInactivecationFromUtil(channelName) {
+    const data = {
+        channelName: channelName
+    };
+    console.log(data);
+    fetch(`${BACKEND_URL}/channels/markinactive`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
 export async function tagGeoLocationFromUtil(data) {
 
     fetch(`${BACKEND_URL}/channels/tagByName`, {
