@@ -8,7 +8,7 @@ import IVSBroadcastClient, {
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
 import './streamerPlayer.css';
-import { listChannels, createChannel, channelHeartbeat, tagChannelsInactivecationFromUtil } from '../../components/Helpers/APIUtils.jsx'
+import { listChannels, createChannel, channelHeartbeat, tagChannelInactive, tagChannelActive } from '../../components/Helpers/APIUtils.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -139,7 +139,7 @@ const Streamer = () => {
     const tags = {
       "latitude": position.coords.latitude.toString(),
       "longitude": position.coords.longitude.toString(),
-      "active": "true",
+      "active": "preparing",
     };
 
     const stream_api_call = await createChannel(tags);
@@ -231,6 +231,7 @@ const Streamer = () => {
       .then((result) => {
         console.log('I am successfully broadcasting!');
         ref.current.setIsBroadcasting(true);
+        tagChannelActive(stream_info.channel.name);
       })
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
@@ -252,7 +253,7 @@ const Streamer = () => {
   const closeStream = async () => {
     if (client) {
       client.stopBroadcast(); // Stop the stream
-      tagChannelsInactivecationFromUtil(stream_info.channel.name);
+      tagChannelInactive(stream_info.channel.name);
       if (ref.current) {
         ref.current.setIsBroadcasting(false);
       }
