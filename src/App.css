@@ -28,6 +28,16 @@
   /* Sets background color of .App to white. */
 }
 
+.row {
+  display: flex;
+  /* Using Flexbox for layout inside .row. */
+  flex-direction: row;
+  /* Elements in the .row are aligned in a row. */
+  justify-content: space-between;
+  /* Space distributed evenly between flex items. */
+  align-items: center;
+  /* Centers items vertically if the row doesn't take up the full height. */
+}
 
 .button {
   padding: 10px 20px;
