@@ -49,7 +49,7 @@ const Streamer = () => {
   const [isClientReady, setIsClientReady] = useState(false);
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false); // Add this state
 
-  var cameraDevices = []; 
+  var cameraDevices = [];
 
   async function getCameraDevices() {
     // Return a list of camera devices
@@ -223,7 +223,7 @@ const Streamer = () => {
     window.videoDevices = devices.filter((d) => d.kind === 'videoinput');
     window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
 
-    setHasMultipleCameras(cameraDevices > 1);
+    setHasMultipleCameras(cameraDevices.length > 1);
 
     try {
       window.cameraStream = await getCameraStream(useFrontCamera);
