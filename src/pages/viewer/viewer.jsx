@@ -90,55 +90,53 @@ const Viewer = () => {
 
   return (
     <div className="App">
-      <div className="mapContainer">
 
-        <div className="backButton">
-          <IconButton edge="start" color="inherit" aria-label="back" onClick={() => navigate('/')}>
-            <ArrowBackIcon />
+      <div className="backButton">
+        <IconButton edge="start" color="inherit" aria-label="back" onClick={() => navigate('/')}>
+          <ArrowBackIcon />
+        </IconButton>
+      </div>
+      {channels.length > 1 &&
+        <div className="rightButton">
+          <IconButton edge="start" color="inherit" aria-label="next" onClick={goToNextChannel}>
+            <ArrowForwardIosIcon />
           </IconButton>
         </div>
-        {channels.length > 1 &&
-          <div className="rightButton">
-            <IconButton edge="start" color="inherit" aria-label="next" onClick={goToNextChannel}>
-              <ArrowForwardIosIcon />
-            </IconButton>
-          </div>
-        }
+      }
 
-        {channels.length > 1 &&
-          <div className="leftButton">
-            <IconButton edge="start" color="inherit" aria-label="previous" onClick={goToPreviousChannel}>
-              <ArrowBackIosIcon />
-            </IconButton>
-          </div>
-        }
-
-        <div className="textOverlayContainer">
-          <span class="CSFont">
-            <span class="CSBlack">Crowd</span>
-            <span class="CSRed">Stream</span>
-          </span>
+      {channels.length > 1 &&
+        <div className="leftButton">
+          <IconButton edge="start" color="inherit" aria-label="previous" onClick={goToPreviousChannel}>
+            <ArrowBackIosIcon />
+          </IconButton>
         </div>
+      }
 
-        <div className="playerContainer">
-          <MiniPlayer
-            ref={ref}
-            //streamUrl={STREAM_PLAYBACK_URL}
-            onPlayerReady={() => {
-              Initialize();
-            }}
-            controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
-            position={POSITION.topLeft}
-            transition
-          />
-        </div>
+      <div className="textOverlayContainer">
+        <span class="CSFont">
+          <span class="CSBlack">Crowd</span>
+          <span class="CSRed">Stream</span>
+        </span>
+      </div>
 
-        <div className="refreshStreamDiv">
-          <button className="button" onClick={refreshStream}>
-            Refresh Stream
-          </button>
+      <div className="playerContainer">
+        <MiniPlayer
+          ref={ref}
+          //streamUrl={STREAM_PLAYBACK_URL}
+          onPlayerReady={() => {
+            Initialize();
+          }}
+          controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
+          position={POSITION.topLeft}
+          transition
+        />
+      </div>
 
-        </div>
+      <div className="refreshStreamDiv">
+        <button className="button" onClick={refreshStream}>
+          Refresh Stream
+        </button>
+
       </div>
     </div>
   );
