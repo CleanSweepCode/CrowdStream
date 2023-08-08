@@ -270,9 +270,9 @@ const Streamer = () => {
           End Stream
         </button>
 
-        <button className="button" onClick={toggleCamera} disabled={!hasMultipleCameras}>
+        {/* <button className="button" onClick={toggleCamera} disabled={!hasMultipleCameras}>
           Toggle Camera
-        </button>
+        </button> */}
 
       </div>
     </div>
