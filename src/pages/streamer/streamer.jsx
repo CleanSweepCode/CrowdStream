@@ -49,6 +49,40 @@ const Streamer = () => {
   const [isClientReady, setIsClientReady] = useState(false);
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false); // Add this state
 
+  var cameraDevices = []; 
+
+  async function getCameraDevices() {
+    // Return a list of camera devices
+    // First will be rear camera OR only camera
+    // Second will be front camera (if available)
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+    let camera1 = null;
+    let camera2 = null;
+
+    for (const device of videoDevices) {
+        if (device.label.toLowerCase().includes('front')) {
+            camera2 = device;
+        } else if (device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear')) {
+            camera1 = device;
+        }
+    }
+
+    // If specific labels weren't found, just default to using the devices in the order they appear
+    if (!camera1 && videoDevices.length > 0) {
+        camera1 = videoDevices[0];
+    }
+
+    if (!camera2 && videoDevices.length > 1) {
+        rearCamera = videoDevices[1];
+    }
+
+    // Return the camera devices, ignoring if null
+    return [camera1, camera2].filter(camera => camera !== null);
+  }
+
   async function requestCameraPermissions() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -75,11 +109,21 @@ const Streamer = () => {
 
   // Fetch camera stream according to the current value of useFrontCamera
   async function getCameraStream(useFrontCamera = true) {
-    const facingMode = useFrontCamera ? 'user' : 'environment';
+    // Get the deviceId based on the useFrontCamera flag
+    let deviceId;
+    if (cameraDevices.length === 0) {
+      console.error("No cameras available.");
+      return;
+    } else if (useFrontCamera || cameraDevices.length === 1) {
+      deviceId = cameraDevices[0].deviceId;
+    } else if (!useFrontCamera && cameraDevices.length > 1) {
+      deviceId = cameraDevices[1].deviceId;
+    }
+  
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode,
+          deviceId, // Use the deviceId
           width: {
             ideal: streamConfig.maxResolution.width,
             max: streamConfig.maxResolution.width,
@@ -90,13 +134,14 @@ const Streamer = () => {
           },
         },
       });
-
+  
       ref.current.setStream(stream);
       return stream;
     } catch (err) {
       console.error("Error accessing camera: ", err);
-    }
+    }  
   }
+  
 
   async function handlePermissions() {
     let permissions = {
@@ -173,11 +218,12 @@ const Streamer = () => {
 
     await requestCameraPermissions(); // request camera permissions on page load
 
+    cameraDevices = await getCameraDevices();
     const devices = await navigator.mediaDevices.enumerateDevices();
     window.videoDevices = devices.filter((d) => d.kind === 'videoinput');
     window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
 
-    setHasMultipleCameras(window.videoDevices.length > 1);
+    setHasMultipleCameras(cameraDevices > 1);
 
     try {
       window.cameraStream = await getCameraStream(useFrontCamera);
