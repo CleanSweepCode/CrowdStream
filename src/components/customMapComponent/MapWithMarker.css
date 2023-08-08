@@ -1,17 +1,16 @@
-
 @font-face {
     font-family: 'Coolvetica';
     src: url('../../assets/fonts/coolvetica-rg.woff') format('woff');
     font-weight: bold;
     font-style: normal;
-  }
+}
 
-  @font-face {
+@font-face {
     font-family: 'Coolvetica';
     src: url('../../assets/fonts/coolveticael-extra-light.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-  }
+}
 
 .switchContainer {
     position: absolute;
@@ -22,48 +21,21 @@
     border-radius: 4px;
     z-index: 2;
 }
+
 .switchContainer .MuiFormControlLabel-label {
     font-family: 'Coolvetica', fallback, sans-serif;
     font-weight: bold;
 }
 
 
-.startStreamingContainer {
+/* Styling for the refresh button */
+.refreshStreamDiv {
     position: absolute;
     bottom: 2rem;
     left: 2rem;
-    padding: 1rem;
-    border-radius: 4px;
     z-index: 2;
     left: 50%;
     transform: translate(-50%, 0%);
-    padding: 10px 20px;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    text-transform: none;
-    border: none;
-    background-color: #08B2E3;
-    /* background-color: #E85D4A; */
-    color: #ffffff; 
-    /* color: #001308; */
-    transition: background-color 0.3s ease;
-    margin: 8px auto;
-    font-family: 'Coolvetica', fallback, sans-serif;
-    letter-spacing: 1px;
-}
-
-.startStreamingContainer:hover {
-    background-color: #2980b9;
-}
-
-.startStreamingContainer:focus {
-    outline: none;
-}
-
-.startStreamingContainer:active {
-    background-color: #1f618d;
 }
 
 .titleOverlayContainer {
@@ -90,11 +62,12 @@
     background-color: rgba(255, 255, 255, 1.0);
     font-size: 15px;
     font-family: 'Coolvetica', fallback, sans-serif;
-    font-style: italic; 
+    font-style: italic;
     font-weight: bold;
     padding: 0.25rem;
     border-radius: 4px;
-    text-align: center; /* this is the new line */
+    text-align: center;
+    /* this is the new line */
 }
 
 .mapContainer {
@@ -110,22 +83,29 @@
 
 @media screen and (max-width: 720px) {
     .titleOverlayContainer {
-        font-size: 26px; /* or any size you prefer */
+        font-size: 26px;
+        /* or any size you prefer */
         /* left: initial;  reset the left property */
         /* right: 2rem;  move it to the right */
         /* transform: none;  reset the transform property */
     }
+
     .helpTextOverlay {
         top: 6.5rem;
-    }    
+    }
+
     .switchContainer {
         padding: 0.5rem;
     }
+
     .switchContainer .MuiFormControlLabel-label {
-        font-size: 15px; /* Adjust as needed */
+        font-size: 15px;
+        /* Adjust as needed */
     }
+
     .switchContainer .MuiSwitch-root {
-        transform: scale(0.75); /* adjust as needed */
+        transform: scale(0.75);
+        /* adjust as needed */
     }
 }
 
