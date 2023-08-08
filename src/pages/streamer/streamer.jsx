@@ -302,7 +302,6 @@ const Streamer = () => {
       </h1>
 
       <StreamerPlayer
-        className="playerContainer"
         ref={ref}
         onPlayerReady={() => {
           if (!isClientReady) {

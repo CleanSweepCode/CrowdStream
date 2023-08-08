@@ -1,17 +1,17 @@
-/* Styling for the player container */
-.playerContainer {
+.StreamerPlayer {
   display: flex;
-  justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
+  justify-content: center;
+  width: 80vh;
+  height: 60vh;
+  background-color: #000;
 }
 
-.StreamerPlayer {
+.player-wrapper {
   position: relative;
   width: 100%;
-  max-width: 900px;
-  border-radius: var(--border-radius);
+  height: 100%;
+  overflow: hidden;
 }
 
 .backButton {
@@ -21,21 +21,19 @@
   z-index: 100;
 }
 
-.row {
+.video-container {
   display: flex;
-  /* Using Flexbox for layout inside .row. */
-  flex-direction: row;
-  /* Elements in the .row are aligned in a row. */
-  justify-content: space-between;
-  /* Space distributed evenly between flex items. */
+  flex-direction: column;
   align-items: center;
-  /* Centers items vertically if the row doesn't take up the full height. */
+  justify-content: center;
+  width: auto;
+  height: 100%;
 }
 
-@media screen and (max-width: 700px) {
-  .row {
-    flex-direction: column;
-  }
+video {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
 
