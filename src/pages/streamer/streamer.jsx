@@ -13,8 +13,8 @@ import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
-import {getCurrentPosition, fetchGeolocationData} from './locationManagement.jsx'
-import { requestCameraPermissions, getCameraDevices, getStreamFromCamera } from './deviceManagement.jsx'
+import {fetchGeolocationData} from './locationManagement.jsx'
+import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handlePermissions } from './deviceManagement.jsx'
 
 const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
 
@@ -82,30 +82,6 @@ const Streamer = () => {
   }
   
 
-  async function handlePermissions() {
-    let permissions = {
-      audio: false,
-      video: false,
-    };
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      for (const track of stream.getTracks()) {
-        track.stop();
-
-      }
-      permissions = { video: true, audio: true };
-    } catch (err) {
-      permissions = { video: false, audio: false };
-      console.error(err.message);
-    }
-    // If we still don't have permissions after requesting them display the error message
-    if (!permissions.video) {
-      console.error('Failed to get video permissions.');
-    } else if (!permissions.audio) {
-      console.error('Failed to get audio permissions.');
-    }
-  }
-
   async function setupMicrophoneStream() {
     const devices = await navigator.mediaDevices.enumerateDevices();
     window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
@@ -172,6 +148,7 @@ const Streamer = () => {
     await requestCameraPermissions(); // request camera permissions on page load
 
     cameraDevices = await getCameraDevices();
+    // console.log("DEVICES: ", cameraDevices)
     setHasMultipleCameras(cameraDevices.length > 1);
     await setupCameraStream();
     await setupMicrophoneStream();
