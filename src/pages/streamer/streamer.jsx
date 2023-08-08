@@ -13,29 +13,10 @@ import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
+import {getCurrentPosition, fetchGeolocationData} from './locationManagement.jsx'
+import { requestCameraPermissions, getCameraDevices, getStreamFromCamera } from './deviceManagement.jsx'
+
 const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
-
-function getCurrentPosition() {
-  return new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(resolve, reject);
-    } else {
-      reject(new Error('Geolocation is not supported'));
-    }
-  });
-}
-
-async function fetchGeolocationData() {
-  try {
-    const position = await getCurrentPosition();
-
-    // Use latitude and longitude to perform further operations
-    return position
-
-  } catch (error) {
-    console.error('Error retrieving geolocation:', error);
-  }
-}
 
 var client = null;
 var stream_info = null;
@@ -51,90 +32,48 @@ const Streamer = () => {
 
   var cameraDevices = [];
 
-  async function getCameraDevices() {
-    // Return a list of camera devices
-    // First will be rear camera OR only camera
-    // Second will be front camera (if available)
 
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoDevices = devices.filter(device => device.kind === 'videoinput');
 
-    let camera1 = null;
-    let camera2 = null;
-
-    for (const device of videoDevices) {
-        if (device.label.toLowerCase().includes('front')) {
-            camera2 = device;
-        } else if (device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear')) {
-            camera1 = device;
-        }
+  // Function to toggle the camera
+  async function setupCameraStream() {
+    if (window.cameraStream) {
+      window.cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
     }
 
-    // If specific labels weren't found, just default to using the devices in the order they appear
-    if (!camera1 && videoDevices.length > 0) {
-        camera1 = videoDevices[0];
-    }
-
-    if (!camera2 && videoDevices.length > 1) {
-        rearCamera = videoDevices[1];
-    }
-
-    // Return the camera devices, ignoring if null
-    return [camera1, camera2].filter(camera => camera !== null);
+    window.cameraStream = await getCameraStream(useFrontCamera);  // Fetch the new stream    
+    console.log("Camera switched to " + (useFrontCamera ? "front" : "back") + " camera successfully")
   }
 
-  async function requestCameraPermissions() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      console.log("Camera permissions granted");
-    } catch (err) {
-      console.error("No cameras available, so no camera permissions granted: ", err);
+  async function setupCameraStreamForClient() {
+    if (!window.cameraStream) {
+      console.error("No camera stream available to add to client");
     }
+    client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });  // Add the new stream to the client
   }
 
   // Function to toggle the camera
   async function toggleCamera() {
-    if (!isClientReady) {
-      console.log("Client not ready")
-      return;
-    }
-
     setUseFrontCamera(!useFrontCamera);  // Switch the camera mode
-    window.cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
-    client.removeVideoInputDevice('camera1');
-    window.cameraStream = await getCameraStream(useFrontCamera);  // Fetch the new stream
-    client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });  // Add the new stream to the client
-    console.log("Camera switched to " + (useFrontCamera ? "front" : "back") + " camera successfully")
+    await setupCameraStream();  // Setup the new camera stream
+    await setupCameraStreamForClient();  // Setup the new camera stream for the client
   }
 
   // Fetch camera stream according to the current value of useFrontCamera
   async function getCameraStream(useFrontCamera = true) {
     // Get the deviceId based on the useFrontCamera flag
-    let deviceId;
+    let camera;
+    let stream;
     if (cameraDevices.length === 0) {
       console.error("No cameras available.");
       return;
-    } else if (useFrontCamera || cameraDevices.length === 1) {
-      deviceId = cameraDevices[0].deviceId;
-    } else if (!useFrontCamera && cameraDevices.length > 1) {
-      deviceId = cameraDevices[1].deviceId;
+    } else if (!useFrontCamera || cameraDevices.length === 1) {
+      camera = cameraDevices[0];
+    } else if (useFrontCamera && cameraDevices.length > 1) {
+      camera = cameraDevices[1];
     }
   
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          deviceId, // Use the deviceId
-          width: {
-            ideal: streamConfig.maxResolution.width,
-            max: streamConfig.maxResolution.width,
-          },
-          height: {
-            ideal: streamConfig.maxResolution.height,
-            max: streamConfig.maxResolution.height,
-          },
-        },
-      });
-  
+      stream = await getStreamFromCamera(camera)
       ref.current.setStream(stream);
       return stream;
     } catch (err) {
@@ -164,6 +103,20 @@ const Streamer = () => {
       console.error('Failed to get video permissions.');
     } else if (!permissions.audio) {
       console.error('Failed to get audio permissions.');
+    }
+  }
+
+  async function setupMicrophoneStream() {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
+  
+    try {
+      window.microphoneStream = await navigator.mediaDevices.getUserMedia({
+        audio: { deviceId: window.audioDevices[0].deviceId },
+      });
+      client.addAudioInputDevice(window.microphoneStream, 'mic1');
+    } catch (error) {
+      console.warn('Unable to access microphone:', error);
     }
   }
 
@@ -219,29 +172,12 @@ const Streamer = () => {
     await requestCameraPermissions(); // request camera permissions on page load
 
     cameraDevices = await getCameraDevices();
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    window.videoDevices = devices.filter((d) => d.kind === 'videoinput');
-    window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
-
     setHasMultipleCameras(cameraDevices.length > 1);
-
-    try {
-      window.cameraStream = await getCameraStream(useFrontCamera);
-      ref.current.setStream(window.cameraStream);
-      client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });
-    } catch (error) {
-      console.warn('Unable to access camera:', error);
-    }
-
-    try {
-      window.microphoneStream = await navigator.mediaDevices.getUserMedia({
-        audio: { deviceId: window.audioDevices[0].deviceId },
-      });
-      client.addAudioInputDevice(window.microphoneStream, 'mic1');
-    } catch (error) {
-      console.warn('Unable to access microphone:', error);
-    }
+    await setupCameraStream();
+    await setupMicrophoneStream();
     setIsClientReady(true);
+    await setupCameraStreamForClient();
+
   }
 
 
@@ -256,21 +192,11 @@ const Streamer = () => {
 
     // If there isn't a camera and microphone stream (which occurs after clicking 'End Stream'), start one
     if (!window.cameraStream) {
-      try {
-        window.cameraStream = await getCameraStream(useFrontCamera);
-        ref.current.setStream(window.cameraStream);
-      } catch (error) {
-        console.warn('Unable to access camera:', error);
-      }
+      await setupCameraStream();
+      await setupCameraStreamForClient();
     }
     if (!window.microphoneStream) {
-      try {
-        window.microphoneStream = await navigator.mediaDevices.getUserMedia({
-          audio: { deviceId: window.audioDevices[0].deviceId },
-        });
-      } catch (error) {
-        console.warn('Unable to access microphone:', error);
-      }
+      await setupMicrophoneStream();
     }
 
     client.startBroadcast(stream_info.streamKey.value)
