@@ -70,7 +70,7 @@ function MapWithMarker() {
         fetchChannelInfo();
     }, []);
 
-    const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo;
+    const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo.filter(channel => channel.tags.active === "false");
 
     return (
         <div>
