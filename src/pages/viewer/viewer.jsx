@@ -79,6 +79,9 @@ const Viewer = () => {
   const refreshStream = async () => {
     ref.current.reloadRef();
   }
+  const refreshButtonPressed = () => {
+    window.location.reload();
+  }
 
   async function Initialize() {
     console.log("Initializing STREAM_PLAYBACK_URL", channel_name);
@@ -133,7 +136,7 @@ const Viewer = () => {
       </div>
 
       <div className="refreshStreamDiv">
-        <button className="button" onClick={refreshStream}>
+        <button className="button" onClick={refreshButtonPressed}>
           Refresh Stream
         </button>
 
