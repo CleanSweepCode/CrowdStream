@@ -50,11 +50,11 @@ function MapWithMarker() {
                         numActiveChannels++;
                     }
                 }
-            
+
                 if (numActiveChannels > 0) {
                     const averageLat = totalLat / numActiveChannels;
                     const averageLng = totalLng / numActiveChannels;
-            
+
                     setCenter({
                         lat: averageLat,
                         lng: averageLng
@@ -70,7 +70,7 @@ function MapWithMarker() {
         fetchChannelInfo();
     }, []);
 
-    const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo;
+    const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo.filter(channel => channel.tags.active === "false");
 
     return (
         <div>
@@ -89,15 +89,15 @@ function MapWithMarker() {
                 />
 
 
-                <button className="startStreamingContainer"
+                <button className="refreshStreamDiv button"
                     onClick={() => navigate(`/streamer`)}>
                     Start Broadcasting
                 </button>
 
                 <div className="titleOverlayContainer">
                     <span className="CSFont">
-                    <span className="CSBlack">Crowd</span>
-                    <span className="CSRed">Stream</span>
+                        <span className="CSBlack">Crowd</span>
+                        <span className="CSRed">Stream</span>
                     </span>
                 </div>
 
