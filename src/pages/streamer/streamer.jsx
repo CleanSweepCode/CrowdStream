@@ -244,7 +244,7 @@ const Streamer = () => {
         </IconButton>
       </div>
 
-      <h1 style={{ fontSize: "4rem" }}>
+      <h1 className="streamerPlayer-backButton">
         <span className="CSFont">
           <span className="CSBlack">Crowd</span>
           <span className="CSRed">Stream</span>

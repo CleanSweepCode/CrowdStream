@@ -6,7 +6,6 @@
 .MiniPlayer {
   position: relative;
   width: 100%;
-  max-width: 900px;
   border-radius: var(--border-radius);
 }
 
@@ -33,4 +32,3 @@
 .MinPlayer-video.small {
   position: fixed;
 }
-
