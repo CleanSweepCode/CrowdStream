@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import StreamerPlayer from './streamerPlayer.jsx';
 import useStream from '../../components/Stream/useStream.js';
 import { getConfigFromResolution } from '../../components/Helpers/helpers.js';
@@ -20,19 +20,22 @@ const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
 
 var client = null;
 var stream_info = null;
+var cameraDevices = [];
+var isClientReady = false; // TODO: move this to be a property of streamer instead
+var useFrontCamera = true;
 
 const Streamer = () => {
   const ref = useRef();
   const navigate = useNavigate();
 
-  const [useFrontCamera, setUseFrontCamera] = useState(true);  // Add this line
   const [streamConfig, setStreamConfig] = useState(IVSBroadcastClient.BASIC_LANDSCAPE); // Add this line
-  const [isClientReady, setIsClientReady] = useState(false);
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false); // Add this state
+  const [readyToStream, setReadyToStream] = useState(false); // Add this state
 
-  var cameraDevices = [];
-
-
+  // Initialize the streamer
+  useEffect(() => {
+    Initialize();
+  }, []);
 
   // Function to toggle the camera
   async function setupCameraStream() {
@@ -53,9 +56,11 @@ const Streamer = () => {
 
   // Function to toggle the camera
   async function toggleCamera() {
-    setUseFrontCamera(!useFrontCamera);  // Switch the camera mode
+    client.removeVideoInputDevice('camera1');  // Remove the old stream from the client
+    useFrontCamera = !useFrontCamera;  // Switch the camera mode
     await setupCameraStream();  // Setup the new camera stream
     await setupCameraStreamForClient();  // Setup the new camera stream for the client
+
   }
 
   // Fetch camera stream according to the current value of useFrontCamera
@@ -148,11 +153,13 @@ const Streamer = () => {
     await requestCameraPermissions(); // request camera permissions on page load
 
     cameraDevices = await getCameraDevices();
-    // console.log("DEVICES: ", cameraDevices)
+
+    // setup cameras and microphones
     setHasMultipleCameras(cameraDevices.length > 1);
     await setupCameraStream();
     await setupMicrophoneStream();
-    setIsClientReady(true);
+    isClientReady = true;
+    setReadyToStream(true);
     await setupCameraStreamForClient();
 
   }
@@ -233,8 +240,6 @@ const Streamer = () => {
   return (
     <div className="App">
 
-
-
       <div className="backButton">
         <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
           closeStreamAndChannel();
@@ -244,7 +249,7 @@ const Streamer = () => {
         </IconButton>
       </div>
 
-      <h1 style={{ fontSize: "4rem" }}>
+      <h1 className="streamerPlayer-backButton">
         <span className="CSFont">
           <span className="CSBlack">Crowd</span>
           <span className="CSRed">Stream</span>
@@ -253,16 +258,11 @@ const Streamer = () => {
 
       <StreamerPlayer
         ref={ref}
-        onPlayerReady={() => {
-          if (!isClientReady) {
-            Initialize();
-          }
-        }}
       />
 
 
       <div className="row">
-        <button className="button" onClick={handleStream} disabled={!isClientReady}>
+        <button className="button" onClick={handleStream} disabled={!readyToStream}>
           Start Stream
         </button>
 
@@ -270,9 +270,9 @@ const Streamer = () => {
           End Stream
         </button>
 
-        {/* <button className="button" onClick={toggleCamera} disabled={!hasMultipleCameras}>
+        <button className="button" onClick={toggleCamera} disabled={!hasMultipleCameras}>
           Toggle Camera
-        </button> */}
+        </button>
 
       </div>
     </div>

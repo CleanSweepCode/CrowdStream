@@ -27,9 +27,6 @@ const StreamerPlayer = forwardRef((props, ref) => {
             videoRef.current.srcObject = props.initialStream;
         }
 
-        // Call onPlayerReady when video player is ready
-        props.onPlayerReady();
-
     }, [props.initialStream, props.onPlayerReady]);
 
     return (
