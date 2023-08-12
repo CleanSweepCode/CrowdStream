@@ -92,56 +92,57 @@ const Viewer = () => {
   }
 
   return (
-    <div className="App">
-
-      <div className="backButton">
-        <IconButton edge="start" color="inherit" aria-label="back" onClick={() => navigate('/')}>
-          <ArrowBackIcon />
-        </IconButton>
-      </div>
-      {channels.length > 1 &&
-        <div className="rightButton">
-          <IconButton edge="start" color="inherit" aria-label="next" onClick={goToNextChannel}>
-            <ArrowForwardIosIcon />
+    <div className="viewer-container">
+      <div className="viewer-rows">
+        <div className="viewer-backButton">
+          <IconButton edge="start" color="inherit" aria-label="back" onClick={() => navigate('/')}>
+            <ArrowBackIcon />
           </IconButton>
         </div>
-      }
-
-      {channels.length > 1 &&
-        <div className="leftButton">
-          <IconButton edge="start" color="inherit" aria-label="previous" onClick={goToPreviousChannel}>
+        <div className="viewer-title">
+          <span class="CSFont">
+            <span class="CSBlack">Crowd</span>
+            <span class="CSRed">Stream</span>
+          </span>
+        </div>
+        <div />
+      </div>
+      <div className="viewer-rows">
+        <div className="viewer-channelButton">
+          <IconButton edge="start" color="inherit" aria-label="previous" disabled={channels.length === 1} onClick={goToPreviousChannel}>
             <ArrowBackIosIcon />
           </IconButton>
         </div>
-      }
+        <div className="viewer-playerContainer">
+          <MiniPlayer
+            ref={ref}
+            //streamUrl={STREAM_PLAYBACK_URL}
+            onPlayerReady={() => {
+              Initialize();
+            }}
+            controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
+            position={POSITION.center}
+            transition
+          />
+        </div>
+        <div className="viewer-channelButton">
+            <IconButton edge="start" color="inherit" aria-label="next" disabled={channels.length === 1} onClick={goToNextChannel}>
+              <ArrowForwardIosIcon />
+            </IconButton>
 
-      <div className="textOverlayContainer">
-        <span class="CSFont">
-          <span class="CSBlack">Crowd</span>
-          <span class="CSRed">Stream</span>
-        </span>
+        </div>
+
+
       </div>
 
-      <div className="playerContainer">
-        <MiniPlayer
-          ref={ref}
-          //streamUrl={STREAM_PLAYBACK_URL}
-          onPlayerReady={() => {
-            Initialize();
-          }}
-          controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
-          position={POSITION.topLeft}
-          transition
-        />
-      </div>
 
-      <div className="refreshStreamDiv">
+      <div className="viewer-rows-bottom">
         <button className="button" onClick={refreshButtonPressed}>
           Refresh Stream
         </button>
 
       </div>
-    </div>
+    </div >
   );
 
 

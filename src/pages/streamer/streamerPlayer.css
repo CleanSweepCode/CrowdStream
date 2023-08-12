@@ -8,6 +8,20 @@
   background-color: #000;
 }
 
+.streamerPlayer-backButton {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  /* positioned at the center of the parent */
+  transform: translateX(-50%);
+  /* to center the text itself */
+  z-index: 2;
+  color: #000;
+  font-size: 3rem;
+  max-width: 65%;
+  font-weight: bold;
+}
+
 .player-wrapper {
   position: relative;
   width: 100%;
