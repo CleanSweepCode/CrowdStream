@@ -13,7 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
-import {fetchGeolocationData} from './locationManagement.jsx'
+import { fetchGeolocationData } from './locationManagement.jsx'
 import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handlePermissions } from './deviceManagement.jsx'
 
 const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
@@ -71,21 +71,21 @@ const Streamer = () => {
     } else if (useFrontCamera && cameraDevices.length > 1) {
       camera = cameraDevices[1];
     }
-  
+
     try {
       stream = await getStreamFromCamera(camera)
       ref.current.setStream(stream);
       return stream;
     } catch (err) {
       console.error("Error accessing camera: ", err);
-    }  
+    }
   }
-  
+
 
   async function setupMicrophoneStream() {
     const devices = await navigator.mediaDevices.enumerateDevices();
     window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
-  
+
     try {
       window.microphoneStream = await navigator.mediaDevices.getUserMedia({
         audio: { deviceId: window.audioDevices[0].deviceId },
@@ -208,13 +208,14 @@ const Streamer = () => {
       }
     }
 
-    clearCameraStreams();
+
     clearInterval(window.intervalId);
   }
 
   const closeStreamAndChannel = async () => {
     // Current behaviour on 'back', 'refresh' or 'quit' is to close the stream and channel,
     // So creating a new channel each time
+    clearCameraStreams();
     closeStream();
     client = null;
   }
@@ -269,9 +270,9 @@ const Streamer = () => {
           End Stream
         </button>
 
-        <button className="button" onClick={toggleCamera} disabled={!hasMultipleCameras}>
+        {/* <button className="button" onClick={toggleCamera} disabled={!hasMultipleCameras}>
           Toggle Camera
-        </button>
+        </button> */}
 
       </div>
     </div>
