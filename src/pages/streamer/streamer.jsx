@@ -238,30 +238,34 @@ const Streamer = () => {
   };
 
   return (
-    <div className="App">
+    <div className="streamerplayer-container">
 
-      <div className="backButton">
-        <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
-          closeStreamAndChannel();
-          navigate('/');
-        }}>
-          <ArrowBackIcon />
-        </IconButton>
+      <div className="streamerplayer-rows">
+        <div className="streamerplayer-backButton">
+          <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
+            closeStreamAndChannel();
+            navigate('/');
+          }}>
+            <ArrowBackIcon />
+          </IconButton>
+        </div>
+        <h1 className="streamerPlayer-title">
+          <span className="CSFont">
+            <span className="CSBlack">Crowd</span>
+            <span className="CSRed">Stream</span>
+          </span>
+        </h1>
+        <div />
       </div>
 
-      <h1 className="streamerPlayer-backButton">
-        <span className="CSFont">
-          <span className="CSBlack">Crowd</span>
-          <span className="CSRed">Stream</span>
-        </span>
-      </h1>
+
 
       <StreamerPlayer
         ref={ref}
       />
 
 
-      <div className="row">
+      <div className="streamerplayer-rows-bottom">
         <button className="button" onClick={handleStream} disabled={!readyToStream}>
           Start Stream
         </button>
