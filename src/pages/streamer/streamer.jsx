@@ -14,13 +14,13 @@ import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { fetchGeolocationData } from './locationManagement.jsx'
-import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handlePermissions } from './deviceManagement.jsx'
+import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handlePermissions, getCameraByType, canToggleCameras } from './deviceManagement.jsx'
 
 const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
 
 var client = null;
 var stream_info = null;
-var cameraDevices = [];
+var cameraDevices = {};
 var isClientReady = false; // TODO: move this to be a property of streamer instead
 var useFrontCamera = true;
 
@@ -68,14 +68,8 @@ const Streamer = () => {
     // Get the deviceId based on the useFrontCamera flag
     let camera;
     let stream;
-    if (cameraDevices.length === 0) {
-      console.error("No cameras available.");
-      return;
-    } else if (!useFrontCamera || cameraDevices.length === 1) {
-      camera = cameraDevices[0];
-    } else if (useFrontCamera && cameraDevices.length > 1) {
-      camera = cameraDevices[1];
-    }
+
+    camera = getCameraByType(cameraDevices, (useFrontCamera ? "front" : "back"))
 
     try {
       stream = await getStreamFromCamera(camera)
@@ -154,8 +148,9 @@ const Streamer = () => {
 
     cameraDevices = await getCameraDevices();
 
+
     // setup cameras and microphones
-    setHasMultipleCameras(cameraDevices.length > 1);
+    setHasMultipleCameras(canToggleCameras(cameraDevices));
     await setupCameraStream();
     await setupMicrophoneStream();
     isClientReady = true;
