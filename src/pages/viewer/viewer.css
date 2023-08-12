@@ -42,7 +42,7 @@
 /* Styling for the left button */
 .leftButton {
     position: absolute;
-    top: 50% - 50px;
+    top: 48%;
     height: 50px;
     left: 1rem;
     width: 20px;
@@ -54,7 +54,7 @@
 /* Styling for the right button */
 .rightButton {
     position: absolute;
-    top: 50% - 50px;
+    top: 48%;
     height: 50px;
     right: 1rem;
     width: 20px;
