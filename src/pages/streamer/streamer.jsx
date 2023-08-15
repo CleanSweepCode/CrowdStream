@@ -69,7 +69,7 @@ const Streamer = () => {
     let camera;
     let stream;
 
-    camera = getCameraByType(cameraDevices, (useFrontCamera ? "front" : "back"))
+    camera = getCameraByType(cameraDevices, (useFrontCamera ? "front" : "rear"))
 
     try {
       stream = await getStreamFromCamera(camera)
