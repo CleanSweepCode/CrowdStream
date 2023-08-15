@@ -8,7 +8,6 @@ import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Mate
 import liveIconMarker from '../../assets/marker64.png';
 import oldIconMarker from '../../assets/filmMarker64.png';
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
 const REFRESH_INTERVAL = 10000; // 10 seconds
 
 // Google Map Styling
