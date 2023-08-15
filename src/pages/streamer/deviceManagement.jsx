@@ -8,7 +8,29 @@ export async function requestCameraPermissions() {
     }
   }
 
-export async function getCameraDevices() {
+class DeviceList {
+  constructor(arr) {
+    this.array = arr;
+    this.index = 0;
+    this.size = arr.length;
+  }
+
+  active() {
+    return this.array[this.index];
+  }
+
+  activeName() {
+    return this.array[this.index].label;
+  }
+
+    next() {
+      const value = this.array[this.index];
+      this.index = (this.index + 1) % this.array.length;
+      return value;
+    }
+  }
+
+  export async function getCameraDevices() {
     // Return a dictionary of camera devices
     // front: [all front cameras]
     // rear: [all rear cameras]
@@ -18,67 +40,21 @@ export async function getCameraDevices() {
     const videoDevices = devices.filter(device => device.kind === 'videoinput');
     var cameras = videoDevices;
 
-    const returnDict = {
-      front: [],
-      rear: [],
-      other: []
-    };
+    // sort device list, preferring ones that contain rearKeys
+    let rearKeys = ['rear', 'back', 'environment']
 
-  videoDevices.forEach(device => {
-    const label = device.label.toLowerCase();
+    videoDevices.sort((a, b) => {
+      const aContainsKey = rearKeys.some(key => a.label.toLowerCase().includes(key));
+      const bContainsKey = rearKeys.some(key => b.label.toLowerCase().includes(key));
     
-    if (label.includes('front') || label.includes('forward')) {
-        returnDict.front.push(device);
-    } else if (label.includes('rear') || label.includes('back') || label.includes('behind') /* you can add more keywords here */) {
-        returnDict.rear.push(device);
-    } else {
-        returnDict.other.push(device);
-    }
-  });
+      if (aContainsKey && bContainsKey) return 0; // Both have rearKeys, so retain their order
+      if (aContainsKey) return -1;                // a should come before b
+      if (bContainsKey) return 1;                 // b should come before a
+      return 0;                                  // Neither have rearKeys, so retain their order
+    });
 
-  return returnDict
-}
-
-export function canToggleCameras(cameraDevices){
-  if (cameraDevices["front"].length > 0 && cameraDevices["rear"].length > 0) {
-    return true;
-  }
-
-  if ((cameraDevices['front'].length + cameraDevices['rear'].length) > 1 && cameraDevices['other'].length > 0) {
-    return true;
-  }
-
-  if (cameraDevices['other'].length > 1) {
-    return true;
-  }
-
-  return false;
-
-}
-
-export function getCameraByType(cameraDevices, cameraType="front") {
-  // Receives either `front` or `rear`
-  
-  // First, retrieve the first instance in cameraDevices[cameraType]
-  if (cameraType in cameraDevices && cameraDevices[cameraType].length > 0) {
-    return cameraDevices[cameraType][0];
-  }
-
-  // If that fails, retrieve the 0/1st instance in cameraDevices[other]
-  // (ideally 0 for front, 1 for rear, but if not available, just return the first one)
-  let idx = (cameraType === "front" ? 0 : 1);
-  let numOthers = cameraDevices["other"].length;
-  if (numOthers > 0) {
-    return cameraDevices["other"][idx % numOthers];
-  }
-
-  // If that fails, return [other][0]
-  let otherType = (cameraType === "front" ? "rear" : "front");
-  if (cameraDevices[otherType].length > 0) {
-    return cameraDevices[otherType][0];
-  }
-
-  console.error("No available cameras.", cameraDevices);
+    var deviceList = new DeviceList(cameras);
+    return deviceList;
 }
 
 export async function getStreamFromCamera(cameraDevice) {
