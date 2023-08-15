@@ -8,8 +8,6 @@ import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Mate
 import liveIconMarker from '../../assets/marker64.png';
 import oldIconMarker from '../../assets/filmMarker64.png';
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
-
 // Google Map Styling
 const containerStyle = {
     width: '100vw',
@@ -167,5 +165,5 @@ function MapWithMarker() {
     )
 }
 
-export { GOOGLE_MAPS_API_KEY };
+
 export default MapWithMarker;
