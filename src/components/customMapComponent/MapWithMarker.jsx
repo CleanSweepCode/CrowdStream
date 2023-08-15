@@ -30,6 +30,7 @@ function MapWithMarker() {
     const [channelInfo, setChannelInfo] = useState([]);
     const [center, setCenter] = useState(defaultCenter);
     const [selectedChannel, setSelectedChannel] = useState(null);
+    const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
 
 
     useEffect(() => {
@@ -67,16 +68,21 @@ function MapWithMarker() {
             }
         
             // Set up the interval for refreshing streams
-            const intervalId = setInterval(handleRefreshStreams, REFRESH_INTERVAL);
+            if (!intervalId) {
+                const id = setInterval(handleRefreshStreams, REFRESH_INTERVAL);
+                setIntervalId(id);
+            };
 
             // Clean up the interval when the component unmounts or when the effect is run again
             return () => {
-                clearInterval(intervalId);
+                if (intervalId) {
+                    clearInterval(intervalId);
+                }
             };
 
         };
         fetchChannelInfo();
-    }, []);
+    }, [intervalId]);
 
     const handleRefreshStreams = async () => {
         try {
@@ -91,7 +97,11 @@ function MapWithMarker() {
         }
     };
 
-    // const intervalId = setInterval(handleRefreshStreams, REFRESH_INTERVAL); // send refresh request every X seconds
+    const navigateAndClearInterval = (url) => {
+        console.log('clearing interval');
+        clearInterval(intervalId); // Clear the interval when navigating
+        navigate(url);
+    }
 
     const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo.filter(channel => channel.tags.active === "false");
 
@@ -111,10 +121,8 @@ function MapWithMarker() {
                     className="map-switchcontainer"
                 />
 
-                
-
                 <button className="map-refresh button"
-                    onClick={() => navigate(`/streamer`)}>
+                    onClick={() => navigateAndClearInterval(`/streamer`)}>
                     Start Broadcasting
                 </button>
 
@@ -187,7 +195,7 @@ function MapWithMarker() {
                                 lat: parseFloat(channel.tags.latitude),
                                 lng: parseFloat(channel.tags.longitude)
                             }}
-                            onClick={() => navigate(`/viewer/${channel.name}`)}
+                            onClick={() => navigateAndClearInterval(`/viewer/${channel.name}`)}
                             onMouseOver={() => setSelectedChannel(channel)}
                             onMouseOut={() => setSelectedChannel(null)}
                         />
