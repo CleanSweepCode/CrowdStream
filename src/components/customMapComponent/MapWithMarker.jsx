@@ -8,6 +8,9 @@ import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Mate
 import liveIconMarker from '../../assets/marker64.png';
 import oldIconMarker from '../../assets/filmMarker64.png';
 
+const GOOGLE_MAPS_API_KEY = 'AIzaSyDpcl7prQQADOD4o_jRuWSsnD79kGvPBMw';
+const REFRESH_INTERVAL = 10000; // 10 seconds
+
 // Google Map Styling
 const containerStyle = {
     width: '100vw',
@@ -62,10 +65,33 @@ function MapWithMarker() {
                     setCenter(defaultCenter);
                 }
             }
+        
+            // Set up the interval for refreshing streams
+            const intervalId = setInterval(handleRefreshStreams, REFRESH_INTERVAL);
+
+            // Clean up the interval when the component unmounts or when the effect is run again
+            return () => {
+                clearInterval(intervalId);
+            };
 
         };
         fetchChannelInfo();
     }, []);
+
+    const handleRefreshStreams = async () => {
+        try {
+            const fetchedChannelInfo = await listChannels(); // Call your API to get new channel data
+            setChannelInfo(fetchedChannelInfo); // Update the channel data
+            
+            // Might need to update the center and other map-related logic here
+            console.log('Streams refreshed');
+
+        } catch (error) {
+            console.error('Error refreshing streams:', error);
+        }
+    };
+
+    // const intervalId = setInterval(handleRefreshStreams, REFRESH_INTERVAL); // send refresh request every X seconds
 
     const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo.filter(channel => channel.tags.active === "false");
 
@@ -85,6 +111,7 @@ function MapWithMarker() {
                     className="map-switchcontainer"
                 />
 
+                
 
                 <button className="map-refresh button"
                     onClick={() => navigate(`/streamer`)}>
@@ -101,6 +128,15 @@ function MapWithMarker() {
                 <div className="map-helpText">
                     Click a marker to view event
                 </div>
+
+                <div className="refreshStreamButtonDiv">
+                    <button className="refreshStreamButton"
+                        onClick={handleRefreshStreams}>
+                        Refresh Streams
+                    </button>
+                </div>
+
+                
 
                 <GoogleMap
                     mapContainerStyle={containerStyle}
