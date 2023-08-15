@@ -14,15 +14,14 @@ import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { fetchGeolocationData } from './locationManagement.jsx'
-import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handlePermissions } from './deviceManagement.jsx'
+import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handlePermissions, DeviceList } from './deviceManagement.jsx'
 
 const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
 
 var client = null;
 var stream_info = null;
-var cameraDevices = [];
+var cameraDevices = null; // will be a DeviceList
 var isClientReady = false; // TODO: move this to be a property of streamer instead
-var useFrontCamera = true;
 
 const Streamer = () => {
   const ref = useRef();
@@ -43,8 +42,8 @@ const Streamer = () => {
       window.cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
     }
 
-    window.cameraStream = await getCameraStream(useFrontCamera);  // Fetch the new stream    
-    console.log("Camera switched to " + (useFrontCamera ? "front" : "back") + " camera successfully")
+    window.cameraStream = await getCameraStream();  // Fetch the new stream
+    console.log("Camera switched to " + cameraDevices.activeName() + " successfully")
   }
 
   async function setupCameraStreamForClient() {
@@ -57,25 +56,19 @@ const Streamer = () => {
   // Function to toggle the camera
   async function toggleCamera() {
     client.removeVideoInputDevice('camera1');  // Remove the old stream from the client
-    useFrontCamera = !useFrontCamera;  // Switch the camera mode
+    cameraDevices.next()
     await setupCameraStream();  // Setup the new camera stream
     await setupCameraStreamForClient();  // Setup the new camera stream for the client
 
   }
 
   // Fetch camera stream according to the current value of useFrontCamera
-  async function getCameraStream(useFrontCamera = true) {
+  async function getCameraStream() {
     // Get the deviceId based on the useFrontCamera flag
     let camera;
     let stream;
-    if (cameraDevices.length === 0) {
-      console.error("No cameras available.");
-      return;
-    } else if (!useFrontCamera || cameraDevices.length === 1) {
-      camera = cameraDevices[0];
-    } else if (useFrontCamera && cameraDevices.length > 1) {
-      camera = cameraDevices[1];
-    }
+
+    camera = cameraDevices.active(); // get active camera
 
     try {
       stream = await getStreamFromCamera(camera)
@@ -154,8 +147,9 @@ const Streamer = () => {
 
     cameraDevices = await getCameraDevices();
 
+
     // setup cameras and microphones
-    setHasMultipleCameras(cameraDevices.length > 1);
+    setHasMultipleCameras(cameraDevices.size > 1);
     await setupCameraStream();
     await setupMicrophoneStream();
     isClientReady = true;
@@ -238,30 +232,34 @@ const Streamer = () => {
   };
 
   return (
-    <div className="App">
+    <div className="streamerplayer-container">
 
-      <div className="backButton">
-        <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
-          closeStreamAndChannel();
-          navigate('/');
-        }}>
-          <ArrowBackIcon />
-        </IconButton>
+      <div className="streamerplayer-rows">
+        <div className="streamerplayer-backButton">
+          <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
+            closeStreamAndChannel();
+            navigate('/');
+          }}>
+            <ArrowBackIcon />
+          </IconButton>
+        </div>
+        <h1 className="streamerPlayer-title">
+          <span className="CSFont">
+            <span className="CSBlack">Crowd</span>
+            <span className="CSRed">Stream</span>
+          </span>
+        </h1>
+        <div />
       </div>
 
-      <h1 className="streamerPlayer-backButton">
-        <span className="CSFont">
-          <span className="CSBlack">Crowd</span>
-          <span className="CSRed">Stream</span>
-        </span>
-      </h1>
+
 
       <StreamerPlayer
         ref={ref}
       />
 
 
-      <div className="row">
+      <div className="streamerplayer-rows-bottom">
         <button className="button" onClick={handleStream} disabled={!readyToStream}>
           Start Stream
         </button>

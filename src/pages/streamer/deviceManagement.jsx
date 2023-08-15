@@ -8,20 +8,54 @@ export async function requestCameraPermissions() {
     }
   }
 
-export async function getCameraDevices() {
-    // Return a list of camera devices
-    // First will be rear camera OR only camera
-    // Second will be front camera (if available)
+class DeviceList {
+  constructor(arr) {
+    this.array = arr;
+    this.index = 0;
+    this.size = arr.length;
+  }
+
+  active() {
+    return this.array[this.index];
+  }
+
+  activeName() {
+    return this.array[this.index].label;
+  }
+
+    next() {
+      const value = this.array[this.index];
+      this.index = (this.index + 1) % this.array.length;
+      return value;
+    }
+  }
+
+  export async function getCameraDevices() {
+    // Return a dictionary of camera devices
+    // front: [all front cameras]
+    // rear: [all rear cameras]
+    // all: [all other cameras]
 
     const devices = await navigator.mediaDevices.enumerateDevices();
     const videoDevices = devices.filter(device => device.kind === 'videoinput');
     var cameras = videoDevices;
 
-    // sort so that rear is first if possible. Rear will contain 'rear' or 'back', case insensitive
-    cameras.sort((a, b) => { return a.label.toLowerCase().includes('rear') || a.label.toLowerCase().includes('back') ? -1 : 1 }); // Rear camera first
+    // sort device list, preferring ones that contain rearKeys
+    let rearKeys = ['rear', 'back', 'environment']
 
-    return cameras;
-  }
+    videoDevices.sort((a, b) => {
+      const aContainsKey = rearKeys.some(key => a.label.toLowerCase().includes(key));
+      const bContainsKey = rearKeys.some(key => b.label.toLowerCase().includes(key));
+    
+      if (aContainsKey && bContainsKey) return 0; // Both have rearKeys, so retain their order
+      if (aContainsKey) return -1;                // a should come before b
+      if (bContainsKey) return 1;                 // b should come before a
+      return 0;                                  // Neither have rearKeys, so retain their order
+    });
+
+    var deviceList = new DeviceList(cameras);
+    return deviceList;
+}
 
 export async function getStreamFromCamera(cameraDevice) {
     // Given a camera device, return a stream
