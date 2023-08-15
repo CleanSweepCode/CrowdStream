@@ -1,6 +1,7 @@
 /* This is the main component of the application. It is responsible for routing between pages. */
 
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Viewer from "./pages/viewer/viewer.jsx";
 import Streamer from "./pages/streamer/streamer.jsx";
@@ -16,7 +17,7 @@ const App = () => {
         <Route path="/viewer" element={<Viewer />} />
         <Route path="/viewer/:channel_name" element={<Viewer />} />
       </Routes>
-
+      <Analytics />
     </div>
   );
 };
