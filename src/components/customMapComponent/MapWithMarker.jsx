@@ -11,7 +11,6 @@ import oldIconMarker from '../../assets/filmMarker64.png';
 // Google Map Styling
 const containerStyle = {
     width: '100vw',
-    //height: 'calc(var(--vh) - 56px)'  // Assuming the height of the iOS Navbar is 56px
     height: '100svh'
 };
 
@@ -72,7 +71,7 @@ function MapWithMarker() {
 
     return (
         <div>
-            <div className="mapContainer">
+            <div className="map-container">
                 <FormControlLabel
                     control={
                         <Switch
@@ -83,23 +82,23 @@ function MapWithMarker() {
                     }
                     // Label should be 'Active channels' if activeOnly else 'All channels'
                     label={activeOnly ? 'Active channels' : 'All channels'}
-                    className="switchContainer"
+                    className="map-switchcontainer"
                 />
 
 
-                <button className="refreshStreamDiv button"
+                <button className="map-refresh button"
                     onClick={() => navigate(`/streamer`)}>
                     Start Broadcasting
                 </button>
 
-                <div className="titleOverlayContainer">
+                <div className="map-titlecontainer">
                     <span className="CSFont">
                         <span className="CSBlack">Crowd</span>
                         <span className="CSRed">Stream</span>
                     </span>
                 </div>
 
-                <div className="helpTextOverlay">
+                <div className="map-helpText">
                     Click a marker to view event
                 </div>
 
@@ -164,6 +163,5 @@ function MapWithMarker() {
         </div>
     )
 }
-
 
 export default MapWithMarker;

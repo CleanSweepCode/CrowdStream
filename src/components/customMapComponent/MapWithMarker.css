@@ -9,10 +9,15 @@
     font-family: 'Coolvetica';
     src: url('../../assets/fonts/coolveticael-extra-light.woff') format('woff');
     font-weight: normal;
-    font-style: normal;
 }
 
-.switchContainer {
+.map-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.map-switchcontainer {
     position: absolute;
     top: 2rem;
     left: 2rem;
@@ -22,42 +27,39 @@
     z-index: 2;
 }
 
-.switchContainer .MuiFormControlLabel-label {
+.map-switchcontainer .MuiFormControlLabel-label {
     font-family: 'Coolvetica', fallback, sans-serif;
     font-weight: bold;
 }
 
-
-/* Styling for the refresh button */
-.refreshStreamDiv {
+.map-refresh {
     position: absolute;
     bottom: 2rem;
-    left: 2rem;
-    z-index: 2;
     left: 50%;
+    z-index: 2;
     transform: translate(-50%, 0%);
 }
 
-.titleOverlayContainer {
+.map-titlecontainer,
+.map-helpText {
     position: absolute;
-    top: 2rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2;
-    color: #001308;
-    font-size: 40px;
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 1.0);
     padding: 1rem;
     border-radius: 4px;
 }
 
-.helpTextOverlay {
+.map-titlecontainer {
+    top: 2rem;
+    color: #001308;
+    font-size: 40px;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 1.0);
+}
+
+.map-helpText {
     top: 8rem;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
     color: #000000;
     background-color: rgba(255, 255, 255, 1.0);
     font-size: 15px;
@@ -65,107 +67,76 @@
     font-style: italic;
     font-weight: bold;
     padding: 0.25rem;
-    border-radius: 4px;
     text-align: center;
-    /* this is the new line */
-}
-
-.mapContainer {
-    position: relative;
-    width: 100%;
-    height: 100%;
 }
 
 .highlight {
     color: #E85D4A;
 }
 
-
+/* Media Queries */
 @media screen and (max-width: 720px) {
-    .titleOverlayContainer {
+    .map-titlecontainer {
         font-size: 26px;
-        /* or any size you prefer */
-        /* left: initial;  reset the left property */
-        /* right: 2rem;  move it to the right */
-        /* transform: none;  reset the transform property */
     }
 
-    .helpTextOverlay {
+    .map-helpText {
         top: 6.5rem;
     }
 
-    .switchContainer {
+    .map-switchcontainer {
         padding: 0.5rem;
     }
 
-    .switchContainer .MuiFormControlLabel-label {
+    .map-switchcontainer .MuiFormControlLabel-label {
         font-size: 15px;
-        /* Adjust as needed */
     }
 
-    .switchContainer .MuiSwitch-root {
+    .map-switchcontainer .MuiSwitch-root {
         transform: scale(0.75);
-        /* adjust as needed */
     }
 }
 
 @media screen and (max-width: 580px) {
-    .titleOverlayContainer {
+    .map-titlecontainer {
         left: 2rem;
         transform: none;
     }
 
-    .switchContainer {
+    .map-switchcontainer {
         left: initial;
         right: 2rem;
         top: 2.3rem;
-        display: flex;
         justify-content: flex-end;
         padding-left: 0.2rem;
     }
 }
 
 @media screen and (max-width: 430px) {
-    .titleOverlayContainer {
+    .map-titlecontainer {
         left: 1rem;
         transform: none;
     }
 
-    .switchContainer {
-        left: initial;
+    .map-switchcontainer {
         right: 0.1rem;
-        padding-left: 0rem;
+        padding-left: 0;
         padding-right: 0.25rem;
-        display: flex;
-        justify-content: flex-end;
     }
 }
 
 @media screen and (max-width: 365px) {
-    .titleOverlayContainer {
+    .map-titlecontainer {
         left: 1rem;
         transform: none;
-    }
-
-    .switchContainer {
-        left: initial;
-        right: 0.1rem;
-        display: flex;
-        justify-content: flex-end;
-    }
-}
-
-
-@media (max-width: 365px) {
-    .titleOverlayContainer {
         display: none;
     }
 
-    .switchContainer {
+    .map-switchcontainer {
         left: 53.5%;
         transform: translateX(-50%);
         right: initial;
-        padding-left: 0rem;
+        padding-left: 0;
         padding-right: 0.25rem;
     }
 }
