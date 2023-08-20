@@ -136,10 +136,10 @@ function MapWithMarker() {
                     Click a marker to view event
                 </div>
 
-                <div className="refreshStreamButtonDiv">
-                    <button className="refreshStreamButton"
+                <div className="map-refreshStreamButtonDiv">
+                    <button className="map-refreshStreamButton"
                         onClick={handleRefreshStreams}>
-                        Refresh Streams
+                    &#8635;
                     </button>
                 </div>
 
