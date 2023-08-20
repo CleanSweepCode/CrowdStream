@@ -9,6 +9,8 @@
   --CSred: #E85D4A;
   --CSblue: #08B2E3;
   --CSwhite: #F5F5F5;
+  --border-radius: 10px;
+  --controls-transition-duration: 0.3s;
 }
 
 .App {
