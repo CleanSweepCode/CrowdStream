@@ -35,7 +35,7 @@ export class StreamClient {
         }
 
         try {
-            this.client.addVideoInputDevice(stream, 'camera1', { index: 0 });
+            await this.client.addVideoInputDevice(stream, 'camera1', { index: 0 });
         }
         catch (error) {
             console.warn('Error adding video input device to IVS: ', error);
