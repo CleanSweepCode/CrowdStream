@@ -9,7 +9,7 @@ import IVSBroadcastClient, {
 import '../../App.css';
 import './streamerPlayer.css';
 import { listChannels } from '../../components/Helpers/APIUtils.jsx'
-import {StreamClient} from './streamClient.jsx'
+import { StreamClient } from './streamClient.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -20,7 +20,6 @@ import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handle
 const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
 
 var client = null;
-var stream_info = null;
 var cameraDevices = null; // will be a DeviceList
 var isClientReady = false; // TODO: move this to be a property of streamer instead
 
@@ -46,7 +45,7 @@ const Streamer = () => {
     window.cameraStream = await getCameraStream();  // Fetch the new stream
     console.log("Camera switched to " + cameraDevices.activeName() + " successfully")
 
-    client.setStream(window.cameraStream); 
+    client.setStream(window.cameraStream);
   }
 
   // Function to toggle the camera
@@ -170,14 +169,15 @@ const Streamer = () => {
     console.log("Starting stream");
     handlePermissions()
     listChannels()
-    console.log(client)
-    console.log(stream_info);
+    console.log("Client Log HandleStream 172 streamer.jsx: ", client)
 
     // If there isn't a camera and microphone stream (which occurs after clicking 'End Stream'), start one
     if (!window.cameraStream) {
+      console.log("No camera stream");
       await setupCameraStream();
     }
     if (!window.microphoneStream) {
+      console.log("No camera stream");
       await setupMicrophoneStream();
     }
 
