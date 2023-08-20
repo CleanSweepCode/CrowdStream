@@ -8,7 +8,8 @@ import IVSBroadcastClient, {
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
 import './streamerPlayer.css';
-import { listChannels, createChannel, channelHeartbeat, tagChannelInactive, tagChannelActive } from '../../components/Helpers/APIUtils.jsx'
+import { listChannels } from '../../components/Helpers/APIUtils.jsx'
+import { StreamClient } from './streamClient.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -19,9 +20,12 @@ import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handle
 const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
 
 var client = null;
-var stream_info = null;
 var cameraDevices = null; // will be a DeviceList
 var isClientReady = false; // TODO: move this to be a property of streamer instead
+var cameraStream = null;
+var microphoneStream = null;
+var audioDevices = null;
+var intervalIdWindow = null;
 
 const Streamer = () => {
   const ref = useRef();
@@ -38,39 +42,20 @@ const Streamer = () => {
 
   // Function to toggle the camera
   async function setupCameraStream() {
-    if (window.cameraStream) {
-      window.cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
     }
 
-    window.cameraStream = await getCameraStream();  // Fetch the new stream
+    cameraStream = await getCameraStream();  // Fetch the new stream
     console.log("Camera switched to " + cameraDevices.activeName() + " successfully")
-  }
-
-  async function setupCameraStreamForClient() {
-    if (!window.cameraStream) {
-      console.error("No camera stream available to add to client");
-    }
-    console.log("Adding camera stream to windwo client: ", window.cameraStream)
-    console.log("Adding camera stream to client: ", client)
-    client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });  // Add the new stream to the client
-    console.log("added video input...", cameraDevices);
-    console.log("client: ", client);
-    console.log("client: ", client.getVideoInputDevice);
+    console.log("Setting stream to: ", cameraStream);
+    client.setStream(cameraStream);
   }
 
   // Function to toggle the camera
   async function toggleCamera() {
-    console.log("Switching camera...", cameraDevices);
-    console.log("client: ", client);
-    console.log("client: ", client.getVideoInputDevice);
-    client.removeVideoInputDevice('camera1');  // Remove the old stream from the client - NAME NOT CORRECT ON SAFARI
-    console.log("Removed old camera stream from client");
     cameraDevices.next()
-    console.log("Switching to new camera: ", cameraDevices.activeName());
-    console.log("Switching to new camera: ", cameraDevices);
     await setupCameraStream();  // Setup the new camera stream
-    await setupCameraStreamForClient();  // Setup the new camera stream for the client
-    console.log("Camera switched successfully")
   }
 
   // Fetch camera stream according to the current value of useFrontCamera
@@ -93,13 +78,13 @@ const Streamer = () => {
 
   async function setupMicrophoneStream() {
     const devices = await navigator.mediaDevices.enumerateDevices();
-    window.audioDevices = devices.filter((d) => d.kind === 'audioinput');
+    audioDevices = devices.filter((d) => d.kind === 'audioinput');
 
     try {
-      window.microphoneStream = await navigator.mediaDevices.getUserMedia({
-        audio: { deviceId: window.audioDevices[0].deviceId },
+      microphoneStream = await navigator.mediaDevices.getUserMedia({
+        audio: { deviceId: audioDevices[0].deviceId },
       });
-      client.addAudioInputDevice(window.microphoneStream, 'mic1');
+      client.addAudioInputDevice(microphoneStream);
     } catch (error) {
       console.warn('Unable to access microphone:', error);
     }
@@ -125,33 +110,17 @@ const Streamer = () => {
       "active": "preparing",
     };
 
-    const stream_api_call = await createChannel(tags);
-    stream_info = stream_api_call.data;
+    client = await StreamClient.create(tags, streamConfig);
 
-    // console.log(stream_info);
-
-    client = IVSBroadcastClient.create({
-      // Enter the desired stream configuration
-      streamConfig: streamConfig,
-      ingestEndpoint: stream_info.channel.ingestEndpoint,
-      streamKey: stream_info.streamKey.value,
-    });
     console.log("Client created");
     console.log(client);
 
-    // set channel heartbeat every X seconds while active
-    async function sendHeartbeat() {
-      const heartbeat = await channelHeartbeat(stream_info.channel.name);
-    }
-
-    sendHeartbeat(); // send initial heartbeat
-    const intervalId = setInterval(sendHeartbeat, HEARTBEAT_FREQUENCY); // send heartbeat every X seconds
-    window.intervalId = intervalId; // save intervalId to the window object
+    client.sendHeartbeat(); // send initial heartbeat
+    intervalIdWindow = setInterval(client.sendHeartbeat, HEARTBEAT_FREQUENCY); // send heartbeat every X seconds
     function handleBeforeUnload() {
-      client.stopBroadcast();
-      clearInterval(window.intervalId);
+      client.stop();
+      clearInterval(intervalIdWindow);
     }
-
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     await requestCameraPermissions(); // request camera permissions on page load
@@ -160,14 +129,13 @@ const Streamer = () => {
 
 
     // setup cameras and microphones
-    setHasMultipleCameras(cameraDevices.size > 1);
-    await setupCameraStream();
-    await setupMicrophoneStream();
     isClientReady = true;
+    setHasMultipleCameras(cameraDevices.size > 1);
     setReadyToStream(true);
     console.log("Initialize nearly completed")
-    await setupCameraStreamForClient();
-
+    cameraDevices.next() // [BUG 01] We have a bug on Chrome iOS - if this line isn't here, initial stream is black. Currently UNSOLVED!
+    await setupCameraStream();
+    await setupMicrophoneStream();
   }
 
 
@@ -177,24 +145,22 @@ const Streamer = () => {
     console.log("Starting stream");
     handlePermissions()
     listChannels()
-    console.log(client)
-    console.log(stream_info);
+    console.log("Client Log HandleStream 172 streamer.jsx: ", client)
 
     // If there isn't a camera and microphone stream (which occurs after clicking 'End Stream'), start one
-    if (!window.cameraStream) {
+    if (!cameraStream) {
+      console.log("No camera stream");
       await setupCameraStream();
-      console.log("handleStream...");
-      await setupCameraStreamForClient();
     }
-    if (!window.microphoneStream) {
+    if (!microphoneStream) {
+      console.log("No camera stream");
       await setupMicrophoneStream();
     }
 
-    client.startBroadcast(stream_info.streamKey.value)
+    client.start()
       .then((result) => {
         console.log('I am successfully broadcasting!');
         ref.current.setIsBroadcasting(true);
-        tagChannelActive(stream_info.channel.name);
       })
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
@@ -202,28 +168,28 @@ const Streamer = () => {
   };
 
   const clearCameraStreams = async () => {
-    if (window.microphoneStream) {
-      window.microphoneStream.getTracks().forEach((track) => track.stop());
-      window.microphoneStream = null;
+    if (microphoneStream) {
+      microphoneStream.getTracks().forEach((track) => track.stop());
+      microphoneStream = null;
     }
-    if (window.cameraStream) {
-      window.cameraStream.getTracks().forEach((track) => track.stop());
-      window.cameraStream = null;
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());
+      cameraStream = null;
     }
 
   }
 
   const closeStream = async () => {
     if (client) {
-      client.stopBroadcast(); // Stop the stream
-      tagChannelInactive(stream_info.channel.name);
+      client.stop(); // Stop the stream
+
       if (ref.current) {
         ref.current.setIsBroadcasting(false);
       }
     }
 
 
-    clearInterval(window.intervalId);
+    clearInterval(intervalIdWindow);
   }
 
   const closeStreamAndChannel = async () => {
