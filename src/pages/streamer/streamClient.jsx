@@ -39,6 +39,10 @@ export class StreamClient {
         this.has_stream = true;
     }
 
+    async addAudioInputDevice(microphoneStream) {
+        this.client.addAudioInputDevice(microphoneStream, 'mic1');
+    }
+
     async start() {
         this.client.startBroadcast(this.stream_info.streamKey.value)
         tagChannelActive(this.channel_name);

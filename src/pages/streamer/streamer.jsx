@@ -108,7 +108,7 @@ const Streamer = () => {
       window.microphoneStream = await navigator.mediaDevices.getUserMedia({
         audio: { deviceId: window.audioDevices[0].deviceId },
       });
-      client.addAudioInputDevice(window.microphoneStream, 'mic1');
+      client.addAudioInputDevice(window.microphoneStream);
     } catch (error) {
       console.warn('Unable to access microphone:', error);
     }
