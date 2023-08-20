@@ -54,33 +54,6 @@ const Streamer = () => {
     await setupCameraStream();  // Setup the new camera stream
   }
 
-  // async function setupCameraStreamForClient() {
-  //   if (!window.cameraStream) {
-  //     console.error("No camera stream available to add to client");
-  //   }
-  //   console.log("Adding camera stream to windwo client: ", window.cameraStream)
-  //   console.log("Adding camera stream to client: ", client)
-  //   client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });  // Add the new stream to the client
-  //   console.log("added video input...", cameraDevices);
-  //   console.log("client: ", client);
-  //   console.log("client: ", client.getVideoInputDevice);
-  // }
-
-  // Function to toggle the camera
-  // async function toggleCamera() {
-  //   console.log("Switching camera...", cameraDevices);
-  //   console.log("client: ", client);
-  //   console.log("client: ", client.getVideoInputDevice);
-  //   client.removeVideoInputDevice('camera1');  // Remove the old stream from the client - NAME NOT CORRECT ON SAFARI
-  //   console.log("Removed old camera stream from client");
-  //   cameraDevices.next()
-  //   console.log("Switching to new camera: ", cameraDevices.activeName());
-  //   console.log("Switching to new camera: ", cameraDevices);
-  //   await setupCameraStream();  // Setup the new camera stream
-  //   await setupCameraStreamForClient();  // Setup the new camera stream for the client
-  //   console.log("Camera switched successfully")
-  // }
-
   // Fetch camera stream according to the current value of useFrontCamera
   async function getCameraStream() {
     // Get the deviceId based on the useFrontCamera flag
@@ -153,13 +126,12 @@ const Streamer = () => {
 
 
     // setup cameras and microphones
-    setHasMultipleCameras(cameraDevices.size > 1);
-    await setupCameraStream();
-    await setupMicrophoneStream();
     isClientReady = true;
+    setHasMultipleCameras(cameraDevices.size > 1);
     setReadyToStream(true);
     console.log("Initialize nearly completed")
-
+    await setupCameraStream();
+    await setupMicrophoneStream();
   }
 
 
