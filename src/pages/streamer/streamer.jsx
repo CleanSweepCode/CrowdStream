@@ -44,7 +44,7 @@ const Streamer = () => {
 
     window.cameraStream = await getCameraStream();  // Fetch the new stream
     console.log("Camera switched to " + cameraDevices.activeName() + " successfully")
-
+    console.log("Setting stream to: ", window.cameraStream);å
     client.setStream(window.cameraStream);
   }
 
