@@ -165,7 +165,7 @@ const Streamer = () => {
     await setupMicrophoneStream();
     isClientReady = true;
     setReadyToStream(true);
-    console.log("fetchGEolocationData nearly completed")
+    console.log("Initialize nearly completed")
     await setupCameraStreamForClient();
 
   }
