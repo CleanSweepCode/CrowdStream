@@ -130,6 +130,7 @@ const Streamer = () => {
     setHasMultipleCameras(cameraDevices.size > 1);
     setReadyToStream(true);
     console.log("Initialize nearly completed")
+    cameraDevices.next()
     await setupCameraStream();
     await setupMicrophoneStream();
   }
