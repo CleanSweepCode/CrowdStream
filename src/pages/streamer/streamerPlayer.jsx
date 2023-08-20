@@ -30,7 +30,7 @@ const StreamerPlayer = forwardRef((props, ref) => {
     }, [props.initialStream, props.onPlayerReady]);
 
     return (
-        <div className="StreamerPlayer">
+        <div className="streamerplayer">
             <div className="player-wrapper">
                 {isBroadcasting &&
                     <div className="broadcasting-dot"></div>

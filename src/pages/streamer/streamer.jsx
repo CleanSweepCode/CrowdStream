@@ -8,7 +8,8 @@ import IVSBroadcastClient, {
 } from 'amazon-ivs-web-broadcast';
 import '../../App.css';
 import './streamerPlayer.css';
-import { listChannels, createChannel, channelHeartbeat, tagChannelInactive, tagChannelActive } from '../../components/Helpers/APIUtils.jsx'
+import { listChannels } from '../../components/Helpers/APIUtils.jsx'
+import {StreamClient} from './streamClient.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -44,23 +45,42 @@ const Streamer = () => {
 
     window.cameraStream = await getCameraStream();  // Fetch the new stream
     console.log("Camera switched to " + cameraDevices.activeName() + " successfully")
-  }
 
-  async function setupCameraStreamForClient() {
-    if (!window.cameraStream) {
-      console.error("No camera stream available to add to client");
-    }
-    client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });  // Add the new stream to the client
+    client.setStream(window.cameraStream); 
   }
 
   // Function to toggle the camera
   async function toggleCamera() {
-    client.removeVideoInputDevice('camera1');  // Remove the old stream from the client
     cameraDevices.next()
     await setupCameraStream();  // Setup the new camera stream
-    await setupCameraStreamForClient();  // Setup the new camera stream for the client
-
   }
+
+  // async function setupCameraStreamForClient() {
+  //   if (!window.cameraStream) {
+  //     console.error("No camera stream available to add to client");
+  //   }
+  //   console.log("Adding camera stream to windwo client: ", window.cameraStream)
+  //   console.log("Adding camera stream to client: ", client)
+  //   client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });  // Add the new stream to the client
+  //   console.log("added video input...", cameraDevices);
+  //   console.log("client: ", client);
+  //   console.log("client: ", client.getVideoInputDevice);
+  // }
+
+  // Function to toggle the camera
+  // async function toggleCamera() {
+  //   console.log("Switching camera...", cameraDevices);
+  //   console.log("client: ", client);
+  //   console.log("client: ", client.getVideoInputDevice);
+  //   client.removeVideoInputDevice('camera1');  // Remove the old stream from the client - NAME NOT CORRECT ON SAFARI
+  //   console.log("Removed old camera stream from client");
+  //   cameraDevices.next()
+  //   console.log("Switching to new camera: ", cameraDevices.activeName());
+  //   console.log("Switching to new camera: ", cameraDevices);
+  //   await setupCameraStream();  // Setup the new camera stream
+  //   await setupCameraStreamForClient();  // Setup the new camera stream for the client
+  //   console.log("Camera switched successfully")
+  // }
 
   // Fetch camera stream according to the current value of useFrontCamera
   async function getCameraStream() {
@@ -114,33 +134,18 @@ const Streamer = () => {
       "active": "preparing",
     };
 
-    const stream_api_call = await createChannel(tags);
-    stream_info = stream_api_call.data;
+    client = await StreamClient.create(tags, streamConfig);
 
-    // console.log(stream_info);
-
-    client = IVSBroadcastClient.create({
-      // Enter the desired stream configuration
-      streamConfig: streamConfig,
-      ingestEndpoint: stream_info.channel.ingestEndpoint,
-      streamKey: stream_info.streamKey.value,
-    });
     console.log("Client created");
     console.log(client);
 
-    // set channel heartbeat every X seconds while active
-    async function sendHeartbeat() {
-      const heartbeat = await channelHeartbeat(stream_info.channel.name);
-    }
-
-    sendHeartbeat(); // send initial heartbeat
-    const intervalId = setInterval(sendHeartbeat, HEARTBEAT_FREQUENCY); // send heartbeat every X seconds
+    client.sendHeartbeat(); // send initial heartbeat
+    const intervalId = setInterval(client.sendHeartbeat, HEARTBEAT_FREQUENCY); // send heartbeat every X seconds
     window.intervalId = intervalId; // save intervalId to the window object
     function handleBeforeUnload() {
-      client.stopBroadcast();
+      client.stop();
       clearInterval(window.intervalId);
     }
-
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     await requestCameraPermissions(); // request camera permissions on page load
@@ -154,7 +159,7 @@ const Streamer = () => {
     await setupMicrophoneStream();
     isClientReady = true;
     setReadyToStream(true);
-    await setupCameraStreamForClient();
+    console.log("Initialize nearly completed")
 
   }
 
@@ -171,17 +176,15 @@ const Streamer = () => {
     // If there isn't a camera and microphone stream (which occurs after clicking 'End Stream'), start one
     if (!window.cameraStream) {
       await setupCameraStream();
-      await setupCameraStreamForClient();
     }
     if (!window.microphoneStream) {
       await setupMicrophoneStream();
     }
 
-    client.startBroadcast(stream_info.streamKey.value)
+    client.start()
       .then((result) => {
         console.log('I am successfully broadcasting!');
         ref.current.setIsBroadcasting(true);
-        tagChannelActive(stream_info.channel.name);
       })
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
@@ -202,8 +205,8 @@ const Streamer = () => {
 
   const closeStream = async () => {
     if (client) {
-      client.stopBroadcast(); // Stop the stream
-      tagChannelInactive(stream_info.channel.name);
+      client.stop(); // Stop the stream
+
       if (ref.current) {
         ref.current.setIsBroadcasting(false);
       }
