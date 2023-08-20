@@ -55,8 +55,8 @@ const Streamer = () => {
 
   // Function to toggle the camera
   async function toggleCamera() {
-    console.log("Switching camera...")
-    client.removeVideoInputDevice('camera1');  // Remove the old stream from the client
+    console.log("Switching camera...", client);
+    client.removeVideoInputDevice('camera1');  // Remove the old stream from the client - NAME NOT CORRECT ON SAFARI
     console.log("Removed old camera stream from client");
     cameraDevices.next()
     console.log("Switching to new camera: ", cameraDevices.activeName());
