@@ -52,7 +52,7 @@ const Streamer = () => {
     }
     console.log("Adding camera stream to windwo client: ", window.cameraStream)
     console.log("Adding camera stream to client: ", client)
-    client.addVideoInputDevice(window.cameraStream, 'camera1', { index: 0 });  // Add the new stream to the client
+    client.addVideoInputDevice(window.cameraStream, 'Proxy', { index: 0 });  // Add the new stream to the client
     console.log("added video input...", cameraDevices);
     console.log("client: ", client);
     console.log("client: ", client.getVideoInputDevice);
@@ -63,7 +63,7 @@ const Streamer = () => {
     console.log("Switching camera...", cameraDevices);
     console.log("client: ", client);
     console.log("client: ", client.getVideoInputDevice);
-    client.removeVideoInputDevice('camera1');  // Remove the old stream from the client - NAME NOT CORRECT ON SAFARI
+    client.removeVideoInputDevice('Proxy');  // Remove the old stream from the client - NAME NOT CORRECT ON SAFARI
     console.log("Removed old camera stream from client");
     cameraDevices.next()
     console.log("Switching to new camera: ", cameraDevices.activeName());
