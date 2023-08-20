@@ -26,7 +26,7 @@ export class StreamClient {
     }
 
     async setStream(stream) {
-        if (!window.cameraStream) {
+        if (!stream) {
             console.error("Camera stream for client is null");
         }
 
