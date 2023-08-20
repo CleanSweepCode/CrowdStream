@@ -55,11 +55,15 @@ const Streamer = () => {
 
   // Function to toggle the camera
   async function toggleCamera() {
+    console.log("Switching camera...")
     client.removeVideoInputDevice('camera1');  // Remove the old stream from the client
+    console.log("Removed old camera stream from client");
     cameraDevices.next()
+    console.log("Switching to new camera: ", cameraDevices.activeName());
+    console.log("Switching to new camera: ", cameraDevices);
     await setupCameraStream();  // Setup the new camera stream
     await setupCameraStreamForClient();  // Setup the new camera stream for the client
-
+    console.log("Camera switched successfully")
   }
 
   // Fetch camera stream according to the current value of useFrontCamera
