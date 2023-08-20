@@ -34,7 +34,7 @@ export class StreamClient {
             this.client.removeVideoInputDevice('camera1');
         }
 
-        try{
+        try {
             this.client.addVideoInputDevice(stream, 'camera1', { index: 0 });
         }
         catch (error) {
