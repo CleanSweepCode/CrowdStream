@@ -58,15 +58,17 @@ export async function getCameraDevices() {
 
 export async function getStreamFromCamera(cameraDevice) {
   // Given a camera device, return a stream
-  return await navigator.mediaDevices.getUserMedia({
-    video: {
-      deviceId: { exact: cameraDevice.deviceId },
-      width: { ideal: 1280 },
-      height: { ideal: 720 },
-      frameRate: { ideal: 30 }
-    },
-    audio: false
-  });
+  try {
+    return await navigator.mediaDevices.getUserMedia({
+        video: {
+            deviceId: { exact: cameraDevice.deviceId },
+        },
+        audio: false
+    });
+  } catch (err) {
+      console.error('Error accessing camera:', err);
+      throw err;
+  }
 }
 
 export async function handlePermissions() {
