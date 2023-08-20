@@ -8,6 +8,8 @@ import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Mate
 import liveIconMarker from '../../assets/marker64.png';
 import oldIconMarker from '../../assets/filmMarker64.png';
 
+const REFRESH_INTERVAL = 10000; // 10 seconds
+
 // Google Map Styling
 const containerStyle = {
     width: '100vw',
@@ -27,6 +29,7 @@ function MapWithMarker() {
     const [channelInfo, setChannelInfo] = useState([]);
     const [center, setCenter] = useState(defaultCenter);
     const [selectedChannel, setSelectedChannel] = useState(null);
+    const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
 
 
     useEffect(() => {
@@ -62,10 +65,42 @@ function MapWithMarker() {
                     setCenter(defaultCenter);
                 }
             }
+        
+            // Set up the interval for refreshing streams
+            if (!intervalId) {
+                const id = setInterval(handleRefreshStreams, REFRESH_INTERVAL);
+                setIntervalId(id);
+            };
+
+            // Clean up the interval when the component unmounts or when the effect is run again
+            return () => {
+                if (intervalId) {
+                    clearInterval(intervalId);
+                }
+            };
 
         };
         fetchChannelInfo();
-    }, []);
+    }, [intervalId]);
+
+    const handleRefreshStreams = async () => {
+        try {
+            const fetchedChannelInfo = await listChannels(); // Call your API to get new channel data
+            setChannelInfo(fetchedChannelInfo); // Update the channel data
+            
+            // Might need to update the center and other map-related logic here
+            console.log('Streams refreshed');
+
+        } catch (error) {
+            console.error('Error refreshing streams:', error);
+        }
+    };
+
+    const navigateAndClearInterval = (url) => {
+        console.log('clearing interval');
+        clearInterval(intervalId); // Clear the interval when navigating
+        navigate(url);
+    }
 
     const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo.filter(channel => channel.tags.active === "false");
 
@@ -85,9 +120,8 @@ function MapWithMarker() {
                     className="map-switchcontainer"
                 />
 
-
                 <button className="map-refresh button"
-                    onClick={() => navigate(`/streamer`)}>
+                    onClick={() => navigateAndClearInterval(`/streamer`)}>
                     Start Broadcasting
                 </button>
 
@@ -101,6 +135,15 @@ function MapWithMarker() {
                 <div className="map-helpText">
                     Click a marker to view event
                 </div>
+
+                <div className="refreshStreamButtonDiv">
+                    <button className="refreshStreamButton"
+                        onClick={handleRefreshStreams}>
+                        Refresh Streams
+                    </button>
+                </div>
+
+                
 
                 <GoogleMap
                     mapContainerStyle={containerStyle}
@@ -151,7 +194,7 @@ function MapWithMarker() {
                                 lat: parseFloat(channel.tags.latitude),
                                 lng: parseFloat(channel.tags.longitude)
                             }}
-                            onClick={() => navigate(`/viewer/${channel.name}`)}
+                            onClick={() => navigateAndClearInterval(`/viewer/${channel.name}`)}
                             onMouseOver={() => setSelectedChannel(channel)}
                             onMouseOut={() => setSelectedChannel(null)}
                         />

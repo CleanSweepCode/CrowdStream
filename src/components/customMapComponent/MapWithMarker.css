@@ -40,6 +40,32 @@
     transform: translate(-50%, 0%);
 }
 
+
+/* Styling for the refresh button */
+.refreshStreamButtonDiv {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    z-index: 2;
+}
+
+.refreshStreamButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Coolvetica', fallback, sans-serif;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.refreshStreamButton:hover {
+    background-color: #45a049;
+}
+
+
 .map-titlecontainer,
 .map-helpText {
     position: absolute;
