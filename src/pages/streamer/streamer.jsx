@@ -42,11 +42,12 @@ const Streamer = () => {
 
   // Function to toggle the camera
   async function setupCameraStream() {
-    if (cameraStream) {
-      cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
-    }
+    // if (cameraStream) {
+    //   cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
+    // }
 
     cameraStream = await getCameraStream();  // Fetch the new stream
+
     console.log("Camera switched to " + cameraDevices.activeName() + " successfully")
     console.log("Setting stream to: ", cameraStream);
     client.setStream(cameraStream);
