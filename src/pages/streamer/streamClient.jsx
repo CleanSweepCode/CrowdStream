@@ -30,12 +30,12 @@ export class StreamClient {
         }
         console.log("Client is before remove: ", this.client)
         if (this.has_stream) {
-            this.client.removeVideoInputDevice('');
+            this.client.removeVideoInputDevice('cam 1');
         }
         console.log("Setting stream to: ", stream);
         console.log("Client's video is removed: ", this.client)
         try {
-            await this.client.addVideoInputDevice(stream, '', { index: 0 });
+            await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0 });
             console.log("Client's video is added: ", this.client)
         }
         catch (error) {
