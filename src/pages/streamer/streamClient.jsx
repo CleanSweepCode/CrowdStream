@@ -8,6 +8,7 @@ import IVSBroadcastClient, {
 export class StreamClient {
     constructor(stream_info, streamConfig) {
         this.stream_info = stream_info;
+        this.streamConfig = streamConfig;
         this.client = IVSBroadcastClient.create({
             streamConfig: streamConfig,
             ingestEndpoint: stream_info.channel.ingestEndpoint,
@@ -35,7 +36,12 @@ export class StreamClient {
 
         try {
             const { width, height } = stream.getVideoTracks()[0].getSettings();
-            await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0 }, { width: width, height: height });
+            //obtain max resolution to center the video in the client
+            const max_width = this.streamConfig.maxResolution.width;
+            const max_height = this.streamConfig.maxResolution.height;
+            const x_offset = (max_width - width) / 2;
+            const y_offset = (max_height - height) / 2;
+            await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0, x: x_offset, y: y_offset, width: width, height: height });
         }
         catch (error) {
             console.warn('Error adding video input device to IVS: ', error);
