@@ -1,12 +1,6 @@
-
-export async function requestCameraPermissions() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    console.log("Camera permissions granted");
-  } catch (err) {
-    console.error("No cameras available, so no camera permissions granted: ", err);
-  }
-}
+const VIDEO_INPUT = 'videoinput';
+const AUDIO_INPUT = 'audioinput';
+const REAR_KEYS = ['rear', 'back', 'environment'];
 
 class DeviceList {
   constructor(arr) {
@@ -24,50 +18,63 @@ class DeviceList {
   }
 
   next() {
-    console.log("next camera: ", this.array[(this.index + 1) % this.array.length].label)
-    const value = this.array[this.index];
-    console.log("value of new camera: ", value.label)
     this.index = (this.index + 1) % this.array.length;
+  }
+
+  async activeStream(previousStream = null) {
+    if (previousStream) {
+      stopTracks(previousStream);
+    }
+
+    try {
+      return await navigator.mediaDevices.getUserMedia({
+        video: { deviceId: { exact: this.active().deviceId } },
+        audio: false,
+      });
+    } catch (err) {
+      console.error('Error accessing camera:', err);
+      throw err;
+    }
   }
 }
 
+function stopTracks(stream) {
+  const tracks = stream.getTracks();
+  tracks.forEach((track) => track.stop());
+}
+
 export async function getCameraDevices() {
-  // Return a DeviceList of all active cameras
-
   const devices = await navigator.mediaDevices.enumerateDevices();
-  const videoDevices = devices.filter(device => device.kind === 'videoinput');
-
-  // sort device list, preferring ones that contain rearKeys
-  let rearKeys = ['rear', 'back', 'environment']
+  const videoDevices = devices.filter((device) => device.kind === VIDEO_INPUT);
 
   videoDevices.sort((a, b) => {
-    const aContainsKey = rearKeys.some(key => a.label.toLowerCase().includes(key));
-    const bContainsKey = rearKeys.some(key => b.label.toLowerCase().includes(key));
+    const aContainsKey = REAR_KEYS.some((key) => a.label.toLowerCase().includes(key));
+    const bContainsKey = REAR_KEYS.some((key) => b.label.toLowerCase().includes(key));
 
-    if (aContainsKey && bContainsKey) return 0; // Both have rearKeys, so retain their order
-    if (aContainsKey) return -1;                // a should come before b
-    if (bContainsKey) return 1;                 // b should come before a
-    return 0;                                  // Neither have rearKeys, so retain their order
+    if (aContainsKey && bContainsKey) return 0;
+    if (aContainsKey) return -1;
+    if (bContainsKey) return 1;
+    return 0;
   });
 
-  var deviceList = new DeviceList(videoDevices);
-
-  console.log("Device List: ", deviceList)
+  const deviceList = new DeviceList(videoDevices);
   return deviceList;
 }
 
-export async function getStreamFromCamera(cameraDevice) {
-  // Given a camera device, return a stream
+
+
+
+export async function getMicrophoneStream() {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  var audioDevices = devices.filter((d) => d.kind === 'audioinput');
+
   try {
-    return await navigator.mediaDevices.getUserMedia({
-        video: {
-            deviceId: { exact: cameraDevice.deviceId },
-        },
-        audio: false
+    var microphoneStream = await navigator.mediaDevices.getUserMedia({
+      audio: { deviceId: audioDevices[0].deviceId },
     });
-  } catch (err) {
-      console.error('Error accessing camera:', err);
-      throw err;
+    return microphoneStream;
+  } catch (error) {
+    console.warn('Unable to access microphone:', error);
   }
 }
 
@@ -80,9 +87,9 @@ export async function handlePermissions() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     for (const track of stream.getTracks()) {
       track.stop();
-
     }
     permissions = { video: true, audio: true };
+    return true;
   } catch (err) {
     permissions = { video: false, audio: false };
     console.error(err.message);
@@ -90,7 +97,10 @@ export async function handlePermissions() {
   // If we still don't have permissions after requesting them display the error message
   if (!permissions.video) {
     console.error('Failed to get video permissions.');
+    return false;
   } else if (!permissions.audio) {
     console.error('Failed to get audio permissions.');
+    return false;
   }
 }
+
