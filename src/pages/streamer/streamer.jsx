@@ -15,96 +15,33 @@ import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { fetchGeolocationData } from './locationManagement.jsx'
-import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handlePermissions, DeviceList } from './deviceManagement.jsx'
+import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handlePermissions, DeviceList, getMicrophoneStream } from './deviceManagement.jsx'
 
-const HEARTBEAT_FREQUENCY = 40000; // 40 seconds
+
 
 var client = null;
-var cameraDevices = null; // will be a DeviceList
-var isClientReady = false; // TODO: move this to be a property of streamer instead
+var cameraDevices = null;
 var cameraStream = null;
 var microphoneStream = null;
-var audioDevices = null;
-var intervalIdWindow = null;
 
 const Streamer = () => {
   const ref = useRef();
   const navigate = useNavigate();
 
-  const [streamConfig, setStreamConfig] = useState(IVSBroadcastClient.BASIC_LANDSCAPE); // Add this line
-  const [hasMultipleCameras, setHasMultipleCameras] = useState(false); // Add this state
-  const [readyToStream, setReadyToStream] = useState(false); // Add this state
+  const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
+  const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
+  const [readyToStream, setReadyToStream] = useState(false);
 
   // Initialize the streamer
-  useEffect(() => {
+  useEffect(async () => {
     Initialize();
   }, []);
 
-  // Function to toggle the camera
-  async function setupCameraStream() {
-    // if (cameraStream) {
-    //   cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
-    // }
-
-    cameraStream = await getCameraStream();  // Fetch the new stream
-
-    console.log("Camera switched to " + cameraDevices.activeName() + " successfully")
-    console.log("Setting stream to: ", cameraStream);
-
-  }
-
-  // Function to toggle the camera
-  async function toggleCamera() {
-    cameraDevices.next()
-    await setupCameraStream();  // Setup the new camera stream
-    client.setStream(cameraStream);
-  }
-
-  // Fetch camera stream according to the current value of useFrontCamera
-  async function getCameraStream() {
-    // Get the deviceId based on the useFrontCamera flag
-    let camera;
-    let stream;
-
-    camera = cameraDevices.active(); // get active camera
-
-    try {
-      stream = await getStreamFromCamera(camera)
-      console.log("New Line 72, Stream.jsx : ", stream)
-      ref.current.setStream(stream);
-      return stream;
-    } catch (err) {
-      console.error("Error accessing camera: ", err);
-    }
-  }
-
-
-  async function setupMicrophoneStream() {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    audioDevices = devices.filter((d) => d.kind === 'audioinput');
-
-    try {
-      microphoneStream = await navigator.mediaDevices.getUserMedia({
-        audio: { deviceId: audioDevices[0].deviceId },
-      });
-      client.addAudioInputDevice(microphoneStream);
-    } catch (error) {
-      console.warn('Unable to access microphone:', error);
-    }
-  }
-
   async function Initialize() {
-    console.log("INITIALIZING")
-    if (client) {
-      console.log("Client already exists")
-      return;
-    }
-
     const position = await fetchGeolocationData();
 
-    // if we don't have a position, end page here
     if (!position) {
-      return;
+      throw "No Geolocation data received."
     }
 
     const tags = {
@@ -115,48 +52,40 @@ const Streamer = () => {
 
     client = await StreamClient.create(tags, streamConfig);
 
-    console.log("Client created");
-    console.log(client);
-
-    client.sendHeartbeat(); // send initial heartbeat
-    intervalIdWindow = setInterval(client.sendHeartbeat, HEARTBEAT_FREQUENCY); // send heartbeat every X seconds
-    function handleBeforeUnload() {
-      client.stop();
-      clearInterval(intervalIdWindow);
-    }
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    await requestCameraPermissions(); // request camera permissions on page load
-
+    await handlePermissions(); // request camera permissions on page load
     cameraDevices = await getCameraDevices();
 
-
-    // setup cameras and microphones
-    isClientReady = true;
     setHasMultipleCameras(cameraDevices.size > 1);
     setReadyToStream(true);
-    console.log("Initialize nearly completed")
-    cameraDevices.next() // [BUG 01] We have a bug on Chrome iOS - if this line isn't here, initial stream is black. Currently UNSOLVED!
-    await setupCameraStream();
+
+    cameraDevices.next(); // [BUG 01] We have a bug on Chrome iOS - if this line isn't here, initial stream is black. Currently UNSOLVED!
+
+    cameraStream = await getCameraStream();
     await setupMicrophoneStream();
   }
 
+  async function setupMicrophoneStream() {
+    try {
+      microphoneStream = await getMicrophoneStream()
+      client.addAudioInputDevice(microphoneStream);
+    } catch (error) {
+      console.warn('Error adding microphone stream to AWS:', error);
+    }
+  }
 
-  const handleStream = async () => {
-    console.log("Client initialized");
-    console.log(client);
-    console.log("Starting stream");
-    handlePermissions()
-    listChannels()
-    console.log("Client Log HandleStream 172 streamer.jsx: ", client)
+  async function getCameraStream() {
+    var stream = await cameraDevices.activeStream();
+    ref.current.setStream(stream);
+    return stream
+  }
+
+  const startStream = async () => {
 
     // If there isn't a camera and microphone stream (which occurs after clicking 'End Stream'), start one
     if (!cameraStream) {
-      console.log("No camera stream");
-      await setupCameraStream();
+      cameraStream = await getCameraStream();
     }
     if (!microphoneStream) {
-      console.log("No microphone stream");
       await setupMicrophoneStream();
     }
 
@@ -170,7 +99,14 @@ const Streamer = () => {
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
       });
-  };
+
+  }
+
+  async function toggleCamera() {
+    cameraDevices.next()
+    await setupCameraStream();  // Setup the new camera stream
+    client.setStream(cameraStream);
+  }
 
   const clearCameraStreams = async () => {
     if (microphoneStream) {
@@ -181,23 +117,18 @@ const Streamer = () => {
       cameraStream.getTracks().forEach((track) => track.stop());
       cameraStream = null;
     }
-
   }
 
   const closeStream = async () => {
     if (client) {
       client.stop(); // Stop the stream
-
       if (ref.current) {
         ref.current.setIsBroadcasting(false);
       }
     }
-
-
-    clearInterval(intervalIdWindow);
   }
 
-  const closeStreamAndChannel = async () => {
+  const onExit = async () => {
     // Current behaviour on 'back', 'refresh' or 'quit' is to close the stream and channel,
     // So creating a new channel each time
     clearCameraStreams();
@@ -205,15 +136,10 @@ const Streamer = () => {
     client = null;
   }
 
-  // on back
   window.addEventListener('popstate', function (event) {
-    closeStreamAndChannel()
+    onExit()
   });
 
-  // on refresh / quit
-  window.onbeforeunload = function () {
-    closeStreamAndChannel()
-  };
 
   return (
     <div className="streamerplayer-container">
@@ -221,7 +147,7 @@ const Streamer = () => {
       <div className="streamerplayer-rows">
         <div className="streamerplayer-backButton">
           <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
-            closeStreamAndChannel();
+            onExit();
             navigate('/');
           }}>
             <ArrowBackIcon />
@@ -244,7 +170,7 @@ const Streamer = () => {
 
 
       <div className="streamerplayer-rows-bottom">
-        <button className="button" onClick={handleStream} disabled={!readyToStream}>
+        <button className="button" onClick={startStream} disabled={!readyToStream}>
           Start Stream
         </button>
 
@@ -259,7 +185,6 @@ const Streamer = () => {
       </div>
     </div>
   );
-
 
 }
 
