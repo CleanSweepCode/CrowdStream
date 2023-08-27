@@ -11,6 +11,11 @@
     font-weight: normal;
 }
 
+:root {
+    --official-blue: #08B2E3;
+    --official-hover-blue: #0578A9;
+}
+
 .map-container {
     position: relative;
     width: 100%;
@@ -33,12 +38,18 @@
 }
 
 .map-refresh {
+    background-color: var(--official-blue);
     position: absolute;
     bottom: 2rem;
     left: 50%;
     z-index: 2;
     transform: translate(-50%, 0%);
+    transition: background-color 0.2s;
 }
+
+.map-refresh:hover {
+    background-color: var(--official-hover-blue);
+ }
 
 .map-refreshStreamButton {
     position: absolute;
@@ -48,7 +59,7 @@
 }
 
 .map-refreshStreamButton {
-    background-color: #4CAF50;
+    background-color: var(--official-blue);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -57,13 +68,13 @@
     font-size: 30px;
     font-family: 'Coolvetica', fallback, sans-serif;
     font-weight: bold;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s;
 }
 
 .map-refreshStreamButton:hover {
-    background-color: #45a049;
-}
-
+    background-color: var(--official-hover-blue);
+ }
+ 
 
 .map-titlecontainer,
 .map-helpText {
