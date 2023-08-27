@@ -92,7 +92,6 @@ const Streamer = () => {
 
     client.start()
       .then((result) => {
-        console.log('I am successfully broadcasting!');
         ref.current.setIsBroadcasting(true);
         client.has_stream = true;
       })

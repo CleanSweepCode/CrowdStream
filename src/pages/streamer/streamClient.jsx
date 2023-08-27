@@ -28,18 +28,16 @@ export class StreamClient {
         if (!stream) {
             console.error("Camera stream for client is null");
         }
-        console.log("Client is before remove: ", this.client)
+
         if (this.has_stream) {
             this.client.removeVideoInputDevice('cam 1');
         }
-        console.log("Setting stream to: ", stream);
-        console.log("Client's video is removed: ", this.client)
+
         try {
-            await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0 });
-            console.log("Client's video is added: ", this.client)
+            const { width, height } = stream.getVideoTracks()[0].getSettings();
+            await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0 }, { width: width, height: height });
         }
         catch (error) {
-            console.log("STREAM IS: ", stream)
             console.warn('Error adding video input device to IVS: ', error);
         }
 

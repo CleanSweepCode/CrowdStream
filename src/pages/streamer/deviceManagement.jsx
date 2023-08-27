@@ -58,7 +58,6 @@ export async function getCameraDevices() {
   });
 
   const deviceList = new DeviceList(videoDevices);
-  console.log('Device List:', deviceList);
   return deviceList;
 }
 
