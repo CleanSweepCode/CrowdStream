@@ -11,7 +11,6 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { fetchGeolocationData } from './locationManagement.jsx'
 import { getCameraDevices, handlePermissions, getMicrophoneStream } from './deviceManagement.jsx'
 
-
 var client = null;
 var cameraDevices = null;
 var cameraStream = null;
@@ -75,8 +74,6 @@ const Streamer = () => {
     setHasMultipleCameras(cameraDevices.size > 1);
     setReadyToStream(true);
 
-    cameraDevices.next(); // [BUG 01] We have a bug on Chrome iOS - if this line isn't here, initial stream is black. Currently UNSOLVED!
-
     cameraStream = await getCameraStream();
 
     const tags = {
@@ -118,7 +115,6 @@ const Streamer = () => {
 
     client.start()
       .then((result) => {
-        console.log('I am successfully broadcasting!');
         ref.current.setIsBroadcasting(true);
         client.has_stream = true;
       })
