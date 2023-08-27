@@ -126,9 +126,9 @@ const Viewer = () => {
           />
         </div>
         <div className="viewer-channelButton">
-            <IconButton edge="start" color="inherit" aria-label="next" disabled={channels.length === 1} onClick={goToNextChannel}>
-              <ArrowForwardIosIcon />
-            </IconButton>
+          <IconButton edge="start" color="inherit" aria-label="next" disabled={channels.length === 1} onClick={goToNextChannel}>
+            <ArrowForwardIosIcon />
+          </IconButton>
 
         </div>
 

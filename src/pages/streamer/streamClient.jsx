@@ -3,7 +3,7 @@ import { listChannels, createChannel, channelHeartbeat, tagChannelInactive, tagC
 import IVSBroadcastClient, {
     Errors,
     BASIC_LANDSCAPE
-  } from 'amazon-ivs-web-broadcast';
+} from 'amazon-ivs-web-broadcast';
 
 export class StreamClient {
     constructor(stream_info, streamConfig) {
@@ -26,17 +26,28 @@ export class StreamClient {
     }
 
     async setStream(stream) {
-        if (!window.cameraStream) {
+        if (!stream) {
             console.error("Camera stream for client is null");
         }
 
         if (this.has_stream) {
-            this.client.removeVideoInputDevice('camera1');
+            this.client.removeVideoInputDevice('Proxy');
         }
 
-        this.client.addVideoInputDevice(stream, 'camera1', { index: 0 });
+        try {
+            await this.client.addVideoInputDevice(stream, 'Proxy', { index: 0 });
+        }
+        catch (error) {
+            console.log("STREAM IS: ", stream)
+            console.warn('Error adding video input device to IVS: ', error);
+        }
+
 
         this.has_stream = true;
+    }
+
+    async addAudioInputDevice(microphoneStream) {
+        this.client.addAudioInputDevice(microphoneStream, 'mic1');
     }
 
     async start() {
