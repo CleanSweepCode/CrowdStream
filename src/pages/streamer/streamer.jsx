@@ -31,6 +31,7 @@ const Streamer = () => {
   const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
   const [readyToStream, setReadyToStream] = useState(false);
+  const [noCamerasFound, setNoCamerasFound] = useState(false); // Add this state
 
   // Initialize the streamer
   useEffect(async () => {
@@ -54,6 +55,14 @@ const Streamer = () => {
 
     await handlePermissions(); // request camera permissions on page load
     cameraDevices = await getCameraDevices();
+
+    // if we don't have a camera, end page here
+    if (cameraDevices.size === 0) {
+      setNoCamerasFound(true)
+      return;
+    } else {
+      setNoCamerasFound(false)
+    }
 
     setHasMultipleCameras(cameraDevices.size > 1);
     setReadyToStream(true);
@@ -171,6 +180,11 @@ const Streamer = () => {
         ref={ref}
       />
 
+      {noCamerasFound && (
+        <div className="no-cameras-message">
+          No cameras are found. Please connect a camera to start streaming.
+        </div>
+      )}
 
       <div className="streamerplayer-rows-bottom">
         <button className="button" onClick={startStream} disabled={!readyToStream}>
