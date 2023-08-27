@@ -1,12 +1,4 @@
 
-export async function requestCameraPermissions() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    console.log("Camera permissions granted");
-  } catch (err) {
-    console.error("No cameras available, so no camera permissions granted: ", err);
-  }
-}
 
 class DeviceList {
   constructor(arr) {
@@ -17,6 +9,17 @@ class DeviceList {
 
   active() {
     return this.array[this.index];
+  }
+
+  async activeStream() {
+    try {
+      var stream = await getStreamFromCamera(this.active());
+      return stream
+    }
+    catch (err) {
+      console.error("Error accessing camera: ", err)
+    }
+  
   }
 
   activeName() {
@@ -71,6 +74,20 @@ export async function getStreamFromCamera(cameraDevice) {
   }
 }
 
+export async function getMicrophoneStream(){
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  var audioDevices = devices.filter((d) => d.kind === 'audioinput');
+
+  try {
+    var microphoneStream = await navigator.mediaDevices.getUserMedia({
+      audio: { deviceId: audioDevices[0].deviceId },
+    });
+    return microphoneStream;
+  } catch (error) {
+    console.warn('Unable to access microphone:', error);
+  }
+}
+
 export async function handlePermissions() {
   let permissions = {
     audio: false,
@@ -94,3 +111,4 @@ export async function handlePermissions() {
     console.error('Failed to get audio permissions.');
   }
 }
+
