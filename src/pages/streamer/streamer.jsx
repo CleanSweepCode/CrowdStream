@@ -50,13 +50,14 @@ const Streamer = () => {
 
     console.log("Camera switched to " + cameraDevices.activeName() + " successfully")
     console.log("Setting stream to: ", cameraStream);
-    client.setStream(cameraStream);
+
   }
 
   // Function to toggle the camera
   async function toggleCamera() {
     cameraDevices.next()
     await setupCameraStream();  // Setup the new camera stream
+    client.setStream(cameraStream);
   }
 
   // Fetch camera stream according to the current value of useFrontCamera
@@ -158,6 +159,8 @@ const Streamer = () => {
       console.log("No microphone stream");
       await setupMicrophoneStream();
     }
+
+    await client.setStream(cameraStream);
 
     client.start()
       .then((result) => {
