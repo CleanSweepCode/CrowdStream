@@ -1,5 +1,3 @@
-
-
 class DeviceList {
   constructor(arr) {
     this.array = arr;
@@ -27,9 +25,7 @@ class DeviceList {
   }
 
   next() {
-    console.log("next camera: ", this.array[(this.index + 1) % this.array.length].label)
     const value = this.array[this.index];
-    console.log("value of new camera: ", value.label)
     this.index = (this.index + 1) % this.array.length;
   }
 }
