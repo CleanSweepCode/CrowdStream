@@ -104,7 +104,7 @@ const Streamer = () => {
 
   async function toggleCamera() {
     cameraDevices.next()
-    await setupCameraStream();  // Setup the new camera stream
+    cameraStream = await getCameraStream();  // Setup the new camera stream
     client.setStream(cameraStream);
   }
 
