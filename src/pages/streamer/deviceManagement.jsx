@@ -9,16 +9,6 @@ class DeviceList {
     return this.array[this.index];
   }
 
-  async activeStream() {
-    try {
-      var stream = await getStreamFromCamera(this.active());
-      return stream
-    }
-    catch (err) {
-      console.error("Error accessing camera: ", err)
-    }
-  
-  }
 
   activeName() {
     return this.array[this.index].label;
@@ -28,6 +18,27 @@ class DeviceList {
     const value = this.array[this.index];
     this.index = (this.index + 1) % this.array.length;
   }
+
+  async activeStream(previousStream=null) {
+    if (previousStream){
+      const tracks = previousStream.getTracks();
+      tracks.forEach(track => track.stop());
+    }
+  
+    // Given a camera device, return a stream
+    try {
+      return await navigator.mediaDevices.getUserMedia({
+          video: {
+              deviceId: { exact: this.active().deviceId },
+          },
+          audio: false
+      });
+    } catch (err) {
+        console.error('Error accessing camera:', err);
+        throw err;
+    }
+  }
+
 }
 
 export async function getCameraDevices() {
@@ -55,20 +66,7 @@ export async function getCameraDevices() {
   return deviceList;
 }
 
-export async function getStreamFromCamera(cameraDevice) {
-  // Given a camera device, return a stream
-  try {
-    return await navigator.mediaDevices.getUserMedia({
-        video: {
-            deviceId: { exact: cameraDevice.deviceId },
-        },
-        audio: false
-    });
-  } catch (err) {
-      console.error('Error accessing camera:', err);
-      throw err;
-  }
-}
+
 
 export async function getMicrophoneStream(){
   const devices = await navigator.mediaDevices.enumerateDevices();
