@@ -15,7 +15,6 @@ export class StreamClient {
         });
 
         this.has_stream = false;
-
         this.channel_name = stream_info.channel.name;
     }
 
