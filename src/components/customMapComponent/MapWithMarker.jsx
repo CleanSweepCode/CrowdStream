@@ -7,6 +7,9 @@ import { listChannels } from '../Helpers/APIUtils.jsx'
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
 import liveIconMarker from '../../assets/marker64.png';
 import oldIconMarker from '../../assets/filmMarker64.png';
+import VideoJSPlayer from '../videoJS/videojs.jsx';
+
+
 
 const REFRESH_INTERVAL = 10000; // 10 seconds
 
@@ -30,6 +33,7 @@ function MapWithMarker() {
     const [center, setCenter] = useState(defaultCenter);
     const [selectedChannel, setSelectedChannel] = useState(null);
     const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
+    const [showVideoPlayer, setShowVideoPlayer] = useState(false);
 
 
     useEffect(() => {
@@ -194,15 +198,27 @@ function MapWithMarker() {
                                 lat: parseFloat(channel.tags.latitude),
                                 lng: parseFloat(channel.tags.longitude)
                             }}
-                            onClick={() => navigateAndClearInterval(`/viewer/${channel.name}`)}
+                            onClick={() => {
+                                setSelectedChannel(channel);
+                                setShowVideoPlayer(true);
+                            }}
                             onMouseOver={() => setSelectedChannel(channel)}
-                            onMouseOut={() => setSelectedChannel(null)}
+                            //onMouseOut={() => setSelectedChannel(null)}
                         />
                     ))}
 
                 </GoogleMap>
 
-            </div>
+            </div>                
+            {
+                showVideoPlayer && selectedChannel &&
+                <div className="video-player-container">
+                <button onClick={() => setShowVideoPlayer(false)}>Close</button>
+                <VideoJSPlayer channel_name={selectedChannel.name} />
+                </div>
+
+            }
+
         </div>
     )
 }

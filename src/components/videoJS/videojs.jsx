@@ -1,0 +1,59 @@
+import React, { useEffect } from 'react';
+import videojs from 'video.js';
+import { registerIVSTech } from 'amazon-ivs-player';
+import 'video.js/dist/video-js.css';
+import { getStreamLinkFromName } from '../Helpers/APIUtils.jsx';
+
+const VideoJSPlayer = ({ channel_name }) => {
+  const videoRef = React.useRef(null);
+
+  useEffect(() => {
+    const options = {
+      wasmWorker: '/amazon-ivs-wasmworker.min.js',
+      wasmBinary: '/amazon-ivs-wasmworker.min.wasm'
+    };
+
+    registerIVSTech(videojs, options);
+    
+    const player = videojs(videoRef.current, {
+      techOrder: ["AmazonIVS"],
+      controls: true,
+      autoplay: true,
+      preload: 'auto'
+    }, async () => {
+      const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
+      console.log("Set URL to: " + STREAM_PLAYBACK_URL);
+      player.src(STREAM_PLAYBACK_URL);
+
+      // Check for PiP support and request PiP mode
+      const videoEl = videoRef.current;
+      if (document.pictureInPictureEnabled && videoEl.requestPictureInPicture) {
+        console.log('PiP available!');
+        videoEl.requestPictureInPicture().catch(error => {
+          console.error(`Error attempting to enable picture-in-picture: ${error}`);
+        });
+      }
+    });
+
+    return () => {
+      if (player) {
+        player.dispose();
+      }
+    };
+  }, [channel_name]);
+
+  return (
+    <video
+      ref={videoRef}
+      className="video-js vjs-default-skin"
+      controls
+      preload="auto"
+      width="640"
+      height="360"
+      data-setup='{"techOrder": ["AmazonIVS"]}'
+      muted
+    ></video>
+  );
+}
+
+export default VideoJSPlayer;
