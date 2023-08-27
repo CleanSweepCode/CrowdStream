@@ -20,6 +20,8 @@ class DeviceList {
   }
 
   async activeStream(previousStream=null) {
+
+    // Have to close previous stream before calling getUserMedia on iOS Safari.
     if (previousStream){
       const tracks = previousStream.getTracks();
       tracks.forEach(track => track.stop());
