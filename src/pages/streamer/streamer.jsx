@@ -69,6 +69,7 @@ const Streamer = () => {
 
     try {
       stream = await getStreamFromCamera(camera)
+      console.log("New Line 72, Stream.jsx : ", stream)
       ref.current.setStream(stream);
       return stream;
     } catch (err) {
@@ -154,7 +155,7 @@ const Streamer = () => {
       await setupCameraStream();
     }
     if (!microphoneStream) {
-      console.log("No camera stream");
+      console.log("No microphone stream");
       await setupMicrophoneStream();
     }
 
