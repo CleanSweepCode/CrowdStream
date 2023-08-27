@@ -1,22 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import StreamerPlayer from './streamerPlayer.jsx';
-import useStream from '../../components/Stream/useStream.js';
-import { getConfigFromResolution } from '../../components/Helpers/helpers.js';
-import IVSBroadcastClient, {
-  Errors,
-  BASIC_LANDSCAPE
-} from 'amazon-ivs-web-broadcast';
+import IVSBroadcastClient from 'amazon-ivs-web-broadcast';
 import '../../App.css';
 import './streamerPlayer.css';
-import { listChannels } from '../../components/Helpers/APIUtils.jsx'
 import { StreamClient } from './streamClient.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { fetchGeolocationData } from './locationManagement.jsx'
-import { requestCameraPermissions, getCameraDevices, getStreamFromCamera, handlePermissions, DeviceList, getMicrophoneStream } from './deviceManagement.jsx'
-
+import { getCameraDevices, handlePermissions, getMicrophoneStream } from './deviceManagement.jsx'
 
 
 var client = null;
