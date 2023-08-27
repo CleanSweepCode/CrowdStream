@@ -42,7 +42,6 @@ export class StreamClient {
         }
 
 
-        this.has_stream = true;
     }
 
     async addAudioInputDevice(microphoneStream) {
