@@ -11,7 +11,6 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { fetchGeolocationData } from './locationManagement.jsx'
 import { getCameraDevices, handlePermissions, getMicrophoneStream } from './deviceManagement.jsx'
 
-
 var client = null;
 var cameraDevices = null;
 var cameraStream = null;
