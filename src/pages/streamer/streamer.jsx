@@ -60,8 +60,6 @@ const Streamer = () => {
     setHasMultipleCameras(cameraDevices.size > 1);
     setReadyToStream(true);
 
-    cameraDevices.next(); // [BUG 01] We have a bug on Chrome iOS - if this line isn't here, initial stream is black. Currently UNSOLVED!
-
     cameraStream = await getCameraStream();
     await setupMicrophoneStream();
   }
