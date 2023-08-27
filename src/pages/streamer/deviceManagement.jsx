@@ -28,19 +28,14 @@ class DeviceList {
     const value = this.array[this.index];
     console.log("value of new camera: ", value.label)
     this.index = (this.index + 1) % this.array.length;
-    return value;
   }
 }
 
 export async function getCameraDevices() {
-  // Return a dictionary of camera devices
-  // front: [all front cameras]
-  // rear: [all rear cameras]
-  // all: [all other cameras]
+  // Return a DeviceList of all active cameras
 
   const devices = await navigator.mediaDevices.enumerateDevices();
   const videoDevices = devices.filter(device => device.kind === 'videoinput');
-  var cameras = videoDevices;
 
   // sort device list, preferring ones that contain rearKeys
   let rearKeys = ['rear', 'back', 'environment']
@@ -54,22 +49,26 @@ export async function getCameraDevices() {
     if (bContainsKey) return 1;                 // b should come before a
     return 0;                                  // Neither have rearKeys, so retain their order
   });
-  console.log(videoDevices);
-  var deviceList = new DeviceList(cameras);
+
+  var deviceList = new DeviceList(videoDevices);
+
+  console.log("Device List: ", deviceList)
   return deviceList;
 }
 
 export async function getStreamFromCamera(cameraDevice) {
   // Given a camera device, return a stream
-  return await navigator.mediaDevices.getUserMedia({
-    video: {
-      deviceId: { exact: cameraDevice.deviceId },
-      width: { ideal: 1280 },
-      height: { ideal: 720 },
-      frameRate: { ideal: 30 }
-    },
-    audio: false
-  });
+  try {
+    return await navigator.mediaDevices.getUserMedia({
+        video: {
+            deviceId: { exact: cameraDevice.deviceId },
+        },
+        audio: false
+    });
+  } catch (err) {
+      console.error('Error accessing camera:', err);
+      throw err;
+  }
 }
 
 export async function handlePermissions() {
