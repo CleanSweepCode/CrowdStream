@@ -28,13 +28,15 @@ export class StreamClient {
         if (!stream) {
             console.error("Camera stream for client is null");
         }
-
+        console.log("Client is before remove: ", this.client)
         if (this.has_stream) {
             this.client.removeVideoInputDevice('Proxy');
         }
-
+        console.log("Setting stream to: ", stream);
+        console.log("Client's video is removed: ", this.client)
         try {
             await this.client.addVideoInputDevice(stream, 'Proxy', { index: 0 });
+            console.log("Client's video is added: ", this.client)
         }
         catch (error) {
             console.log("STREAM IS: ", stream)
