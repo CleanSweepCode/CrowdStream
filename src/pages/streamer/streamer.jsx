@@ -74,7 +74,7 @@ const Streamer = () => {
   }
 
   async function getCameraStream() {
-    var stream = await cameraDevices.activeStream();
+    var stream = await cameraDevices.activeStream(cameraStream);
     ref.current.setStream(stream);
     return stream
   }
