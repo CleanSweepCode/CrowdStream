@@ -95,6 +95,7 @@ const Streamer = () => {
       .then((result) => {
         console.log('I am successfully broadcasting!');
         ref.current.setIsBroadcasting(true);
+        client.has_stream = true;
       })
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
