@@ -42,15 +42,11 @@ const Streamer = () => {
 
   // Function to toggle the camera
   async function setupCameraStream() {
-    if (cameraStream) {
-      cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
-    }
+    // if (cameraStream) {
+    //   cameraStream.getTracks().forEach((track) => track.stop());  // Stop the current stream
+    // }
 
     cameraStream = await getCameraStream();  // Fetch the new stream
-
-    // start the new stream
-    const videoTrack = cameraStream.getVideoTracks()[0];
-    cameraStream.getTracks().forEach((track) => track.start()); // explicitly activate track for iOS
 
     console.log("Camera switched to " + cameraDevices.activeName() + " successfully")
     console.log("Setting stream to: ", cameraStream);
