@@ -8,6 +8,7 @@ import IVSBroadcastClient, {
 export class StreamClient {
     constructor(stream_info, streamConfig) {
         this.stream_info = stream_info;
+        this.streamConfig = streamConfig;
         this.client = IVSBroadcastClient.create({
             streamConfig: streamConfig,
             ingestEndpoint: stream_info.channel.ingestEndpoint,
@@ -15,7 +16,6 @@ export class StreamClient {
         });
 
         this.has_stream = false;
-
         this.channel_name = stream_info.channel.name;
     }
 
@@ -31,19 +31,23 @@ export class StreamClient {
         }
 
         if (this.has_stream) {
-            this.client.removeVideoInputDevice('Proxy');
+            this.client.removeVideoInputDevice('cam 1');
         }
 
         try {
-            await this.client.addVideoInputDevice(stream, 'Proxy', { index: 0 });
+            const { width, height } = stream.getVideoTracks()[0].getSettings();
+            //obtain max resolution to center the video in the client
+            const max_width = this.streamConfig.maxResolution.width;
+            const max_height = this.streamConfig.maxResolution.height;
+            const x_offset = (max_width - width) / 2;
+            const y_offset = (max_height - height) / 2;
+            await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0, x: x_offset, y: y_offset, width: width, height: height });
         }
         catch (error) {
-            console.log("STREAM IS: ", stream)
             console.warn('Error adding video input device to IVS: ', error);
         }
 
 
-        this.has_stream = true;
     }
 
     async addAudioInputDevice(microphoneStream) {

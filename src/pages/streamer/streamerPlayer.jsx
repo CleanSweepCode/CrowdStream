@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } from 'react';
-
 import './streamerPlayer.css';
 
 const StreamerPlayer = forwardRef((props, ref) => {
