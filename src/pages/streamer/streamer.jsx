@@ -47,6 +47,11 @@ const Streamer = () => {
     }
 
     cameraStream = await getCameraStream();  // Fetch the new stream
+
+    // start the new stream
+    const videoTrack = cameraStream.getVideoTracks()[0];
+    cameraStream.getTracks().forEach((track) => track.start()); // explicitly activate track for iOS
+
     console.log("Camera switched to " + cameraDevices.activeName() + " successfully")
     console.log("Setting stream to: ", cameraStream);
     client.setStream(cameraStream);
