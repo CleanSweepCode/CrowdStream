@@ -1,3 +1,7 @@
+const VIDEO_INPUT = 'videoinput';
+const AUDIO_INPUT = 'audioinput';
+const REAR_KEYS = ['rear', 'back', 'environment'];
+
 class DeviceList {
   constructor(arr) {
     this.array = arr;
@@ -9,68 +13,58 @@ class DeviceList {
     return this.array[this.index];
   }
 
-
   activeName() {
     return this.array[this.index].label;
   }
 
   next() {
-    const value = this.array[this.index];
     this.index = (this.index + 1) % this.array.length;
   }
 
-  async activeStream(previousStream=null) {
-
-    // Have to close previous stream before calling getUserMedia on iOS Safari.
-    if (previousStream){
-      const tracks = previousStream.getTracks();
-      tracks.forEach(track => track.stop());
+  async activeStream(previousStream = null) {
+    if (previousStream) {
+      stopTracks(previousStream);
     }
-  
-    // Given a camera device, return a stream
+
     try {
       return await navigator.mediaDevices.getUserMedia({
-          video: {
-              deviceId: { exact: this.active().deviceId },
-          },
-          audio: false
+        video: { deviceId: { exact: this.active().deviceId } },
+        audio: false,
       });
     } catch (err) {
-        console.error('Error accessing camera:', err);
-        throw err;
+      console.error('Error accessing camera:', err);
+      throw err;
     }
   }
+}
 
+function stopTracks(stream) {
+  const tracks = stream.getTracks();
+  tracks.forEach((track) => track.stop());
 }
 
 export async function getCameraDevices() {
-  // Return a DeviceList of all active cameras
-
   const devices = await navigator.mediaDevices.enumerateDevices();
-  const videoDevices = devices.filter(device => device.kind === 'videoinput');
-
-  // sort device list, preferring ones that contain rearKeys
-  let rearKeys = ['rear', 'back', 'environment']
+  const videoDevices = devices.filter((device) => device.kind === VIDEO_INPUT);
 
   videoDevices.sort((a, b) => {
-    const aContainsKey = rearKeys.some(key => a.label.toLowerCase().includes(key));
-    const bContainsKey = rearKeys.some(key => b.label.toLowerCase().includes(key));
+    const aContainsKey = REAR_KEYS.some((key) => a.label.toLowerCase().includes(key));
+    const bContainsKey = REAR_KEYS.some((key) => b.label.toLowerCase().includes(key));
 
-    if (aContainsKey && bContainsKey) return 0; // Both have rearKeys, so retain their order
-    if (aContainsKey) return -1;                // a should come before b
-    if (bContainsKey) return 1;                 // b should come before a
-    return 0;                                  // Neither have rearKeys, so retain their order
+    if (aContainsKey && bContainsKey) return 0;
+    if (aContainsKey) return -1;
+    if (bContainsKey) return 1;
+    return 0;
   });
 
-  var deviceList = new DeviceList(videoDevices);
-
-  console.log("Device List: ", deviceList)
+  const deviceList = new DeviceList(videoDevices);
   return deviceList;
 }
 
 
 
-export async function getMicrophoneStream(){
+
+export async function getMicrophoneStream() {
   const devices = await navigator.mediaDevices.enumerateDevices();
   var audioDevices = devices.filter((d) => d.kind === 'audioinput');
 
