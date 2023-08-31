@@ -102,11 +102,13 @@ const Streamer = () => {
   }
 
   async function toggleCamera() {
+    setHasMultipleCameras(false)
     cameraDevices.next()
     cameraStream = await getCameraStream();  // Setup the new camera stream
     if (client.has_stream) {
       client.setStream(cameraStream);
     }
+    setHasMultipleCameras(true)
   }
 
   const clearCameraStreams = async () => {
