@@ -52,15 +52,15 @@ const Streamer = () => {
 
 
     // try this and if it throws an error then add this to the error list
-    
+
     const gotPermissions = await handlePermissions(); // request camera permissions on page load
-    if (gotPermissions) {  
+    if (gotPermissions) {
       handleRemoveError('noPermissions');
     } else {
       handleAddError('noPermissions');
       return;
     }
-    
+
     cameraDevices = await getCameraDevices();
 
     // if we don't have a camera, end page here
@@ -131,6 +131,7 @@ const Streamer = () => {
     if (client.has_stream) {
       client.setStream(cameraStream);
     }
+    await delay(1000);
     setHasMultipleCameras(true)
   }
 
@@ -213,7 +214,7 @@ const Streamer = () => {
         </div>
       )}
 
-      
+
 
       <div className="streamerplayer-rows-bottom">
         <button className="button" onClick={startStream} disabled={!readyToStream}>
