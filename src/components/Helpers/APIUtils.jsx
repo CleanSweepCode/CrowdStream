@@ -67,7 +67,7 @@ export async function tagGeoLocationFromUtil(data) {
         body: JSON.stringify(data)
     })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => data)
         .catch((error) => {
             console.error('Error:', error);
         });

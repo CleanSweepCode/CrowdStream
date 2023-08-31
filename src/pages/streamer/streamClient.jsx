@@ -1,5 +1,10 @@
 
-import { listChannels, createChannel, channelHeartbeat, tagChannelInactive, tagChannelActive } from '../../components/Helpers/APIUtils.jsx'
+import { listChannels, 
+         createChannel,
+         channelHeartbeat,
+         tagChannelInactive,
+         tagChannelActive,
+         tagGeoLocationFromUtil } from '../../components/Helpers/APIUtils.jsx'
 import IVSBroadcastClient, {
     Errors,
     BASIC_LANDSCAPE
@@ -66,6 +71,14 @@ export class StreamClient {
 
     async sendHeartbeat() {
         await channelHeartbeat(this.channel_name);
+    }
+
+    async updateTags(tags) {
+        const params = {
+            channelName: this.channel_name,
+            tags: tags
+        };
+        await tagGeoLocationFromUtil(params);
     }
 
 }

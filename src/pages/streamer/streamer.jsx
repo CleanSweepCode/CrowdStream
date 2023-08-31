@@ -11,6 +11,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { fetchGeolocationData } from './locationManagement.jsx'
 import { getCameraDevices, handlePermissions, getMicrophoneStream } from './deviceManagement.jsx'
 
+const REFRESH_INTERVAL = 10000; // 10 seconds
+
 var client = null;
 var cameraDevices = null;
 var cameraStream = null;
@@ -24,6 +26,7 @@ const Streamer = () => {
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
   const [readyToStream, setReadyToStream] = useState(false);
   const [startStreamErrors, setStartStreamErrors] = useState([]);
+  const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
 
   const handleRemoveError = (errorName) => {
     const newStartStreamErrors = startStreamErrors.filter(item => item !== errorName);
@@ -35,10 +38,23 @@ const Streamer = () => {
     setStartStreamErrors(newStartStreamErrors);
   };
 
+  const handleRefreshLocation = async () => {
+    const position = await fetchGeolocationData();
+    const tags = {
+      "latitude": position.coords.latitude.toString(),
+      "longitude": position.coords.longitude.toString(),
+    };
+
+    client.updateTags(tags);
+
+    console.log('Updated location to: ', position.coords.latitude, position.coords.longitude)
+  }
+  
+
   // Initialize the streamer
   useEffect(async () => {
     Initialize();
-  }, []);
+  }, [intervalId]);
 
   async function Initialize() {
     const position = await fetchGeolocationData();
@@ -84,6 +100,18 @@ const Streamer = () => {
 
     client = await StreamClient.create(tags, streamConfig);
     await setupMicrophoneStream();
+
+    if (!intervalId) {
+      const id = setInterval(handleRefreshLocation, REFRESH_INTERVAL);
+      setIntervalId(id);
+    };
+
+    // Clean up the interval when the component unmounts or when the effect is run again
+    return () => {
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
+    };
   }
 
   async function setupMicrophoneStream() {
@@ -157,6 +185,7 @@ const Streamer = () => {
     // So creating a new channel each time
     clearCameraStreams();
     closeStream();
+    clearInterval(intervalId);
     client = null;
   }
 
