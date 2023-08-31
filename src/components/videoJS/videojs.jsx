@@ -4,6 +4,7 @@ import { registerIVSTech } from 'amazon-ivs-player';
 import 'video.js/dist/video-js.css';
 import { getStreamLinkFromName } from '../Helpers/APIUtils.jsx';
 
+
 const VideoJSPlayer = ({ channel_name }) => {
   const videoRef = React.useRef(null);
 
@@ -19,6 +20,7 @@ const VideoJSPlayer = ({ channel_name }) => {
       techOrder: ["AmazonIVS"],
       controls: true,
       autoplay: true,
+      draggable: true,
       preload: 'auto'
     }, async () => {
       const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);

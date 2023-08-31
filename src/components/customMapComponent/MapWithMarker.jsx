@@ -34,6 +34,7 @@ function MapWithMarker() {
     const [selectedChannel, setSelectedChannel] = useState(null);
     const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+    const [dragData, setDragData] = React.useState({ startX: 0, startY: 0, offsetX: 0, offsetY: 0 });
 
 
     useEffect(() => {
@@ -106,6 +107,34 @@ function MapWithMarker() {
         navigate(url);
     }
 
+    const handleDragStart = (e) => {
+        setDragData({
+            ...dragData,
+            startX: e.clientX,
+            startY: e.clientY
+        });
+    }
+    
+    const handleDrag = (e) => {
+        if (e.clientX === 0 && e.clientY === 0) return; // This prevents the drag event firing when the mouse isn't moving
+    
+        const dx = e.clientX - dragData.startX + dragData.offsetX;
+        const dy = e.clientY - dragData.startY + dragData.offsetY;
+    
+        e.target.style.transform = `translate(${dx}px, ${dy}px)`;
+    }
+    
+    const handleDragEnd = (e) => {
+        const dx = e.clientX - dragData.startX + dragData.offsetX;
+        const dy = e.clientY - dragData.startY + dragData.offsetY;
+    
+        setDragData({
+            ...dragData,
+            offsetX: dx,
+            offsetY: dy
+        });
+    }
+    
     const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo.filter(channel => channel.tags.active === "false");
 
     return (
@@ -212,11 +241,11 @@ function MapWithMarker() {
             </div>                
             {
                 showVideoPlayer && selectedChannel &&
-                <div className="video-player-container">
-                <button onClick={() => setShowVideoPlayer(false)}>Close</button>
-                <VideoJSPlayer channel_name={selectedChannel.name} />
+                <div className="video-player-container" draggable="true" onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd}>
+                    {/* <div className="drag-handle">Drag Me</div> */}
+                    <button onClick={() => setShowVideoPlayer(false)}>Close</button>
+                    <VideoJSPlayer channel_name={selectedChannel.name} />
                 </div>
-
             }
 
         </div>
