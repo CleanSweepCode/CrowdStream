@@ -37,7 +37,8 @@
 
 /* Styling for the player container */
 .viewer-playerContainer {
-    flex-grow: 1;
+    flex-grow: 1;   
+    margin-top: 20px;
 }
 
 /* Styling for the left button */

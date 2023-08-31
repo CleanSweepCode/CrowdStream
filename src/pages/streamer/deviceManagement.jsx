@@ -87,9 +87,9 @@ export async function handlePermissions() {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     for (const track of stream.getTracks()) {
       track.stop();
-
     }
     permissions = { video: true, audio: true };
+    return true;
   } catch (err) {
     permissions = { video: false, audio: false };
     console.error(err.message);
@@ -97,8 +97,10 @@ export async function handlePermissions() {
   // If we still don't have permissions after requesting them display the error message
   if (!permissions.video) {
     console.error('Failed to get video permissions.');
+    return false;
   } else if (!permissions.audio) {
     console.error('Failed to get audio permissions.');
+    return false;
   }
 }
 

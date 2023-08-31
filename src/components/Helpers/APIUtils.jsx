@@ -2,6 +2,8 @@
 const LOCALTEST = 'http://localhost:8080';
 //For production, use https://livestreamapp-backend-7r4nlien6a-od.a.run.app
 const REMOTETEST = 'https://livestreamapp-backend-7r4nlien6a-od.a.run.app';
+const LOCALTEST2 = 'https://10.248.151.179:8080';
+
 
 const BACKEND_URL = REMOTETEST;
 

@@ -6,7 +6,7 @@ The web app is hosted on Vercel at this link:
 
 [livestream-app-swart.vercel.app](livestream-app-swart.vercel.app)
 
-The frontend website is written in React JS, and the server is hosted on AWS (with Vercel as a wrapper). Video streaming is managed using the Amazon IVS API.
+The frontend website is written in React JS, and is hosted on vercel. The backend server (ie. nodeJS) is hosted on Google Cloud Platform which makes calls to AWS. Video streaming is managed using the Amazon IVS API.
 
 The website's backend nodeJS server is hosted on Google cloud. The following link should show "Hello World Google Cloud Integration!":
 

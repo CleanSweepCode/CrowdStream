@@ -11,6 +11,9 @@ import { CONTROLS, POSITION } from '../../components/Helpers/config.js';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 
+import VideoJSPlayer from '../../components/videoJS/videojs.jsx';
+
+
 const Viewer = () => {
   const ref = useRef();
   const navigate = useNavigate();
@@ -18,7 +21,7 @@ const Viewer = () => {
   const [currentIndex, setCurrentIndex] = useState(null);
 
   let { channel_name } = useParams();
-
+  
   // fetch the list of channels. List should be sorted by geographical distance from 
   useEffect(() => {
     const fetchChannels = async () => {
@@ -83,14 +86,6 @@ const Viewer = () => {
     window.location.reload();
   }
 
-  async function Initialize() {
-    console.log("Initializing STREAM_PLAYBACK_URL", channel_name);
-    const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
-    ref.current.setURL(STREAM_PLAYBACK_URL);
-    console.log("Set URL to: " + STREAM_PLAYBACK_URL);
-    refreshStream();
-  }
-
   return (
     <div className="viewer-container">
       <div className="viewer-rows">
@@ -114,16 +109,7 @@ const Viewer = () => {
           </IconButton>
         </div>
         <div className="viewer-playerContainer">
-          <MiniPlayer
-            ref={ref}
-            //streamUrl={STREAM_PLAYBACK_URL}
-            onPlayerReady={() => {
-              Initialize();
-            }}
-            controls={[CONTROLS.resize, CONTROLS.close, CONTROLS.mute]}
-            position={POSITION.center}
-            transition
-          />
+          <VideoJSPlayer channel_name={channel_name} />
         </div>
         <div className="viewer-channelButton">
           <IconButton edge="start" color="inherit" aria-label="next" disabled={channels.length === 1} onClick={goToNextChannel}>
