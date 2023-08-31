@@ -23,7 +23,17 @@ const Streamer = () => {
   const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
   const [readyToStream, setReadyToStream] = useState(false);
-  const [noCamerasFound, setNoCamerasFound] = useState(false); // Add this state
+  const [startStreamErrors, setStartStreamErrors] = useState([]);
+
+  const handleRemoveError = (errorName) => {
+    const newStartStreamErrors = startStreamErrors.filter(item => item !== errorName);
+    setStartStreamErrors(newStartStreamErrors);
+  };
+
+  const handleAddError = (errorName) => {
+    const newStartStreamErrors = [...startStreamErrors, errorName];
+    setStartStreamErrors(newStartStreamErrors);
+  };
 
   // Initialize the streamer
   useEffect(async () => {
@@ -33,9 +43,38 @@ const Streamer = () => {
   async function Initialize() {
     const position = await fetchGeolocationData();
 
-    if (!position) {
-      throw "No Geolocation data received."
+    if (position) {
+      handleRemoveError('noGeoLocation');
+    } else {
+      handleAddError('noGeoLocation');
+      return;
     }
+
+
+    // try this and if it throws an error then add this to the error list
+    
+    const gotPermissions = await handlePermissions(); // request camera permissions on page load
+    if (gotPermissions) {  
+      handleRemoveError('noPermissions');
+    } else {
+      handleAddError('noPermissions');
+      return;
+    }
+    
+    cameraDevices = await getCameraDevices();
+
+    // if we don't have a camera, end page here
+    if (cameraDevices.size === 0) {
+      handleAddError('noCamera');
+      return;
+    } else {
+      handleRemoveError('noCamera');
+    }
+
+    setHasMultipleCameras(cameraDevices.size > 1);
+    setReadyToStream(true);
+
+    cameraStream = await getCameraStream();
 
     const tags = {
       "latitude": position.coords.latitude.toString(),
@@ -44,22 +83,6 @@ const Streamer = () => {
     };
 
     client = await StreamClient.create(tags, streamConfig);
-
-    await handlePermissions(); // request camera permissions on page load
-    cameraDevices = await getCameraDevices();
-
-    // if we don't have a camera, end page here
-    if (cameraDevices.size === 0) {
-      setNoCamerasFound(true)
-      return;
-    } else {
-      setNoCamerasFound(false)
-    }
-
-    setHasMultipleCameras(cameraDevices.size > 1);
-    setReadyToStream(true);
-
-    cameraStream = await getCameraStream();
     await setupMicrophoneStream();
   }
 
@@ -171,11 +194,26 @@ const Streamer = () => {
         ref={ref}
       />
 
-      {noCamerasFound && (
-        <div className="no-cameras-message">
+
+      {startStreamErrors.includes('noPermissions') && (
+        <div className="error-message">
+          Camera/Microphone permissions error. Make sure you have Camera/Microphone permissions enabled.
+        </div>
+      )}
+
+      {startStreamErrors.includes('noCamera') && (
+        <div className="error-message">
           No cameras are found. Please connect a camera to start streaming.
         </div>
       )}
+
+      {startStreamErrors.includes('noGeoLocation') && (
+        <div className="error-message">
+          Geo-location permissions error. Make sure you have location permissions enabled to start streaming.
+        </div>
+      )}
+
+      
 
       <div className="streamerplayer-rows-bottom">
         <button className="button" onClick={startStream} disabled={!readyToStream}>

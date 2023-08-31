@@ -74,7 +74,23 @@
 .map-refreshStreamButton:hover {
     background-color: var(--official-hover-blue);
  }
- 
+ .video-player-container {
+    position: fixed;
+    bottom: 20px;    
+    right: 20px;     
+    width: 640px;    
+    height: 360px;   
+    z-index: 1000;   
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.video-player-container button {
+    align-self: flex-end;
+    margin-bottom: 5px; 
+}
+
 
 .map-titlecontainer,
 .map-helpText {
