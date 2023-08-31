@@ -71,7 +71,7 @@ const Streamer = () => {
     }
 
     setHasMultipleCameras(cameraDevices.size > 1);
-    setReadyToStream(true);
+
 
     cameraStream = await getCameraStream();
 
@@ -83,6 +83,7 @@ const Streamer = () => {
 
     client = await StreamClient.create(tags, streamConfig);
     await setupMicrophoneStream();
+    setReadyToStream(true);
   }
 
   async function setupMicrophoneStream() {
@@ -101,7 +102,6 @@ const Streamer = () => {
   }
 
   const startStream = async () => {
-
     // If there isn't a camera and microphone stream (which occurs after clicking 'End Stream'), start one
     if (!cameraStream) {
       cameraStream = await getCameraStream();
@@ -109,18 +109,19 @@ const Streamer = () => {
     if (!microphoneStream) {
       await setupMicrophoneStream();
     }
-
-    await client.setStream(cameraStream);
-
+    if (!client.has_stream) {
+      await client.setStream(cameraStream);
+    }
     client.start()
       .then((result) => {
         ref.current.setIsBroadcasting(true);
         client.has_stream = true;
+        console.log("Started Streaming")
+        setReadyToStream(false);
       })
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
       });
-
   }
 
   const delay = (milliseconds) => {
@@ -151,11 +152,12 @@ const Streamer = () => {
   }
 
   const closeStream = async () => {
-    if (client) {
+    if (readyToStream || client) {
       client.stop(); // Stop the stream
       if (ref.current) {
         ref.current.setIsBroadcasting(false);
       }
+      setReadyToStream(true);
     }
   }
 
