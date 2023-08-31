@@ -7,7 +7,7 @@ import { StreamClient } from './streamClient.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-
+import { setTimeout } from "timers/promises";
 import { fetchGeolocationData } from './locationManagement.jsx'
 import { getCameraDevices, handlePermissions, getMicrophoneStream } from './deviceManagement.jsx'
 
@@ -131,7 +131,7 @@ const Streamer = () => {
     if (client.has_stream) {
       client.setStream(cameraStream);
     }
-    await delay(1000);
+    await setTimeout(5000); // Wait 5 seconds before allowing the user to toggle again
     setHasMultipleCameras(true)
   }
 
