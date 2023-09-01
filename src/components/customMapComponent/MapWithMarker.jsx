@@ -28,7 +28,7 @@ var defaultCenter = {
 
 function MapWithMarker() {
     const navigate = useNavigate();
-    const [activeOnly, setActiveOnly] = useState(true);  // This is the new piece of state
+    const [includePastStreams, setIncludePastStreams] = useState(true);  // This is the new piece of state
     const [channelInfo, setChannelInfo] = useState([]);
     const [center, setCenter] = useState(defaultCenter);
     const [selectedChannel, setSelectedChannel] = useState(null);
@@ -106,7 +106,15 @@ function MapWithMarker() {
         navigate(url);
     }
 
-    const displayedChannels = activeOnly ? channelInfo.filter(channel => channel.tags.active === "true") : channelInfo.filter(channel => channel.tags.active === "false");
+    // if activeOnly, display only channel with tag active == 'true'
+    // if !activeOnly, display those channels, + those with a tag RecordingURL
+    const displayedChannels = channelInfo.filter(channel => {
+        if (!includePastStreams) {
+            return channel.tags.active === "true";
+        } else {
+            return channel.tags.active === "true" || channel.tags.RecordingURL;
+        }
+    });
 
     return (
         <div>
@@ -114,13 +122,12 @@ function MapWithMarker() {
                 <FormControlLabel
                     control={
                         <Switch
-                            checked={activeOnly}
-                            onChange={e => setActiveOnly(e.target.checked)}
+                            checked={includePastStreams}
+                            onChange={e => setIncludePastStreams(e.target.checked)}
                             color="primary"
                         />
                     }
-                    // Label should be 'Active channels' if activeOnly else 'All channels'
-                    label={activeOnly ? 'Active channels' : 'All channels'}
+                    label={'Include past streams'}
                     className="map-switchcontainer"
                 />
 
@@ -193,7 +200,6 @@ function MapWithMarker() {
                             key={index}
                             icon={channel.tags.active === "true" ? liveIconMarker : oldIconMarker}
                             scaledSize={2000}
-                            clickable={channel.tags.active === "true"}
                             position={{
                                 lat: parseFloat(channel.tags.latitude),
                                 lng: parseFloat(channel.tags.longitude)
