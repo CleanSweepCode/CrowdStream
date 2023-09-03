@@ -7,9 +7,10 @@ import { StreamClient } from './streamClient.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-
 import { fetchGeolocationData } from './locationManagement.jsx'
 import { getCameraDevices, handlePermissions, getMicrophoneStream } from './deviceManagement.jsx'
+
+const REFRESH_INTERVAL = 10000; // 10 seconds
 
 var client = null;
 var cameraDevices = null;
@@ -24,6 +25,7 @@ const Streamer = () => {
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
   const [readyToStream, setReadyToStream] = useState(false);
   const [startStreamErrors, setStartStreamErrors] = useState([]);
+  const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
 
   const handleRemoveError = (errorName) => {
     const newStartStreamErrors = startStreamErrors.filter(item => item !== errorName);
@@ -35,10 +37,23 @@ const Streamer = () => {
     setStartStreamErrors(newStartStreamErrors);
   };
 
+  const handleRefreshLocation = async () => {
+    const position = await fetchGeolocationData();
+    const tags = {
+      "latitude": position.coords.latitude.toString(),
+      "longitude": position.coords.longitude.toString(),
+    };
+
+    client.updateTags(tags);
+
+    console.log('Updated location to: ', position.coords.latitude, position.coords.longitude)
+  }
+  
+
   // Initialize the streamer
   useEffect(async () => {
     Initialize();
-  }, []);
+  }, [intervalId]);
 
   async function Initialize() {
     const position = await fetchGeolocationData();
@@ -52,15 +67,15 @@ const Streamer = () => {
 
 
     // try this and if it throws an error then add this to the error list
-    
+
     const gotPermissions = await handlePermissions(); // request camera permissions on page load
-    if (gotPermissions) {  
+    if (gotPermissions) {
       handleRemoveError('noPermissions');
     } else {
       handleAddError('noPermissions');
       return;
     }
-    
+
     cameraDevices = await getCameraDevices();
 
     // if we don't have a camera, end page here
@@ -72,7 +87,7 @@ const Streamer = () => {
     }
 
     setHasMultipleCameras(cameraDevices.size > 1);
-    setReadyToStream(true);
+
 
     cameraStream = await getCameraStream();
 
@@ -84,6 +99,20 @@ const Streamer = () => {
 
     client = await StreamClient.create(tags, streamConfig);
     await setupMicrophoneStream();
+
+    if (!intervalId) {
+      const id = setInterval(handleRefreshLocation, REFRESH_INTERVAL);
+      setIntervalId(id);
+    };
+
+    setReadyToStream(true);
+    
+    // Clean up the interval when the component unmounts or when the effect is run again
+    return () => {
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
+    };
   }
 
   async function setupMicrophoneStream() {
@@ -102,7 +131,6 @@ const Streamer = () => {
   }
 
   const startStream = async () => {
-
     // If there isn't a camera and microphone stream (which occurs after clicking 'End Stream'), start one
     if (!cameraStream) {
       cameraStream = await getCameraStream();
@@ -110,26 +138,35 @@ const Streamer = () => {
     if (!microphoneStream) {
       await setupMicrophoneStream();
     }
-
-    await client.setStream(cameraStream);
-
+    if (!client.has_stream) {
+      await client.setStream(cameraStream);
+    }
     client.start()
       .then((result) => {
         ref.current.setIsBroadcasting(true);
         client.has_stream = true;
+        console.log("Started Streaming")
+        setReadyToStream(false);
       })
       .catch((error) => {
         console.error('Something drastically failed while broadcasting!', error);
       });
-
   }
 
+  const delay = (milliseconds) => {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  };
+
   async function toggleCamera() {
+    setHasMultipleCameras(false)
     cameraDevices.next()
     cameraStream = await getCameraStream();  // Setup the new camera stream
     if (client.has_stream) {
       client.setStream(cameraStream);
     }
+    await delay(1000); // Wait 5 seconds before allowing the user to toggle again
+    console.log('camera toggled')
+    setHasMultipleCameras(true)
   }
 
   const clearCameraStreams = async () => {
@@ -144,11 +181,12 @@ const Streamer = () => {
   }
 
   const closeStream = async () => {
-    if (client) {
+    if (readyToStream || client) {
       client.stop(); // Stop the stream
       if (ref.current) {
         ref.current.setIsBroadcasting(false);
       }
+      setReadyToStream(true);
     }
   }
 
@@ -157,6 +195,7 @@ const Streamer = () => {
     // So creating a new channel each time
     clearCameraStreams();
     closeStream();
+    clearInterval(intervalId);
     client = null;
   }
 
@@ -211,7 +250,7 @@ const Streamer = () => {
         </div>
       )}
 
-      
+
 
       <div className="streamerplayer-rows-bottom">
         <button className="button" onClick={startStream} disabled={!readyToStream}>
