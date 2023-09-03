@@ -8,7 +8,7 @@ import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Mate
 import liveIconMarker from '../../assets/marker64.png';
 import oldIconMarker from '../../assets/filmMarker64.png';
 import VideoJSPlayer from '../videoJS/videojs.jsx';
-
+import { XSquare, ArrowLeft, ArrowRight } from 'lucide-react';
 
 
 const REFRESH_INTERVAL = 10000; // 10 seconds
@@ -134,6 +134,10 @@ function MapWithMarker() {
             offsetY: dy
         });
     }
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+    };
     
     // if activeOnly, display only channel with tag active == 'true'
     // if !activeOnly, display those channels, + those with a tag RecordingURL
@@ -144,6 +148,17 @@ function MapWithMarker() {
             return channel.tags.active === "true" || channel.tags.RecordingURL;
         }
     });
+
+    const handleDragOver = (e) => {
+        e.preventDefault(); // Prevent default to allow drop
+    };
+
+    const backChannel = () => {
+        console.log("left channel")
+    }
+    const forwardChannel = () => {
+        console.log("right channel")
+    }
 
     return (
         <div>
@@ -247,10 +262,12 @@ function MapWithMarker() {
             </div>                
             {
                 showVideoPlayer && selectedChannel &&
-                <div className="video-player-container" draggable="true" onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd}>
+                <div className="video-player-container" draggable="true" onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd} onDrop={handleDrop} onDragOver={handleDragOver} >
                     {/* <div className="drag-handle">Drag Me</div> */}
-                    <button onClick={() => setShowVideoPlayer(false)}>Close</button>
-                    <VideoJSPlayer channel_name={selectedChannel.name} />
+                    <XSquare onClick={() => setShowVideoPlayer(false)} className="map-closebutton" />
+                    <ArrowLeft onClick={backChannel} className="map-leftbutton" />
+                    <ArrowRight onClick={forwardChannel}  className="map-rightbutton" />
+                    <VideoJSPlayer channel_name={selectedChannel.name} className="map-videojsplayer"/>
                 </div>
             }
 
