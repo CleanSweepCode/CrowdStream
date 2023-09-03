@@ -4,7 +4,7 @@ import { listChannels,
          channelHeartbeat,
          tagChannelInactive,
          tagChannelActive,
-         tagGeoLocationFromUtil } from '../../components/Helpers/APIUtils.jsx'
+         tagChannel } from '../../components/Helpers/APIUtils.jsx'
 import IVSBroadcastClient, {
     Errors,
     BASIC_LANDSCAPE
@@ -78,7 +78,7 @@ export class StreamClient {
             channelName: this.channel_name,
             tags: tags
         };
-        await tagGeoLocationFromUtil(params);
+        await tagChannel(params);
     }
 
 }

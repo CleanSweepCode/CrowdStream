@@ -57,7 +57,8 @@ export async function tagChannelActive(channelName) {
         });
 }
 
-export async function tagGeoLocationFromUtil(data) {
+export async function tagChannel(data) {
+    // receives a dict of channelName and tags, sends to backend.
 
     fetch(`${BACKEND_URL}/channels/tagByName`, {
         method: 'POST',

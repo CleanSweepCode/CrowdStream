@@ -45,7 +45,6 @@ const Streamer = () => {
     };
 
     client.updateTags(tags);
-
     console.log('Updated location to: ', position.coords.latitude, position.coords.longitude)
   }
   
@@ -53,7 +52,7 @@ const Streamer = () => {
   // Initialize the streamer
   useEffect(async () => {
     Initialize();
-  }, [intervalId]);
+  }, []);
 
   async function Initialize() {
     const position = await fetchGeolocationData();
@@ -95,6 +94,7 @@ const Streamer = () => {
       "latitude": position.coords.latitude.toString(),
       "longitude": position.coords.longitude.toString(),
       "active": "preparing",
+      // "record": "true", // Uncomment this to enable recording
     };
 
     client = await StreamClient.create(tags, streamConfig);
@@ -209,8 +209,8 @@ const Streamer = () => {
 
       <div className="streamerplayer-rows">
         <div className="streamerplayer-backButton">
-          <IconButton edge="start" color="inherit" aria-label="back" onClick={() => {
-            onExit();
+          <IconButton edge="start" color="inherit" aria-label="back" onClick={async () => {
+            await onExit();
             navigate('/');
           }}>
             <ArrowBackIcon />
@@ -257,8 +257,11 @@ const Streamer = () => {
           Start Stream
         </button>
 
-        <button className="button red" onClick={closeStream}>
-          End Stream
+        <button className="button red" onClick={async () => {
+            await onExit();
+            navigate('/');
+          }}>
+          End Stream 
         </button>
 
         <button className="button" onClick={toggleCamera} disabled={!hasMultipleCameras}>
