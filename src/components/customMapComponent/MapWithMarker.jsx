@@ -198,7 +198,14 @@ function MapWithMarker() {
                     </button>
                 </div>
 
-                
+
+                <div className='map-refreshStreamButtonDiv'>
+                    <button className="map-refreshStreamButton" style={{ top: '4em' }}
+                        onClick={() => navigateAndClearInterval(`/about`)}>
+                        ?
+                    </button>
+                </div>
+
 
                 <GoogleMap
                     mapContainerStyle={containerStyle}
