@@ -7,7 +7,7 @@ export function getCurrentPosition() {
       }
     });
   }
-  
+
 export async function fetchGeolocationData() {
     try {
       const position = await getCurrentPosition();
@@ -17,5 +17,6 @@ export async function fetchGeolocationData() {
   
     } catch (error) {
       console.error('Error retrieving geolocation:', error);
+      return null;
     }
   }
