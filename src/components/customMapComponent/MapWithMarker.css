@@ -16,10 +16,36 @@
     --official-hover-blue: #0578A9;
 }
 
+.map-videojsplayer {
+    position: relative;
+}
+  
+.map-closebutton, .map-leftbutton, .map-rightbutton {
+    position: absolute; /* Absolute positioning */
+    color: #E5E5E5;
+    cursor: pointer;
+    z-index: 9999;  /* High z-index to make it appear above the video player */
+}
+  
+.map-closebutton {
+    top: 5px;            /* Place it at the top */
+    right: 5px;          /* Place it at the right */
+}
+  
+.map-leftbutton {
+    top: 50%;            /* Center vertically */
+    left: 5px;           /* Place it at the left */
+    transform: translateY(-50%);  /* Adjust for true centering */
+}
+  
+.map-rightbutton {
+    top: 50%;            /* Center vertically */
+    right: 5px;          /* Place it at the right */
+    transform: translateY(-50%);  /* Adjust for true centering */
+}
+
 .map-container {
     position: relative;
-    width: 100%;
-    height: 100%;
 }
 
 .map-switchcontainer {
@@ -73,13 +99,25 @@
 
 .map-refreshStreamButton:hover {
     background-color: var(--official-hover-blue);
- }
- .video-player-container {
+}
+
+
+
+:root {
+    --calculated-width: calc(100vw); /* Remove the margin subtraction to take full width */
+}
+
+.video-js {
+    width: 845px;
+    height: 480px;
+}
+
+.video-player-container {
     position: fixed;
     bottom: 20px;    
     right: 20px;     
-    width: 640px;    
-    height: 360px;   
+    width: 845px;
+    height: 480px;   
     z-index: 1000;   
     display: flex;
     flex-direction: column;
@@ -89,6 +127,34 @@
 .video-player-container button {
     align-self: flex-end;
     margin-bottom: 5px; 
+}
+
+/* when the screen width is smaller than 855px, use 640x360 dimensions for player container and video-js */
+@media (max-width: 855px) {
+    .video-player-container {
+        width: 640px;
+        height: 360px;
+    }
+    .video-js {
+        width: 640px;
+        height: 360px;
+    }
+}
+
+@media (max-width: 640px) {
+    .video-player-container {
+        width: var(--calculated-width);
+        height: calc(var(--calculated-width) * 9 / 16);
+        top: 0; /* Align to top */
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%); /* Adjust for exact centering */
+        bottom: auto; /* Reset bottom property */
+        right: auto; /* Reset right property */
+    }
+    .video-js {
+        width: var(--calculated-width);
+        height: calc(var(--calculated-width) * 9 / 16);
+    }
 }
 
 

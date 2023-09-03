@@ -50,12 +50,10 @@ const VideoJSPlayer = ({ channel_name }) => {
       className="video-js vjs-default-skin"
       controls
       preload="auto"
-      width="640"
-      height="360"
       data-setup='{"techOrder": ["AmazonIVS"]}'
       muted
-    ></video>
+    >
+    </video>
   );
 }
-
 export default VideoJSPlayer;
