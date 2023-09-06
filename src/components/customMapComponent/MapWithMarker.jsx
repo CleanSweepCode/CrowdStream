@@ -3,12 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { GoogleMap, Marker } from '@react-google-maps/api'
 import { useNavigate } from "react-router-dom";
 import './MapWithMarker.css';
-import { listChannels } from '../Helpers/APIUtils.jsx'
+// import { listChannels } from '../Helpers/APIUtils.jsx'
+import {getChannelList} from '../Helpers/ChannelList.jsx';
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
 import liveIconMarker from '../../assets/marker64.png';
 import oldIconMarker from '../../assets/filmMarker64.png';
 import VideoJSPlayer from '../videoJS/videojs.jsx';
 import { XSquare, ArrowLeft, ArrowRight } from 'lucide-react';
+
 
 
 const REFRESH_INTERVAL = 10000; // 10 seconds
@@ -24,12 +26,14 @@ var defaultCenter = {
     lng: -0.21997342925326427
 }; // if marker loading fails, default to London for map centre
 
+const channelList = await getChannelList(); // ChannelList object
+
 
 
 function MapWithMarker() {
     const navigate = useNavigate();
     const [includePastStreams, setIncludePastStreams] = useState(true);  // This is the new piece of state
-    const [channelInfo, setChannelInfo] = useState([]);
+    // const [channelInfo, setChannelInfo] = useState([]);
     const [center, setCenter] = useState(defaultCenter);
     const [selectedChannel, setSelectedChannel] = useState(null);
     const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
@@ -39,37 +43,10 @@ function MapWithMarker() {
 
     useEffect(() => {
         const fetchChannelInfo = async () => {
-            const fetchedChannelInfo = await listChannels();
-            setChannelInfo(fetchedChannelInfo);
+            await channelList.loadChannels();
 
-            if (fetchedChannelInfo.length > 0) {
-                let totalLat = 0.0;
-                let totalLng = 0.0;
-                let numPoints = fetchedChannelInfo.length;
-                let numActiveChannels = 0;
-
-                for (let i = 0; i < numPoints; i++) {
-                    if (fetchedChannelInfo[i].tags.active === "true") {
-                        totalLat += parseFloat(fetchedChannelInfo[i].tags.latitude);
-                        totalLng += parseFloat(fetchedChannelInfo[i].tags.longitude);
-                        numActiveChannels++;
-                    }
-                }
-
-                if (numActiveChannels > 0) {
-                    const averageLat = totalLat / numActiveChannels;
-                    const averageLng = totalLng / numActiveChannels;
-
-                    setCenter({
-                        lat: averageLat,
-                        lng: averageLng
-                    });
-                } else {
-                    // Handle case when no active channels found
-                    // For example, set a default center location
-                    setCenter(defaultCenter);
-                }
-            }
+            const mapCentre = channelList.averagePosition(includePastStreams);
+            setCenter(mapCentre || defaultCenter);
         
             // Set up the interval for refreshing streams
             if (!intervalId) {
@@ -90,10 +67,7 @@ function MapWithMarker() {
 
     const handleRefreshStreams = async () => {
         try {
-            const fetchedChannelInfo = await listChannels(); // Call your API to get new channel data
-            setChannelInfo(fetchedChannelInfo); // Update the channel data
-            
-            // Might need to update the center and other map-related logic here
+            await channelList.loadChannels(); // Call your API to get new channel data
             console.log('Streams refreshed');
 
         } catch (error) {
@@ -139,25 +113,20 @@ function MapWithMarker() {
         e.preventDefault();
     };
     
-    // if activeOnly, display only channel with tag active == 'true'
-    // if !activeOnly, display those channels, + those with a tag RecordingURL
-    const displayedChannels = channelInfo.filter(channel => {
-        if (!includePastStreams) {
-            return channel.tags.active === "true";
-        } else {
-            return channel.tags.active === "true" || channel.tags.RecordingURL;
-        }
-    });
+
+    const displayedChannels = channelList.filterActive(includePastStreams);
 
     const handleDragOver = (e) => {
         e.preventDefault(); // Prevent default to allow drop
     };
 
     const backChannel = () => {
-        console.log("left channel")
+        var newChannel = channelList.getPreviousByLongitude(selectedChannel, includePastStreams);
+        setSelectedChannel(newChannel);
     }
     const forwardChannel = () => {
-        console.log("right channel")
+        var newChannel = channelList.getNextByLongitude(selectedChannel, includePastStreams);
+        setSelectedChannel(newChannel);
     }
 
     return (
