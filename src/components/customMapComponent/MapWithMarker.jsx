@@ -34,7 +34,7 @@ var defaultCenter = {
 }; // if marker loading fails, default to London for map centre
 
 const channelList = await getChannelList(); // ChannelList object
-
+var isFullScreen = false;
 
 
 function MapWithMarker() {
@@ -47,6 +47,10 @@ function MapWithMarker() {
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
     const [dragData, setDragData] = React.useState({ startX: 0, startY: 0, offsetX: 0, offsetY: 0 });
 
+    // set a toggle function for when video is set to fullscreen
+    const handleFullscreenToggle = (fullscreenStatus) => {
+        isFullScreen = fullscreenStatus;
+    }
 
     useEffect(() => {
         const fetchChannelInfo = async () => {
@@ -98,7 +102,8 @@ function MapWithMarker() {
     
     const handleDrag = (e) => {
         if (e.clientX === 0 && e.clientY === 0) return; // This prevents the drag event firing when the mouse isn't moving
-    
+        if (isFullScreen) return; // This prevents the drag event firing when the video is fullscreen
+
         const dx = e.clientX - dragData.startX + dragData.offsetX;
         const dy = e.clientY - dragData.startY + dragData.offsetY;
     
@@ -259,7 +264,11 @@ function MapWithMarker() {
                     <XSquare onClick={onVideoClose} className="map-closebutton" />
                     <ArrowLeft onClick={backChannel} className="map-leftbutton" />
                     <ArrowRight onClick={forwardChannel}  className="map-rightbutton" />
-                    <VideoJSPlayer channel_name={selectedChannel.name} className="map-videojsplayer"/>
+                    <VideoJSPlayer 
+                        channel_name={selectedChannel.name}
+                        onFullscreenToggle={handleFullscreenToggle}
+                        className="map-videojsplayer"
+                    />
                 </div>
             }
 
