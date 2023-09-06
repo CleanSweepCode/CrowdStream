@@ -6,7 +6,7 @@ import { getStreamLinkFromName } from '../Helpers/APIUtils.jsx';
 import './videojs.css';
 
 
-const VideoJSPlayer = ({ channel_name }) => {
+const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
   const videoRef = React.useRef(null);
 
   useEffect(() => {
@@ -36,6 +36,8 @@ const VideoJSPlayer = ({ channel_name }) => {
     const fullscreenBtn = document.querySelector('.vjs-fullscreen-control');
     const videoContainer = document.querySelector('.video-player-container');
 
+    // set fullscreen status on reload
+    onFullscreenToggle(videoContainer.classList.contains('fullscreen'));
 
     if (fullscreenBtn) {
       
@@ -50,6 +52,8 @@ const VideoJSPlayer = ({ channel_name }) => {
         } else {
           videoContainer.classList.remove('fullscreen');
         }
+
+        onFullscreenToggle(!isFullscreen);
       });
     }
     
