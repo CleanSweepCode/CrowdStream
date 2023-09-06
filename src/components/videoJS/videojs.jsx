@@ -27,21 +27,10 @@ const VideoJSPlayer = ({ channel_name }) => {
       console.log("Set URL to: " + STREAM_PLAYBACK_URL);
       player.src(STREAM_PLAYBACK_URL);
 
-      // Check for PiP support and request PiP mode
-      const videoEl = videoRef.current;
-      if (document.pictureInPictureEnabled && videoEl.requestPictureInPicture) {
-        console.log('PiP available!');
-        videoEl.requestPictureInPicture().catch(error => {
-          console.error(`Error attempting to enable picture-in-picture: ${error}`);
-        });
-      }
     });
+    
 
-    return () => {
-      if (player) {
-        player.dispose();
-      }
-    };
+    return () => {};
   }, [channel_name]);
 
   return (

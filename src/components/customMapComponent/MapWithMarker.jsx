@@ -259,7 +259,7 @@ function MapWithMarker() {
                                 setSelectedChannel(channel);
                                 setShowVideoPlayer(true);
                             }}
-                            onMouseOver={() => setSelectedChannel(channel)}
+                            // onMouseOver={() => setSelectedChannel(channel)}
                             //onMouseOut={() => setSelectedChannel(null)}
                         />
                     ))}
