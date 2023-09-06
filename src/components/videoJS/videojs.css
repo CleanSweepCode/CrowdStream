@@ -1,0 +1,53 @@
+.video-player-container {
+    position: fixed;
+    bottom: 20px;    
+    right: 20px;     
+    width: 845px;
+    height: 480px;   
+    z-index: 1000;   
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.video-player-container.fullscreen {
+   width: 100%;
+   height: 100%;
+   top: 0px;
+   left: 0px;
+   transform: translate(0%, 0%);
+}
+
+.video-player-container button {
+    align-self: flex-end;
+    margin-bottom: 5px; 
+}
+
+
+/* when the screen width is smaller than 855px, use 640x360 dimensions for player container and video-js */
+@media (max-width: 855px) {
+    .video-player-container {
+        width: 640px;
+        height: 360px;
+    }
+    .video-js {
+        width: 640px;
+        height: 360px;
+    }
+}
+
+@media (max-width: 640px) {
+    .video-player-container {
+        width: var(--calculated-width);
+        height: calc(var(--calculated-width) * 9 / 16);
+        top: 0; /* Align to top */
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%); /* Adjust for exact centering */
+        bottom: auto; /* Reset bottom property */
+        right: auto; /* Reset right property */
+    }
+    .video-js {
+        width: var(--calculated-width);
+        height: calc(var(--calculated-width) * 9 / 16);
+    }
+}

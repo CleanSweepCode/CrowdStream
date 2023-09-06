@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { GoogleMap, Marker } from '@react-google-maps/api'
 import { useNavigate } from "react-router-dom";
 import './MapWithMarker.css';
+import '../videoJS/videojs.css';
 // import { listChannels } from '../Helpers/APIUtils.jsx'
 import {getChannelList} from '../Helpers/ChannelList.jsx';
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example

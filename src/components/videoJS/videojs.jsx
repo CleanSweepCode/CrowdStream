@@ -3,6 +3,7 @@ import videojs from 'video.js';
 import { registerIVSTech } from 'amazon-ivs-player';
 import 'video.js/dist/video-js.css';
 import { getStreamLinkFromName } from '../Helpers/APIUtils.jsx';
+import './videojs.css';
 
 
 const VideoJSPlayer = ({ channel_name }) => {
@@ -21,13 +22,36 @@ const VideoJSPlayer = ({ channel_name }) => {
       controls: true,
       autoplay: true,
       draggable: true,
-      preload: 'auto'
+      preload: 'auto',
+      controlBar: {
+        pictureInPictureToggle: false // Hide PiP button
+      }
     }, async () => {
       const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
       console.log("Set URL to: " + STREAM_PLAYBACK_URL);
       player.src(STREAM_PLAYBACK_URL);
 
     });
+
+    const fullscreenBtn = document.querySelector('.vjs-fullscreen-control');
+    const videoContainer = document.querySelector('.video-player-container');
+
+
+    if (fullscreenBtn) {
+      
+      // clone the fullcreen button
+      const clonedBtn = fullscreenBtn.cloneNode(true);
+      fullscreenBtn.parentNode.replaceChild(clonedBtn, fullscreenBtn);
+  
+      clonedBtn.addEventListener('click', function() {
+        const isFullscreen = videoContainer.classList.contains('fullscreen');
+        if (!isFullscreen) {
+          videoContainer.classList.add('fullscreen');
+        } else {
+          videoContainer.classList.remove('fullscreen');
+        }
+      });
+    }
     
 
     return () => {};
@@ -39,7 +63,7 @@ const VideoJSPlayer = ({ channel_name }) => {
       className="video-js vjs-default-skin"
       controls
       preload="auto"
-      data-setup='{"techOrder": ["AmazonIVS"]}'
+      data-setup='{"techOrder": ["AmazonIVS"], "fluid": true}'
       muted
     >
     </video>
