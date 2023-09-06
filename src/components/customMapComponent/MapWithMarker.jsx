@@ -6,8 +6,14 @@ import './MapWithMarker.css';
 // import { listChannels } from '../Helpers/APIUtils.jsx'
 import {getChannelList} from '../Helpers/ChannelList.jsx';
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
-import liveIconMarker from '../../assets/marker64.png';
-import oldIconMarker from '../../assets/filmMarker64.png';
+
+
+import liveStreamMarker from '../../assets/markers/liveStream.png';
+import pastStreamMarker from '../../assets/markers/pastStream.png';
+import liveStreamWatchingMarker from '../../assets/markers/liveStreamWatching.png';
+import pastStreamWatchingMarker from '../../assets/markers/pastStreamWatching.png';
+
+
 import VideoJSPlayer from '../videoJS/videojs.jsx';
 import { XSquare, ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -120,6 +126,11 @@ function MapWithMarker() {
         e.preventDefault(); // Prevent default to allow drop
     };
 
+    const onVideoClose = () => {
+        setShowVideoPlayer(false)
+        setSelectedChannel(null)
+    }
+
     const backChannel = () => {
         var newChannel = channelList.getPreviousByLongitude(selectedChannel, includePastStreams);
         setSelectedChannel(newChannel);
@@ -218,8 +229,12 @@ function MapWithMarker() {
                     {displayedChannels.map((channel, index) => (
                         <Marker
                             key={index}
-                            icon={channel.tags.active === "true" ? liveIconMarker : oldIconMarker}
-                            scaledSize={2000}
+                            icon={{
+                                url: channel.tags.active === "true"
+                                ? (channel === selectedChannel ? liveStreamWatchingMarker : liveStreamMarker)
+                                : (channel === selectedChannel ? pastStreamWatchingMarker : pastStreamMarker),
+                                scaledSize: new window.google.maps.Size(64, 64)
+                            }}
                             position={{
                                 lat: parseFloat(channel.tags.latitude),
                                 lng: parseFloat(channel.tags.longitude)
@@ -240,7 +255,7 @@ function MapWithMarker() {
                 showVideoPlayer && selectedChannel &&
                 <div className="video-player-container" draggable="true" onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd} onDrop={handleDrop} onDragOver={handleDragOver} >
                     {/* <div className="drag-handle">Drag Me</div> */}
-                    <XSquare onClick={() => setShowVideoPlayer(false)} className="map-closebutton" />
+                    <XSquare onClick={onVideoClose} className="map-closebutton" />
                     <ArrowLeft onClick={backChannel} className="map-leftbutton" />
                     <ArrowRight onClick={forwardChannel}  className="map-rightbutton" />
                     <VideoJSPlayer channel_name={selectedChannel.name} className="map-videojsplayer"/>
