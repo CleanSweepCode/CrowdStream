@@ -37,13 +37,11 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
 
     const fullscreenBtn = document.querySelector('.vjs-fullscreen-control');
     const videoContainer = document.querySelector('.video-player-container');
-
-    // set fullscreen status on reload
     onFullscreenToggle(fullScreenManager.status);
 
     if (fullscreenBtn) {
       
-      // clone the fullcreen button
+      // clone the fullscreen button
       const clonedBtn = fullscreenBtn.cloneNode(true);
       fullscreenBtn.parentNode.replaceChild(clonedBtn, fullscreenBtn);
   
