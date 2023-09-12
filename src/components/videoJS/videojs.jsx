@@ -47,7 +47,7 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
   
       clonedBtn.addEventListener('click', function() {
         fullScreenManager.toggleFullscreen(videoContainer);
-        onFullscreenToggle(!fullScreenManager.status);
+        onFullscreenToggle(fullScreenManager.status);
       });
     }
     

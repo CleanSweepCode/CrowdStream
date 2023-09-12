@@ -6,8 +6,8 @@
     height: 480px;   
     z-index: 1000;   
     display: flex;
-    flex-direction: column;
     align-items: center;
+    background-color: #000;
 }
 
 .video-player-container.fullscreen {
