@@ -4,7 +4,9 @@ import { registerIVSTech } from 'amazon-ivs-player';
 import 'video.js/dist/video-js.css';
 import { getStreamLinkFromName } from '../Helpers/APIUtils.jsx';
 import './videojs.css';
+import {FullscreenManager} from './fullscreenManager.jsx';
 
+const fullScreenManager = new FullscreenManager();
 
 const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
   const videoRef = React.useRef(null);
@@ -37,7 +39,7 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
     const videoContainer = document.querySelector('.video-player-container');
 
     // set fullscreen status on reload
-    onFullscreenToggle(videoContainer.classList.contains('fullscreen'));
+    onFullscreenToggle(fullScreenManager.status);
 
     if (fullscreenBtn) {
       
@@ -46,14 +48,8 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
       fullscreenBtn.parentNode.replaceChild(clonedBtn, fullscreenBtn);
   
       clonedBtn.addEventListener('click', function() {
-        const isFullscreen = videoContainer.classList.contains('fullscreen');
-        if (!isFullscreen) {
-          videoContainer.classList.add('fullscreen');
-        } else {
-          videoContainer.classList.remove('fullscreen');
-        }
-
-        onFullscreenToggle(!isFullscreen);
+        fullScreenManager.toggleFullscreen(videoContainer);
+        onFullscreenToggle(!fullScreenManager.status);
       });
     }
     
@@ -62,7 +58,8 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
   }, [channel_name]);
 
   return (
-    <video
+    <video 
+      playsInline
       ref={videoRef}
       className="video-js vjs-default-skin"
       controls
