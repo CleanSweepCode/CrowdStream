@@ -66,6 +66,8 @@ const InfoPage = () => {
 
         </div>
       </section>
+      <br />  <br />
+      <a href="https://www.flaticon.com/free-icons/film" title="film icons">Film and Camera icons created by juicy_fish - Flaticon</a>
     </div>
   );
 };
