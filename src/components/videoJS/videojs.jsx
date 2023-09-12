@@ -94,7 +94,8 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
   }, [channel_name]);
 
   return (
-    <video
+    <video 
+      playsinline
       ref={videoRef}
       className="video-js vjs-default-skin"
       controls
