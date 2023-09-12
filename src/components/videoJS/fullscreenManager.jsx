@@ -15,6 +15,7 @@ export class FullscreenManager {
     }
 
     toggleFullscreen(elem) {
+        this.updateStatus();
         if (this.status) {
             this.endFullscreen();
         } else {
@@ -22,8 +23,8 @@ export class FullscreenManager {
         }
     }
 
-    checkIfFullscreen() {
-        return checkIfFullscreen();
+    updateStatus() {
+        this.status = checkIfFullscreen();
     }
 
 }
