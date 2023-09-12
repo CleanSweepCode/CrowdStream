@@ -36,6 +36,38 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
     const fullscreenBtn = document.querySelector('.vjs-fullscreen-control');
     const videoContainer = document.querySelector('.video-player-container');
 
+    const goFullScreen = () => {
+      const elem = document.querySelector(".video-player-container");
+
+          if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+          } else if (elem.mozRequestFullScreen) { // Firefox
+            elem.mozRequestFullScreen();
+          } else if (elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
+            elem.webkitRequestFullscreen();
+          } else if (elem.msRequestFullscreen) { // IE/Edge
+            elem.msRequestFullscreen();
+          }
+      }
+
+    const endFullscreen = () => {
+      const elem = document.querySelector(".video-player-container");
+
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) { // Firefox
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { // IE/Edge
+        document.msExitFullscreen();
+      }
+    }
+
+    const checkIfFullscreen = () => {
+      return document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+    }
+
     // set fullscreen status on reload
     onFullscreenToggle(videoContainer.classList.contains('fullscreen'));
 
@@ -46,11 +78,11 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
       fullscreenBtn.parentNode.replaceChild(clonedBtn, fullscreenBtn);
   
       clonedBtn.addEventListener('click', function() {
-        const isFullscreen = videoContainer.classList.contains('fullscreen');
+        const isFullscreen = checkIfFullscreen();
         if (!isFullscreen) {
-          videoContainer.classList.add('fullscreen');
+          goFullScreen();
         } else {
-          videoContainer.classList.remove('fullscreen');
+          endFullscreen();
         }
 
         onFullscreenToggle(!isFullscreen);
