@@ -137,6 +137,14 @@ function MapWithMarker() {
     const onVideoClose = () => {
         setShowVideoPlayer(false)
         setSelectedChannel(null)
+
+        // recenter current channel
+        if (selectedChannel) {
+            map.panTo({
+                lat: parseFloat(selectedChannel.tags.latitude),
+                lng: parseFloat(selectedChannel.tags.longitude)
+            })
+        }
     }
 
     const backChannel = () => {
