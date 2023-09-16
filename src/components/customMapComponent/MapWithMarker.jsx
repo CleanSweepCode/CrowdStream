@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GoogleMap, Marker } from '@react-google-maps/api'
 import { useNavigate } from "react-router-dom";
 import './MapWithMarker.css';
@@ -7,7 +7,6 @@ import '../videoJS/videojs.css';
 // import { listChannels } from '../Helpers/APIUtils.jsx'
 import { getChannelList } from '../Helpers/ChannelList.jsx';
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
-
 
 import liveStreamMarker from '../../assets/markers/cameralive.svg';
 import pastStreamMarker from '../../assets/markers/paststreamlive.svg';
@@ -46,6 +45,9 @@ function MapWithMarker() {
     const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
     const [dragData, setDragData] = React.useState({ startX: 0, startY: 0, offsetX: 0, offsetY: 0 });
+
+    const [map, setMap]= useState( /** @type google.maps.GoogleMap */ (null))
+    const videoPlayerRef = useRef(null);
 
     // set a toggle function for when video is set to fullscreen
     const handleFullscreenToggle = (fullscreenStatus) => {
@@ -146,6 +148,38 @@ function MapWithMarker() {
         setSelectedChannel(newChannel);
     }
 
+    const getVideoPlayerBoundingBox = () => {
+        if (videoPlayerRef.current) {
+            return videoPlayerRef.current.getBoundingClientRect();
+          }
+          return null;
+    };
+
+    const moveCentreOutsideVideoBox = () => {
+        const bbox = getVideoPlayerBoundingBox();
+
+        // same y position as video
+        // x is halfway between video and one edge of the screen, depending on which side has more space
+        var leftSpace = bbox.left;
+        var rightSpace = map.getDiv().offsetWidth - bbox.right;
+
+
+        if (leftSpace > rightSpace) {
+            var posX = bbox.left/2
+        }
+        else {
+            var posX = (map.getDiv().offsetWidth + bbox.right)/2
+        }
+
+        moveCentre({x: posX, y: bbox.bottom - bbox.height/2});
+    }
+
+    const moveCentre = (position) => {
+        const offsetX = map.getDiv().offsetWidth / 2 - position.x;
+        const offsetY = map.getDiv().offsetHeight / 2 - position.y;
+        map.panBy(offsetX, offsetY);
+    }
+
     return (
         <div>
             <div className="map-container">
@@ -197,6 +231,7 @@ function MapWithMarker() {
                     mapContainerStyle={containerStyle}
                     center={center}
                     zoom={8}
+                    onLoad={map=>setMap(map)}
                     options={{
                         mapTypeControl: false,
                         streetViewControl: false,
@@ -246,11 +281,15 @@ function MapWithMarker() {
                                 lng: parseFloat(channel.tags.longitude)
                             }}
                             onClick={() => {
+                                map.setCenter({
+                                    lat: parseFloat(channel.tags.latitude),
+                                    lng: parseFloat(channel.tags.longitude)
+                                })
                                 setSelectedChannel(channel);
                                 setShowVideoPlayer(true);
+                                moveCentreOutsideVideoBox();
                             }}
-                        // onMouseOver={() => setSelectedChannel(channel)}
-                        //onMouseOut={() => setSelectedChannel(null)}
+
                         />
                     ))}
 
@@ -259,7 +298,7 @@ function MapWithMarker() {
             </div>
             {
                 showVideoPlayer && selectedChannel &&
-                <div className="video-player-container" draggable="true" onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd} onDrop={handleDrop} onDragOver={handleDragOver} >
+                <div className="video-player-container" ref={videoPlayerRef} draggable="true" onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd} onDrop={handleDrop} onDragOver={handleDragOver} >
                     {/* <div className="drag-handle">Drag Me</div> */}
                     <XSquare onClick={onVideoClose} className="map-closebutton" />
                     <ArrowLeft onClick={backChannel} className="map-leftbutton" />
