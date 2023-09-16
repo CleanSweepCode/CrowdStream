@@ -166,20 +166,48 @@ function MapWithMarker() {
     const moveCentreOutsideVideoBox = () => {
         const bbox = getVideoPlayerBoundingBox();
 
-        // same y position as video
-        // x is halfway between video and one edge of the screen, depending on which side has more space
+        // look for the most space in left/right/up/down
+        // centre between edge and video in that direction
+        // centre to video in other direction
+
         var leftSpace = bbox.left;
         var rightSpace = map.getDiv().offsetWidth - bbox.right;
+        var upSpace = bbox.top;
+        var downSpace = map.getDiv().offsetHeight - bbox.bottom;
 
+        var maxSpace = Math.max(leftSpace, rightSpace, upSpace, downSpace);
 
-        if (leftSpace > rightSpace) {
-            var posX = bbox.left/2
+        var posX, posY
+        console.log(maxSpace, leftSpace, rightSpace, upSpace, downSpace)
+        switch (maxSpace) {
+            case leftSpace:
+                posX = bbox.left / 2.0;
+                posY = bbox.top + bbox.height/2;
+                break;
+            
+            case rightSpace:
+                posX = (map.getDiv().offsetWidth + bbox.right) / 2.0;
+                posY = bbox.top + bbox.height/2;
+                break;
+
+            case upSpace:
+                posX = bbox.left + bbox.width/2;
+                posY = bbox.top / 2.0;
+                break;
+            
+            case downSpace:
+                posX = bbox.left + bbox.width/2;
+                posY = (map.getDiv().offsetHeight + bbox.bottom) / 2.0;
+                break;
+
+            default:
+                console.log("!!!")
+                posX = 100
+                posY = 100
+        
         }
-        else {
-            var posX = (map.getDiv().offsetWidth + bbox.right)/2
-        }
 
-        moveCentre({x: posX, y: bbox.bottom - bbox.height/2});
+        moveCentre({x: posX, y: posY});
     }
 
     const moveCentre = (position) => {
