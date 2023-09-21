@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleMap, Marker, Polygon } from '@react-google-maps/api';
+import { GoogleMap, Marker, Polygon, Polyline } from '@react-google-maps/api';
 
 import { useNavigate } from "react-router-dom";
 import './MapWithMarker.css';
@@ -46,14 +46,15 @@ function MapWithMarker() {
     // const [channelInfo, setChannelInfo] = useState([]);
     const [center, setCenter] = useState(defaultCenter);
     const [zoom, setZoom] = useState(10);
-    const [routeMarkers, setRouteMarkers] = useState([]);
     const [selectedChannel, setSelectedChannel] = useState(null);
     const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
     const [dragData, setDragData] = React.useState({ startX: 0, startY: 0, offsetX: 0, offsetY: 0 });
     const [eventIDs, setEventIDs] = useState([]);
     const [eventInfo, setEventInfo] = useState({});
-    
+    const [eventRouteInfo, setEventRouteInfo] = useState({});
+    const [routeLines, setRouteLines] = useState([]);
+
 
     const [map, setMap]= useState( /** @type google.maps.GoogleMap */ (null))
     const videoPlayerRef = useRef(null);
@@ -71,10 +72,10 @@ function MapWithMarker() {
         let numPoints = routePoints.length;
 
         for (let i = 0; i < numPoints; i++) {
-            minLat = Math.min(routePoints[i]["latitude"], minLat);
-            maxLat = Math.max(routePoints[i]["latitude"], maxLat);
-            minLng = Math.min(routePoints[i]["longitude"], minLng);
-            maxLng = Math.max(routePoints[i]["longitude"], maxLng);
+            minLat = Math.min(routePoints[i][0], minLat);
+            maxLat = Math.max(routePoints[i][0], maxLat);
+            minLng = Math.min(routePoints[i][1], minLng);
+            maxLng = Math.max(routePoints[i][1], maxLng);
         }
 
         const latDiff = maxLat - minLat;
@@ -101,21 +102,27 @@ function MapWithMarker() {
     };
 
     const getPolygonByEventID = (eventID) => {
-        const routePoints = null; // eventInfo[eventID]["routePoints"];
         let polygonCoords = eventInfo[eventID] || []; //["perimeterPoints"];
 
         polygonCoords = polygonCoords.map(point => ({ lat: point[0], lng: point[1] }));
 
-        return { routePoints, polygonCoords };
+        return polygonCoords;
     };
 
+    const getRoutePointsByEventID = (eventID) => {
+        let routePoints = eventRouteInfo[eventID] || []; // eventInfo[eventID]["routePoints"];
+
+        const polylineCoords = routePoints.map(point => ({ lat: point[0], lng: point[1] }));
+
+        return polylineCoords;
+    };
 
     const calculateCenterEvent = async (eventID) => {
         try {
             const fetchedEvents = await getEvents();
             const routePoints = fetchedEvents["events"][eventID]["routePoints"];
-            getZoomParams(routePoints);
-            setRouteMarkers(routePoints);
+            const perimPoints = fetchedEvents["events"][eventID]["perimPoints"];
+            getZoomParams(perimPoints);
         } catch (error) {
             console.error('Error fetching events:', error);
         }
@@ -142,6 +149,24 @@ function MapWithMarker() {
             };
 
         };
+
+        const newRouteLines = eventIDs.map((eventID, index) => {
+            const routePoints = getRoutePointsByEventID(eventID);
+      
+            return (
+              <Polyline
+                key={index}
+                path={routePoints}
+                options={{
+                  strokeColor: '#FF0000',
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                }}
+              />
+            );
+          });
+
+        setRouteLines(newRouteLines);
         getEventInfo();
         fetchChannelInfo();
     }, [intervalId]);
@@ -157,9 +182,18 @@ function MapWithMarker() {
                 return result;
             }, {});
 
+            const eventRouteInfo_ = Object.entries(fetchedEvents["events"]).reduce((result, [eventID, eventData]) => {
+                result[eventID] = eventData["routePoints"];
+                return result;
+            }, {});
+
 
             setEventInfo((prevEventInfo) => {
                 return { ...prevEventInfo, ...eventInfo_ };
+            });
+
+            setEventRouteInfo((prevEventRouteInfo) => {
+                return { ...prevEventRouteInfo, ...eventRouteInfo_ };
             });
 
         } catch (error) {
@@ -436,9 +470,9 @@ function MapWithMarker() {
                             }}
                         />
                         )) */}
-
+                    {routeLines}
                     {eventIDs.map((eventID, index) => {
-                        const { routePoints, polygonCoords } = getPolygonByEventID(eventID);
+                        const polygonCoords = getPolygonByEventID(eventID);
                         return (
                         <Polygon
                             paths={polygonCoords}
