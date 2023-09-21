@@ -19,6 +19,17 @@ export const listChannels = async () => {
     }
 }
 
+export const getEvents = async () => {
+    try {
+        const response = await fetch(`${BACKEND_URL}/events/getEvents`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        return [];
+    }
+}
+
 export async function tagChannelInactive(channelName) {
     const data = {
         channelName: channelName
