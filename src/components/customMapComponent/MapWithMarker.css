@@ -50,9 +50,9 @@
 
 .map-switchcontainer {
     position: absolute;
-    top: 2rem;
+    top: 0.2rem;
     left: 2rem;
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(255, 255, 255, 0);
     padding: 1rem;
     border-radius: 4px;
     z-index: 2;
@@ -79,8 +79,8 @@
 
 .map-refreshStreamButton {
     position: absolute;
-    top: 2rem;
-    right: 2rem;
+    top: 0.4rem;
+    right: 5rem;
     z-index: 2;
 }
 
@@ -169,15 +169,15 @@
 }
 
 .map-titlecontainer {
-    top: 2rem;
+    top: -6px;
     color: #001308;
     font-size: 40px;
     font-weight: bold;
-    background-color: rgba(255, 255, 255, 1.0);
+    background-color: rgba(255, 255, 255, 0);
 }
 
 .map-helpText {
-    top: 8rem;
+    top: 5rem;
     color: #000000;
     background-color: rgba(255, 255, 255, 1.0);
     font-size: 15px;
@@ -279,3 +279,14 @@
         padding-right: 0.25rem;
     }
 }
+
+.map-top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;  /* You can adjust this value as per your requirement */
+    background-color: white;
+    z-index: 1;  /* Making sure it's behind buttons and titles */
+}
+
