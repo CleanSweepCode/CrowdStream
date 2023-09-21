@@ -143,6 +143,9 @@ function MapWithMarker() {
     return (
         <div>
             <div className="map-container">
+    
+                <div className="map-top-bar"></div>
+
                 <FormControlLabel
                     control={
                         <Switch
@@ -168,7 +171,7 @@ function MapWithMarker() {
                 </div>
 
                 <div className="map-helpText">
-                    Click a marker to view event
+                    Click on a marker to view an event
                 </div>
 
                 <div className="map-refreshStreamButtonDiv">
@@ -179,8 +182,8 @@ function MapWithMarker() {
                 </div>
 
 
-                <div className='map-refreshStreamButtonDiv'>
-                    <button className="map-refreshStreamButton" style={{ top: '4em' }}
+                <div className='map-Menu'>
+                    <button className="map-refreshStreamButton" style={{ top: '0.25em', right: '0.35em' }}
                         onClick={() => navigateAndClearInterval(`/about`)}>
                         ?
                     </button>
