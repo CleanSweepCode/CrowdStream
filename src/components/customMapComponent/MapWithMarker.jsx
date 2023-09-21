@@ -15,6 +15,8 @@ import pastStreamMarker from '../../assets/markers/paststreamlive.svg';
 import liveStreamWatchingMarker from '../../assets/markers/cameralivewatching.svg';
 import pastStreamWatchingMarker from '../../assets/markers/pastStreamWatching.svg';
 
+import Timer from '../Timer/Timer.jsx'
+
 
 import finishMarker from '../../assets/finishMarker64.png';
 import VideoJSPlayer from '../videoJS/videojs.jsx';
@@ -364,6 +366,11 @@ function MapWithMarker() {
                     onClick={() => navigateAndClearInterval(`/streamer`)}>
                     Start Broadcasting
                 </button>
+
+                {/* TIMER object */}
+                <div className="map-timercontainer">
+                    <Timer />
+                </div>
 
                 <div className="map-titlecontainer">
                     <span className="CSFont">
