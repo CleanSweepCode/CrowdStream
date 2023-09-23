@@ -1,11 +1,13 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api'
+import { GoogleMap, Marker, Polygon, Polyline } from '@react-google-maps/api';
+
 import { useNavigate } from "react-router-dom";
 import './MapWithMarker.css';
 import '../videoJS/videojs.css';
-// import { listChannels } from '../Helpers/APIUtils.jsx'
+import { listChannels, getEvents } from '../Helpers/APIUtils.jsx'
 import { getChannelList } from '../Helpers/ChannelList.jsx';
+
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
 
 import liveStreamMarker from '../../assets/markers/cameralive.svg';
@@ -13,7 +15,10 @@ import pastStreamMarker from '../../assets/markers/paststreamlive.svg';
 import liveStreamWatchingMarker from '../../assets/markers/cameralivewatching.svg';
 import pastStreamWatchingMarker from '../../assets/markers/pastStreamWatching.svg';
 
+import Timer from '../Timer/Timer.jsx'
 
+
+import finishMarker from '../../assets/finishMarker64.png';
 import VideoJSPlayer from '../videoJS/videojs.jsx';
 import { XSquare, ArrowLeft, ArrowRight } from 'lucide-react';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -39,14 +44,21 @@ var isFullScreen = false;
 
 function MapWithMarker() {
     const navigate = useNavigate();
+    const mapRef = useRef(null); // Create a ref for the map instance
     const [includePastStreams, setIncludePastStreams] = useState(true);  // This is the new piece of state
     includePastStreams == 1;
     // const [channelInfo, setChannelInfo] = useState([]);
     const [center, setCenter] = useState(defaultCenter);
+    const [zoom, setZoom] = useState(10);
     const [selectedChannel, setSelectedChannel] = useState(null);
     const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
     const [dragData, setDragData] = React.useState({ startX: 0, startY: 0, offsetX: 0, offsetY: 0 });
+    const [eventIDs, setEventIDs] = useState([]);
+    const [eventInfo, setEventInfo] = useState({});
+    const [eventRouteInfo, setEventRouteInfo] = useState({});
+    const [routeLines, setRouteLines] = useState([]);
+
 
     const [map, setMap]= useState( /** @type google.maps.GoogleMap */ (null))
     const videoPlayerRef = useRef(null);
@@ -56,6 +68,70 @@ function MapWithMarker() {
     const handleFullscreenToggle = (fullscreenStatus) => {
         isFullScreen = fullscreenStatus;
     }
+    
+    const getZoomParams = (routePoints) => {
+        let minLat = 1000.0;
+        let maxLat = -1000.0;
+        let minLng = 1000.0;
+        let maxLng = -1000.0;
+        let numPoints = routePoints.length;
+
+        for (let i = 0; i < numPoints; i++) {
+            minLat = Math.min(routePoints[i][0], minLat);
+            maxLat = Math.max(routePoints[i][0], maxLat);
+            minLng = Math.min(routePoints[i][1], minLng);
+            maxLng = Math.max(routePoints[i][1], maxLng);
+        }
+
+        const latDiff = maxLat - minLat;
+        const lngDiff = maxLng - minLng;
+
+        let zoom_ = 0;
+        if (latDiff > lngDiff) {
+            zoom_ = Math.log2(360 / latDiff);
+        } else {
+            zoom_ = Math.log2(360 / lngDiff);
+        }
+
+        const centreLat = (minLat + maxLat) / 2;
+        const centreLng = (minLng + maxLng) / 2;
+
+        setCenter({
+            lat: centreLat,
+            lng: centreLng
+        });
+
+        setZoom(zoom_);
+        
+        return;
+    };
+
+    const getPolygonByEventID = (eventID) => {
+        let polygonCoords = eventInfo[eventID] || []; //["perimeterPoints"];
+
+        polygonCoords = polygonCoords.map(point => ({ lat: point[0], lng: point[1] }));
+
+        return polygonCoords;
+    };
+
+    const getRoutePointsByEventID = (eventID) => {
+        let routePoints = eventRouteInfo[eventID] || []; // eventInfo[eventID]["routePoints"];
+
+        const polylineCoords = routePoints.map(point => ({ lat: point[0], lng: point[1] }));
+
+        return polylineCoords;
+    };
+
+    const calculateCenterEvent = async (eventID) => {
+        try {
+            const fetchedEvents = await getEvents();
+            const routePoints = fetchedEvents["events"][eventID]["routePoints"];
+            const perimPoints = fetchedEvents["events"][eventID]["perimPoints"];
+            getZoomParams(perimPoints);
+        } catch (error) {
+            console.error('Error fetching events:', error);
+        }
+    };
 
     useEffect(() => {
         const fetchChannelInfo = async () => {
@@ -78,8 +154,57 @@ function MapWithMarker() {
             };
 
         };
+
+        const newRouteLines = eventIDs.map((eventID, index) => {
+            const routePoints = getRoutePointsByEventID(eventID);
+      
+            return (
+              <Polyline
+                key={index}
+                path={routePoints}
+                options={{
+                  strokeColor: '#FF0000',
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                }}
+              />
+            );
+          });
+
+        setRouteLines(newRouteLines);
+        getEventInfo();
         fetchChannelInfo();
     }, [intervalId]);
+
+    const getEventInfo = async () => {
+        try {
+            const fetchedEvents = await getEvents();
+            const eventIDList = Object.keys(fetchedEvents["events"]);
+            setEventIDs(eventIDList);
+
+            const eventInfo_ = Object.entries(fetchedEvents["events"]).reduce((result, [eventID, eventData]) => {
+                result[eventID] = eventData["perimPoints"];
+                return result;
+            }, {});
+
+            const eventRouteInfo_ = Object.entries(fetchedEvents["events"]).reduce((result, [eventID, eventData]) => {
+                result[eventID] = eventData["routePoints"];
+                return result;
+            }, {});
+
+
+            setEventInfo((prevEventInfo) => {
+                return { ...prevEventInfo, ...eventInfo_ };
+            });
+
+            setEventRouteInfo((prevEventRouteInfo) => {
+                return { ...prevEventRouteInfo, ...eventRouteInfo_ };
+            });
+
+        } catch (error) {
+            console.error('Error fetching events:', error);
+        }
+    };
 
     const handleRefreshStreams = async () => {
         try {
@@ -149,6 +274,12 @@ function MapWithMarker() {
             })
         }
     }
+
+    const handlePolygonClick = (eventID) => {
+        calculateCenterEvent(eventID);
+        // setZoom(10);
+        console.log("polygon clicked")
+      };
 
     const backChannel = () => {
         var newChannel = channelList.getPreviousByLongitude(selectedChannel, includePastStreams);
@@ -230,6 +361,11 @@ function MapWithMarker() {
                     Start <br /> Broadcasting
                 </button>
 
+                {/* TIMER object */}
+                <div className="map-timercontainer">
+                    <Timer />
+                </div>
+
                 <div className="map-titlecontainer">
                     <span className="CSFont">
                         <span className="CSBlack">Crowd</span>
@@ -258,8 +394,9 @@ function MapWithMarker() {
 
                 <GoogleMap
                     mapContainerStyle={containerStyle}
+                    ref={mapRef}
                     center={center}
-                    zoom={8}
+                    zoom={zoom}
                     onLoad={map=>setMap(map)}
                     options={{
                         mapTypeControl: false,
@@ -321,6 +458,34 @@ function MapWithMarker() {
 
                         />
                     ))}
+
+                    {/* routeMarkers.map((routePoint, index) => (
+                        <Marker
+                            key={index}
+                            icon={finishMarker}
+                            size={0.1}
+                            position={{
+                                lat: parseFloat(routePoint["latitude"]),
+                                lng: parseFloat(routePoint["longitude"])
+                            }}
+                        />
+                        )) */}
+                    {routeLines}
+                    {eventIDs.map((eventID, index) => {
+                        const polygonCoords = getPolygonByEventID(eventID);
+                        return (
+                        <Polygon
+                            paths={polygonCoords}
+                            options={{
+                            strokeColor: "#FF0000",
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: "#FF0000",
+                            fillOpacity: 0.35,
+                            }}
+                            onClick={() => handlePolygonClick(eventID)}
+                        />)
+                    })}
 
                 </GoogleMap>
                 
