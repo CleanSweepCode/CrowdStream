@@ -238,3 +238,14 @@
         display: none;
     }
 }
+
+
+/* timer css */
+.map-timercontainer {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    z-index: 2;
+    transform: translate(-50%, 0%);
+    transition: background-color 0.2s;
+}
