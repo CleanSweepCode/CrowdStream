@@ -16,6 +16,7 @@ import pastStreamWatchingMarker from '../../assets/markers/pastStreamWatching.sv
 
 import VideoJSPlayer from '../videoJS/videojs.jsx';
 import { XSquare, ArrowLeft, ArrowRight } from 'lucide-react';
+import MenuIcon from '@material-ui/icons/Menu';
 
 
 
@@ -39,6 +40,7 @@ var isFullScreen = false;
 function MapWithMarker() {
     const navigate = useNavigate();
     const [includePastStreams, setIncludePastStreams] = useState(true);  // This is the new piece of state
+    includePastStreams == 1;
     // const [channelInfo, setChannelInfo] = useState([]);
     const [center, setCenter] = useState(defaultCenter);
     const [selectedChannel, setSelectedChannel] = useState(null);
@@ -48,6 +50,7 @@ function MapWithMarker() {
 
     const [map, setMap]= useState( /** @type google.maps.GoogleMap */ (null))
     const videoPlayerRef = useRef(null);
+    const [showMenu, setShowMenu] = useState(false);
 
     // set a toggle function for when video is set to fullscreen
     const handleFullscreenToggle = (fullscreenStatus) => {
@@ -222,21 +225,9 @@ function MapWithMarker() {
     
                 <div className="map-top-bar"></div>
 
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={includePastStreams}
-                            onChange={e => setIncludePastStreams(e.target.checked)}
-                            color="primary"
-                        />
-                    }
-                    label={'Include past streams'}
-                    className="map-switchcontainer"
-                />
-
-                <button className="map-refresh button"
+                <button className="map-StartStreamButton"
                     onClick={() => navigateAndClearInterval(`/streamer`)}>
-                    Start Broadcasting
+                    Start <br /> Broadcasting
                 </button>
 
                 <div className="map-titlecontainer">
@@ -258,10 +249,9 @@ function MapWithMarker() {
                 </div>
 
 
-                <div className='map-Menu'>
-                    <button className="map-refreshStreamButton" style={{ top: '0.25em', right: '0.35em' }}
-                        onClick={() => navigateAndClearInterval(`/about`)}>
-                        ?
+                <div className='map-MenuButtonDiv'>
+                    <button className="map-MenuButton" onClick={() => setShowMenu(!showMenu)}>
+                        <MenuIcon style={{ fontSize: '37px' }} />
                     </button>
                 </div>
 
@@ -333,6 +323,17 @@ function MapWithMarker() {
                     ))}
 
                 </GoogleMap>
+                
+                {
+                    showMenu && (
+                        <div className="menu-container">
+                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/about`)}>About <span className="CSBlack">Crowd</span><span className="CSRed">Stream</span></button>
+                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/newevent`)}>Create an Event</button>
+                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/streamer`)}>Start Broadcasting</button>
+                        </div>
+                    )
+                }
+
 
             </div>
             {
