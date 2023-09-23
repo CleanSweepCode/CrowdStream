@@ -24,7 +24,7 @@
     position: absolute; /* Absolute positioning */
     color: #E5E5E5;
     cursor: pointer;
-    z-index: 9999;  /* High z-index to make it appear above the video player */
+    z-index: 100;  /* High z-index to make it appear above the video player */
 }
   
 .map-closebutton {
@@ -48,39 +48,42 @@
     position: relative;
 }
 
-.map-switchcontainer {
-    position: absolute;
-    top: 0.2rem;
-    left: 2rem;
-    background-color: rgba(255, 255, 255, 0);
-    padding: 1rem;
-    border-radius: 4px;
-    z-index: 2;
-}
 
-.map-switchcontainer .MuiFormControlLabel-label {
-    font-family: 'Coolvetica', fallback, sans-serif;
-    font-weight: bold;
-}
-
-.map-refresh {
+.map-StartStreamButton {
     background-color: var(--official-blue);
     position: absolute;
-    bottom: 2rem;
-    left: 50%;
+    top: 10px;
+    right: -50px;
     z-index: 2;
     transform: translate(-50%, 0%);
     transition: background-color 0.2s;
+    padding: 6px 12px;
+    /* Padding around the text in the button. */
+    border-radius: 8px;
+    /* Rounded corners on the button. */
+    border: none;
+    /* No border on the button. */
+    cursor: pointer;
+    /* The cursor will look like a pointer when over the button. */
+    font-size: 16px;
+    /* Size of the text in the button. */
+    font-weight: 600;
+    /* Thickness of the text in the button. */
+    color: #fff;
+    /* Color of the text in the button. */
+    font-family: 'Coolvetica', fallback, sans-serif;
+    letter-spacing: 1px;
+  
 }
 
-.map-refresh:hover {
+.map-StartStreamButton:hover {
     background-color: var(--official-hover-blue);
  }
 
 .map-refreshStreamButton {
     position: absolute;
-    top: 0.4rem;
-    right: 5rem;
+    top: 10px;
+    right: 150px;
     z-index: 2;
 }
 
@@ -88,8 +91,8 @@
     background-color: var(--official-blue);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    padding: 6px 15px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 30px;
     font-family: 'Coolvetica', fallback, sans-serif;
@@ -101,6 +104,26 @@
     background-color: var(--official-hover-blue);
 }
 
+.map-MenuButton {
+    background-color: white; /* Change the background-color to white */
+    position: absolute;
+    top: 8px;
+    left: 45px;
+    z-index: 2;
+    transform: translate(-50%, 0%);
+    transition: background-color 0.2s;
+    border: none; /* Remove any border */
+    border-radius: 50%; /* Make the button circular */
+    width: 55px; /* Set a fixed width (adjust as needed) */
+    height: 55px; /* Set a fixed height (adjust as needed) */
+    display: flex; /* Center the icon */
+    justify-content: center; /* Center the icon horizontally */
+    align-items: center; /* Center the icon vertically */
+}
+
+.map-MenuButton:hover {
+    background-color: grey;
+ }
 
 
 :root {
@@ -112,8 +135,11 @@
     height: 480px;
 }
 
-
-
+.video-player-container {
+    position: absolute;
+    top: 70px;
+    left: 0;
+}
 
 
 
@@ -129,6 +155,7 @@
 
 .map-titlecontainer {
     top: -6px;
+    /* left: 10rem; */
     color: #001308;
     font-size: 40px;
     font-weight: bold;
@@ -151,93 +178,36 @@
     color: #E85D4A;
 }
 
-/* Media Queries */
-@media screen and (max-width: 720px) {
-    .map-titlecontainer {
-        font-size: 26px;
-    }
-
-    .map-helpText {
-        top: 6.5rem;
-    }
-
-    .map-switchcontainer {
-        padding: 0.5rem;
-    }
-
-    .map-switchcontainer .MuiFormControlLabel-label {
-        font-size: 15px;
-    }
-
-    .map-switchcontainer .MuiSwitch-root {
-        transform: scale(0.75);
-    }
-
-    .map-refreshStreamButton {
-        font-size: 20px;
-    }
+.menu-container {
+    position: absolute;
+    top: 63px;
+    left: 20px;
+    background-color: white;
+    border: 5px solid black; /* Corrected this line */
+    border-radius: 8px;
+    z-index: 900; /* Above other elements */
 }
 
-@media screen and (max-width: 580px) {
-    .map-titlecontainer {
-        left: 2rem;
-        transform: none;
-    }
-
-    .map-switchcontainer {
-        left: initial;
-        right: 2rem;
-        top: 2.3rem;
-        justify-content: flex-end;
-        padding-left: 0.2rem;
-    }
-
-    .map-refreshStreamButtonDiv {
-        position: absolute;
-        bottom: 2rem;
-        left: 2rem;
-    }
-
-    .map-refreshStreamButton {
-        position: relative;
-        right: initial;
-        top: initial;
-    }
+.menu-option {
+    display: block;
+    padding: 10px 20px;
+    text-align: left;
+    cursor: pointer;
+    background-color: #f7f7f7;
+    transition: background-color 0.3s;
+    font-family: 'Coolvetica', fallback, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    border: none;         /* Ensure no border */
+    outline: none;        /* Ensure no outline */
+    width: 170px;  
 }
 
-@media screen and (max-width: 430px) {
-    .map-titlecontainer {
-        left: 1rem;
-        transform: none;
-    }
 
-    .map-switchcontainer {
-        right: 0.1rem;
-        padding-left: 0;
-        padding-right: 0.25rem;
-    }
-
-    .map-refreshStreamButtonDiv {
-        bottom: 2rem;
-        left: 1rem;
-    }
+.menu-option:hover {
+    background-color: #e0e0e0;
 }
 
-@media screen and (max-width: 365px) {
-    .map-titlecontainer {
-        left: 1rem;
-        transform: none;
-        display: none;
-    }
-
-    .map-switchcontainer {
-        left: 53.5%;
-        transform: translateX(-50%);
-        right: initial;
-        padding-left: 0;
-        padding-right: 0.25rem;
-    }
-}
 
 .map-top-bar {
     position: absolute;
@@ -249,3 +219,22 @@
     z-index: 1;  /* Making sure it's behind buttons and titles */
 }
 
+/* By default, the span doesn't break onto a new line */
+.responsive-break::before {
+    content: " ";
+}
+
+
+/* Below 865 pixels the refresh button doesn't fit on the screen any longer*/
+@media (max-width: 700px) {
+    .map-refreshStreamButton {
+        display: none;
+    }
+}
+
+/* Below 550 pixels remove the startStream button */
+@media (max-width: 550px) {
+    .map-StartStreamButton {
+        display: none;
+    }
+}
