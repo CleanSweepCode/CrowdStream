@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Timer.css';  // Assuming your CSS is named Timer.css
 
 // import image
-import historyIcon from '../../assets/icons/history-icons8/icons8-history-96.png';
-import liveIcon from '../../assets/icons/live/live.webp';
+import historyActiveIcon from '../../assets/icons/timer/set1/history_active.png';
+import historyInactiveIcon from '../../assets/icons/timer/set1/history_inactive.png';
+import liveActiveIcon from '../../assets/icons/timer/set1/live_active.png';
+import liveInactiveIcon from '../../assets/icons/timer/set1/live_inactive.png';
+
 
 // element with an up and down arrow on bottom/top that will cycle through options
-const Picker = ({ value, onChange }) => {
+const Picker = ({ value, onChange, useArrows = true }) => {
     const handleClick = (direction) => {
         onChange(direction);
     };
@@ -14,9 +17,9 @@ const Picker = ({ value, onChange }) => {
     return (
         <div className="picker">
             <div className="picker__controls">
-                <button onClick={() => handleClick(1)}> ▲ </button>
+                {useArrows && <button onClick={() => handleClick(1)}> ▲ </button>}
                 <span>{value}</span>
-                <button onClick={() => handleClick(-1)}> ▼ </button>
+                {useArrows && <button onClick={() => handleClick(-1)}> ▼ </button>}
             </div>
         </div>
     );
@@ -92,9 +95,9 @@ const DateTimePicker = () => {
                 <Picker value={formattedDate.year} onChange={(direction) => handlePickerChange("year", direction)} />
             </div>
             <div className="dateTimePicker__time">
-                <Picker value={formattedDate.hours} onChange={(direction) => handlePickerChange("hour", direction)} />
-                <Picker value={formattedDate.minutes} onChange={(direction) => handlePickerChange("minute", direction)} />
-                <Picker value={formattedDate.seconds} onChange={(direction) => handlePickerChange("second", direction)} />
+                <Picker value={formattedDate.hours} onChange={(direction) => handlePickerChange("hour", direction)} useArrows={false} />
+                <Picker value={formattedDate.minutes} onChange={(direction) => handlePickerChange("minute", direction)} useArrows={false} />
+                <Picker value={formattedDate.seconds} onChange={(direction) => handlePickerChange("second", direction)} useArrows={false} />
             </div>
 
             <div className="dateTimePicker__slider">
@@ -111,6 +114,31 @@ const DateTimePicker = () => {
         </div>
     );
 };
+
+
+const ToggleButton = ({ inactiveImage, activeImage, isActive, setIsActive, onClick, text = '' }) => {
+  
+  useEffect(() => {
+    setIsActive(isActive);
+  }, [isActive]);
+
+
+  return (
+    <div className="toggle-button" onClick={onClick}>
+        <img
+          src={inactiveImage}
+          alt="inactive"
+          className={`icon ${isActive ? 'icon--inactive' : 'icon--active'}`}
+        />
+        <img
+          src={activeImage}
+          alt="active"
+          className={`icon ${isActive ? 'pulsate': ''} ${isActive ? 'icon--active' : 'icon--inactive'}`}
+        />
+    </div>
+  );
+  
+};
     
 
 
@@ -118,39 +146,52 @@ const Timer = () => {
   const [isLive, setIsLive] = useState(true);
   const [dateTime, setDateTime] = useState(new Date());
 
+  const [isHistoryActive, setIsHistoryActive] = useState(false);
+  const [isLiveActive, setIsLiveActive] = useState(true);
+
   useEffect(() => {
     if (isLive) {
       const interval = setInterval(() => {
         setDateTime(new Date());
       }, 1000);
-      
+
+      setIsLiveActive(true);
+      setIsHistoryActive(false);
+
       return () => clearInterval(interval);
     }
+
+    else {
+      setIsLiveActive(false);
+      setIsHistoryActive(true);
+    }
+
   }, [isLive]);
 
   return (
-    <div className="timer-container">
+    <div className={`timer-container ${isLive ? '' : 'timer-container-history'}`}>
 
-        <div className={`date-time-container ${isLive ? '' : 'active'}`}>
+      <div className={`date-time-container ${isLive ? 'inactive' : 'active'}`}>
             <DateTimePicker dateTime={dateTime} onChange={setDateTime} />
       </div>
 
-      <img 
-        src={historyIcon}
-        alt="history" 
-        height={100}
-        className={`icon icon--history ${isLive ? '' : 'active'}`}
-        onClick={() => setIsLive(false)}
-      />
+    <ToggleButton
+      inactiveImage={historyInactiveIcon}
+      activeImage={historyActiveIcon}
+      isActive={isHistoryActive}
+      setIsActive={setIsHistoryActive}
+      onClick={() => setIsLive(false)}
+    />
 
-      <div 
-        className={`icon icon--live ${isLive ? 'icon--live--active' : 'icon--live--inactive'}`} 
-        onClick={() => setIsLive(true)}
-      >
-        <div className="live-circle">
-            <img src={liveIcon} alt="live" className="live-icon" height={100}/>
-        </div>
-      </div>
+    <ToggleButton
+      inactiveImage={liveInactiveIcon}
+      activeImage={liveActiveIcon}
+      isActive={isLiveActive}
+      setIsActive={setIsLiveActive}
+      onClick={() => setIsLive(true)}
+      text="LIVE"
+    />
+
     </div>
   );
 };
