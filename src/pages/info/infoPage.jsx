@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './infoPage.css'; // Importing your CSS
 import { Lynch, Parish, Mayhew, Boyne } from '../../assets/images'
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,13 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const InfoPage = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://app.termly.io/embed-policy.min.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
 
   return (
 
@@ -66,8 +73,17 @@ const InfoPage = () => {
 
         </div>
       </section>
-      <br />  <br />
-      <a href="https://www.flaticon.com/free-icons/film" title="film icons">Film and Camera icons created by juicy_fish - Flaticon</a>
+      <div>
+        <a href="https://www.flaticon.com/free-icons/film" title="film icons">Film and Camera icons created by juicy_fish - Flaticon</a>
+        <br />
+        <a href="https://app.termly.io/document/privacy-policy/e1105ba9-115f-4421-b6ac-b09b08890005">Privacy Policy</a>
+        <br />
+        <a href="https://app.termly.io/document/terms-of-service/9496bf5f-860c-4043-aacc-fb4cb531879a" title="film icons">Terms of Service Policy</a>
+        <br />
+        <a href="https://app.termly.io/document/acceptable-use/b944433f-0739-4c92-b2ca-5f8404589e99" title="film icons">Acceptable Use Policy</a>
+        <br />
+        <a href="https://app.termly.io/document/disclaimer/df7600c5-215e-4850-82cb-fa65777a1c1e" title="film icons">Disclaimer</a>
+      </div>
     </div>
   );
 };
