@@ -2,23 +2,19 @@
     background-color: lightgray;
     border-radius: 12px;
     padding: 10px;
+    height: 50px;
     display: flex;
     align-items: center;
-  }
-  
-  .icon {
-    cursor: pointer;
-    margin: 0 10px;
-  }
-  
-  .icon--history, .icon--live {
-    font-size: 24px;
-  }
-  
-  .icon--live--inactive {
-    color: grey;
+    vertical-align: center;
+    transition: all 0.3s ease-out;
+    background-image: linear-gradient(to bottom right, #eef2f3 0%, #d2dce3 100%);
   }
 
+.timer-container-history {
+  height: 200px;
+}
+
+  /* Standard */
   @keyframes pulsate {
     0% {
       opacity: 0.2;
@@ -30,10 +26,51 @@
       opacity: 0.2;
     }
   }
-  
-  .icon--live--active {
-    animation: pulsate 1.5s ease-in-out infinite;
+
+  /* Webkit browsers like Safari */
+  @-webkit-keyframes pulsate {
+    0% {
+      opacity: 0.2;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.2;
+    }
   }
+
+  .pulsate {
+    animation: pulsate 1.5s ease-in-out infinite;
+    -webkit-animation: pulsate 1.5s ease-in-out infinite; /* For Safari */
+  }
+
+  .toggle-button {
+    position: relative;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .icon {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    transition: opacity 0.5s ease-in-out;
+    cursor: pointer;
+    opacity: 0;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .icon--active {
+    opacity: 1;
+  }
+  
+  .icon--inactive {
+    opacity: 0;
+  }
+
+
   
   
   .date-time-container {
@@ -41,11 +78,17 @@
     flex-direction: column;
     align-items: center;
     opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease width 0.3s ease height 0.3s ease;
   }
   
   .date-time-container.active {
     opacity: 1;
+    transition: opacity 2.0s ease /*, slower fadein*/;
+  }
+
+  .date-time-container.inactive {
+    width: 0px;
+    height: 0px;
   }
   
   .date-time {
