@@ -25,7 +25,8 @@ section:nth-child(odd) {
 /* Header styling */
 h1 {
   font-size: 3em;
-  margin-bottom: 0.5em;
+  margin-bottom: -0.3em;
+  margin-top: 0em;
   color: #14110F;
   /* Feel free to pick your own color */
   max-width: 800px;
@@ -36,9 +37,9 @@ p {
   font-size: 1.2em;
   max-width: 100%;
   text-align: justify;
-  line-height: 1.6;
+  line-height: 1.4;
   margin: 0;
-  padding: 0;
+  padding: 0.2em;
 }
 
 
@@ -49,7 +50,6 @@ html {
 
 
 #team {
-  background-color: #f1f1f1;
   color: #333;
 }
 
@@ -59,6 +59,8 @@ html {
   gap: 1em;
   padding: 1em;
   min-width: 100%;
+  background-color: #f1f1f1;
+
 }
 
 .team-member {

@@ -19,6 +19,12 @@ const InfoPage = () => {
           <ArrowBackIcon />
         </IconButton>
       </div>
+      
+      <section id="intro">
+        <p>
+         More and more people want to watch local sports events online. However, operating a livestream is prohibitively expensive and difficult to set-up for most event organizers. 
+        </p>
+      </section>
 
       <h1>What is <span className="CSFont">
         <span className="CSBlack">Crowd</span>
@@ -26,17 +32,30 @@ const InfoPage = () => {
       </span>?</h1>
       <section id="what-is">
         <p>
-          CrowdStream is a platform that democratizes live streaming. Livestreaming local events can be costly, ineffective, and difficult to set up. CrowdStream aims to solve these problems by allowing anyone to stream an event from their phone, and allowing anyone to watch that stream from their phone.
+          <b>
+        <span className="CSBlack">Crowd</span>
+        <span className="CSRed">Stream</span> is the easiest way for event organizers to provide a livestream of their event.  </b> 
+        </p>
+        <p>
+
+        On-site spectators and event volunteers can broadcast their perspective of the event by using <span className="CSBlack">Crowd</span><span className="CSRed">Stream</span> on their phone.
+        </p>
+        <p>
+         Then, online viewers have a selection of perspectives to view on the <span className="CSBlack">Crowd</span>
+        <span className="CSRed">Stream</span> map. Viewers can create their own experience by switching between available broadcasts of the event.  
+          </p>
+          <p>
+          Anything broadcast to <span className="CSBlack">Crowd</span><span className="CSRed">Stream</span> is also available to save and rewatch in the future.   
         </p>
       </section>
 
       <h1>How do I get started?</h1>
       <section id="get-started">
         <p><b>To watch a stream:</b> Simply click on a pin on the map!</p>
-        <p><b>To stream:</b> Click on the streamer icon in the top right corner of the screen. You will be prompted to allow CrowdStream to access your camera and microphone. Once you allow access, you will be able to start streaming!</p>
+        <p><b>To stream:</b> Click on the "Start Broadcasting" icon in the top right corner of the screen. Depending on the event, you may need to enter a password or log-in before sharing your perspective</p>
       </section>
 
-      {<h1>The Team</h1>}
+      {<h1>About Us</h1>}
       <section id="team">
         <div className="team-grid">
           <div className="team-member">
@@ -62,13 +81,31 @@ const InfoPage = () => {
             <strong>Ollie Boyne</strong>
             <p>PhD Student in Computer Vision at Cambridge, studying shape reconstruction from multiview images.</p>
           </div>
-
-
         </div>
+        < br />
+     <p>
+      Our team got together after rowing in (and winning!) the 2023 Boat Race for Cambridge. 
+      </p>
+      <p>
+      We were frustrated with the fact that the reserve Goldie-Isis race was completely unavailable online, despite being filmed by hundreds of spectators using their phones down the course. 
+      </p>
+      <p>
+      We'd also all experienced the frustration of trying to view live events online like British University Championships, Fours Head, or Metropolitan Regatta.
+      </p>
       </section>
-      <br />  <br />
-      <a href="https://www.flaticon.com/free-icons/film" title="film icons">Film and Camera icons created by juicy_fish - Flaticon</a>
+
+
+      <h1>Questions?</h1>
+      <section id="questions">
+        <p>
+          If you have any questions or feedback, please email us at <a href="mailto: lyncht248@gmail.com">CleanSweepCode@gmail.com</a> or call at +44 7576 106282.
+        </p>
+      </section>
+      <br /> <br />
+
+
     </div>
+
   );
 };
 
