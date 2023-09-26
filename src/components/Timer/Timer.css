@@ -14,6 +14,7 @@
   height: 200px;
 }
 
+  /* Standard */
   @keyframes pulsate {
     0% {
       opacity: 0.2;
@@ -25,9 +26,23 @@
       opacity: 0.2;
     }
   }
-  
+
+  /* Webkit browsers like Safari */
+  @-webkit-keyframes pulsate {
+    0% {
+      opacity: 0.2;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.2;
+    }
+  }
+
   .pulsate {
     animation: pulsate 1.5s ease-in-out infinite;
+    -webkit-animation: pulsate 1.5s ease-in-out infinite; /* For Safari */
   }
 
   .toggle-button {
