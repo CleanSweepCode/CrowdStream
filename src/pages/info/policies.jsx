@@ -172,7 +172,7 @@ export const Policies = () => {
                                     <span style={{ color: 'rgb(127, 127, 127)' }}>
                                         <span data-custom-class='body_text'>
                                             <strong>Questions or concerns?&nbsp;</strong>Reading this privacy notice will help you understand your privacy rights and choices. If you do not agree with our policies and practices, please
-                                            do not use our Services. If you still have any questions or concerns, please contact us at <bdt className='question'>n.mayhew@hotmail.co.uk</bdt>.
+                                            do not use our Services. If you still have any questions or concerns, please contact us at <bdt className='question'>cleansweepcode@gmail.com</bdt>.
                                         </span>
                                     </span>
                                 </span>
@@ -2927,7 +2927,7 @@ export const Policies = () => {
                                                                                                                                                         }}>
                                                                                                                                                         <span data-custom-class='body_text'>
                                                                                                                                                             <bdt className='block-component' />
-                                                                                                                                                            <bdt className='question'>n.mayhew@hotmail.co.uk</bdt>
+                                                                                                                                                            <bdt className='question'>cleansweepcode@gmail.com</bdt>
                                                                                                                                                             <bdt className='else-block' />
                                                                                                                                                         </span>
                                                                                                                                                     </span>
@@ -7498,7 +7498,7 @@ export const Policies = () => {
                                                                                                                                                                                                 }}>
                                                                                                                                                                                                 <span data-custom-class='body_text'>
                                                                                                                                                                                                     <bdt className='block-component' />
-                                                                                                                                                                                                    by email at <bdt className='question'>n.mayhew@hotmail.co.uk</bdt>, <bdt className='statement-end-if-in-editor' />
+                                                                                                                                                                                                    by email at <bdt className='question'>cleansweepcode@gmail.com</bdt>, <bdt className='statement-end-if-in-editor' />
                                                                                                                                                                                                     <bdt className='block-component' />
                                                                                                                                                                                                 </span>
                                                                                                                                                                                                 <span data-custom-class='body_text'>
@@ -7837,7 +7837,7 @@ export const Policies = () => {
                                                                                                                                                                                             }}>
                                                                                                                                                                                             <span data-custom-class='body_text'>
                                                                                                                                                                                                 <bdt className='block-component' />
-                                                                                                                                                                                                email us at <bdt className='question'>n.mayhew@hotmail.co.uk</bdt>
+                                                                                                                                                                                                email us at <bdt className='question'>cleansweepcode@gmail.com</bdt>
                                                                                                                                                                                                 <bdt className='statement-end-if-in-editor' />
                                                                                                                                                                                             </span>
                                                                                                                                                                                         </span>
@@ -8059,7 +8059,7 @@ export const Policies = () => {
                                                                                                                                                                                         fontSize: 15,
                                                                                                                                                                                     }}>
                                                                                                                                                                                     <span data-custom-class='body_text'>
-                                                                                                                                                                                        <bdt className='question'>Nick Mayhew</bdt>
+                                                                                                                                                                                        <bdt className='question'>Clean Sweep Code</bdt>
                                                                                                                                                                                     </span>
                                                                                                                                                                                 </span>{' '}
                                                                                                                                                                                 to be our representative in the UK. You can contact them directly regarding our processing of your information
@@ -8070,7 +8070,7 @@ export const Policies = () => {
                                                                                                                                                                                     }}>
                                                                                                                                                                                     <span data-custom-class='body_text'>
                                                                                                                                                                                         ,
-                                                                                                                                                                                        <bdt className='block-component' /> by email at <bdt className='question'>n.mayhew@hotmail.co.uk</bdt>
+                                                                                                                                                                                        <bdt className='block-component' /> by email at <bdt className='question'>cleansweepcode@gmail.com</bdt>
                                                                                                                                                                                         ,
                                                                                                                                                                                         <bdt className='statement-end-if-in-editor' />
                                                                                                                                                                                         <bdt className='block-component' />
@@ -8108,7 +8108,7 @@ export const Policies = () => {
                                                                                                                                                                                             fontSize: 15,
                                                                                                                                                                                         }}>
                                                                                                                                                                                         <span data-custom-class='body_text'>
-                                                                                                                                                                                            <bdt className='question'>n.mayhew@hotmail.co.uk</bdt>
+                                                                                                                                                                                            <bdt className='question'>cleansweepcode@gmail.com</bdt>
                                                                                                                                                                                         </span>
                                                                                                                                                                                     </span>
                                                                                                                                                                                     <span
@@ -8748,12 +8748,12 @@ export const Policies = () => {
                             <li data-custom-class='body_text' style={{ lineHeight: '1.5' }}>
                                 breach this Policy, please <bdt className='block-component' />
                                 <bdt className='block-component' />
-                                email us at <bdt className='question'>n.mayhew@hotmail.co.uk</bdt>, <bdt className='statement-end-if-in-editor' />
+                                email us at <bdt className='question'>cleansweepcode@gmail.com</bdt>, <bdt className='statement-end-if-in-editor' />
                                 <bdt className='block-component' /> or refer to the contact details at the bottom of this document to let us know which Content or Contribution is in breach of this Policy and why; or
                             </li>
                             <li data-custom-class='body_text' style={{ lineHeight: '1.5' }}>
                                 infringe any third-party intellectual property rights, please <bdt className='block-component' />
-                                email us at <bdt className='question'>n.mayhew@hotmail.co.uk</bdt>
+                                email us at <bdt className='question'>cleansweepcode@gmail.com</bdt>
                                 <bdt className='else-block' />.
                             </li>
                         </ul>
@@ -8852,7 +8852,7 @@ export const Policies = () => {
                         </div>
                         <div style={{ lineHeight: '1.5' }}>
                             <span data-custom-class='body_text'>
-                                Email: <bdt className='question'>n.mayhew@hotmail.co.uk</bdt>
+                                Email: <bdt className='question'>cleansweepcode@gmail.com</bdt>
                                 <bdt className='statement-end-if-in-editor' />
                                 <bdt className='block-component' />
                             </span>
