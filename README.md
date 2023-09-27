@@ -1,5 +1,5 @@
 ### LivestreamApp
-This is the repo for CrowdShare. We host crowdsourced event livestreams. 
+This is the repo for CrowdStream. We host crowdsourced event livestreams. 
 
 ### Current Tech Stack (2023-07-12)
 The web app is hosted on Vercel at this link:
