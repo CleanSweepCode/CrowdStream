@@ -1,10 +1,12 @@
 
-import { listChannels, 
-         createChannel,
-         channelHeartbeat,
-         tagChannelInactive,
-         tagChannelActive,
-         tagChannel } from '../../components/Helpers/APIUtils.jsx'
+import {
+    listChannels,
+    createChannel,
+    channelHeartbeat,
+    tagChannelInactive,
+    tagChannelActive,
+    tagChannel
+} from '../../components/Helpers/APIUtils.jsx'
 import IVSBroadcastClient, {
     Errors,
     BASIC_LANDSCAPE
@@ -41,12 +43,19 @@ export class StreamClient {
 
         try {
             const { width, height } = stream.getVideoTracks()[0].getSettings();
+            console.log("WIDTH: " + width);
+            console.log("HEIGHT: " + height);
             //obtain max resolution to center the video in the client
+            console.log("HELLO");
+            const forced_width = 1920;
+            const forced_height = 1080;
             const max_width = this.streamConfig.maxResolution.width;
+            console.log("MAX WIDTH: " + max_width);
             const max_height = this.streamConfig.maxResolution.height;
-            const x_offset = (max_width - width) / 2;
-            const y_offset = (max_height - height) / 2;
-            await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0, x: x_offset, y: y_offset, width: width, height: height });
+            console.log("MAX HEIGHT: " + max_height);
+            const x_offset = 0;
+            const y_offset = 0;
+            await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0, x: x_offset, y: y_offset, width: forced_width, height: forced_height });
         }
         catch (error) {
             console.warn('Error adding video input device to IVS: ', error);
