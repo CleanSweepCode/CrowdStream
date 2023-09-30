@@ -14,6 +14,7 @@ const App = () => {
     <div className="App">
       <Routes>
         <Route path="/*" element={<HomePage />} />
+        <Route path="/event/:URLEventID" element={<HomePage />} />
         <Route path="/streamer" element={<Streamer />} />
         <Route path="/about" element={<InfoPage />} />
         <Route path="/timer" element={<Timer />} />
