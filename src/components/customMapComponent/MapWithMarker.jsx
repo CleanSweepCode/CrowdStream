@@ -1,9 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { GoogleMap, Marker, Polygon, Polyline } from '@react-google-maps/api';
 
-import { useNavigate } from "react-router-dom";
 import './MapWithMarker.css';
 import '../videoJS/videojs.css';
 import { listChannels, getEvents } from '../Helpers/APIUtils.jsx'
@@ -67,7 +66,7 @@ function MapWithMarker() {
 
     // setting the eventID from a URL
     const { URLEventID } = useParams();
-  
+
     // set a toggle function for when video is set to fullscreen
     const handleFullscreenToggle = (fullscreenStatus) => {
         isFullScreen = fullscreenStatus;
@@ -280,7 +279,7 @@ function MapWithMarker() {
 
     const handlePolygonClick = (eventID) => {
         calculateCenterEvent(eventID);
-        // setZoom(10);
+        navigate('/event/' + eventID);
         console.log("polygon clicked")
       };
 
