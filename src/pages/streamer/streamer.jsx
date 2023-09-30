@@ -21,7 +21,7 @@ const Streamer = () => {
   const ref = useRef();
   const navigate = useNavigate();
 
-  const streamConfig = IVSBroadcastClient.BASIC_LANDSCAPE;
+  const streamConfig = IVSBroadcastClient.BASIC_FULL_HD_LANDSCAPE;
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
   const [readyToStream, setReadyToStream] = useState(false);
   const [startStreamErrors, setStartStreamErrors] = useState([]);

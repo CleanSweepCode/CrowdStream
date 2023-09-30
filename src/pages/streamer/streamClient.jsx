@@ -50,7 +50,7 @@ export class StreamClient {
             const max_width = this.streamConfig.maxResolution.width;
             console.log("MAX WIDTH: " + max_width);
             const max_height = this.streamConfig.maxResolution.height;
-            console.log("MAX HEIGHT: " + max_height);n
+            console.log("MAX HEIGHT: " + max_height);
             const x_offset = (max_width - width) / 2;
             const y_offset = (max_height - height) / 2;
             await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0, x: x_offset, y: y_offset, width: forced_width, height: forced_height });
