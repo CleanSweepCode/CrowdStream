@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import { GoogleMap, Marker, Polygon, Polyline } from '@react-google-maps/api';
 
 import { useNavigate } from "react-router-dom";
@@ -64,6 +65,9 @@ function MapWithMarker() {
     const videoPlayerRef = useRef(null);
     const [showMenu, setShowMenu] = useState(false);
 
+    // setting the eventID from a URL
+    const { URLEventID } = useParams();
+  
     // set a toggle function for when video is set to fullscreen
     const handleFullscreenToggle = (fullscreenStatus) => {
         isFullScreen = fullscreenStatus;
@@ -125,7 +129,6 @@ function MapWithMarker() {
     const calculateCenterEvent = async (eventID) => {
         try {
             const fetchedEvents = await getEvents();
-            const routePoints = fetchedEvents["events"][eventID]["routePoints"];
             const perimPoints = fetchedEvents["events"][eventID]["perimPoints"];
             getZoomParams(perimPoints);
         } catch (error) {
@@ -281,6 +284,15 @@ function MapWithMarker() {
         console.log("polygon clicked")
       };
 
+    const zoomOnEventUrl = () => {
+        // Perhaps not the most robus, waits a second after map has loaded, zooms in on event if given
+        setTimeout(() => {
+            if (URLEventID) {
+                calculateCenterEvent(URLEventID);
+            };
+          }, 1000);
+    };
+
     const backChannel = () => {
         var newChannel = channelList.getPreviousByLongitude(selectedChannel, includePastStreams);
         setSelectedChannel(newChannel);
@@ -397,7 +409,10 @@ function MapWithMarker() {
                     ref={mapRef}
                     center={center}
                     zoom={zoom}
-                    onLoad={map=>setMap(map)}
+                    onLoad={map => {
+                        setMap(map);
+                        zoomOnEventUrl();
+                      }}
                     options={{
                         mapTypeControl: false,
                         streetViewControl: false,
