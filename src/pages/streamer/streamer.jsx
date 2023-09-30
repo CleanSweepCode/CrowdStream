@@ -94,7 +94,7 @@ const Streamer = () => {
       "latitude": position.coords.latitude.toString(),
       "longitude": position.coords.longitude.toString(),
       "active": "preparing",
-      // "record": "true", // Uncomment this to enable recording
+      "record": "true", // Uncomment this to enable recording
     };
 
     client = await StreamClient.create(tags, streamConfig);
