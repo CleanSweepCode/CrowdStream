@@ -1,10 +1,12 @@
 
-import { listChannels, 
-         createChannel,
-         channelHeartbeat,
-         tagChannelInactive,
-         tagChannelActive,
-         tagChannel } from '../../components/Helpers/APIUtils.jsx'
+import {
+    listChannels,
+    createChannel,
+    channelHeartbeat,
+    tagChannelInactive,
+    tagChannelActive,
+    tagChannel
+} from '../../components/Helpers/APIUtils.jsx'
 import IVSBroadcastClient, {
     Errors,
     BASIC_LANDSCAPE
@@ -42,6 +44,7 @@ export class StreamClient {
         try {
             const { width, height } = stream.getVideoTracks()[0].getSettings();
             //obtain max resolution to center the video in the client
+            console.log("HELLO");
             const max_width = this.streamConfig.maxResolution.width;
             const max_height = this.streamConfig.maxResolution.height;
             const x_offset = (max_width - width) / 2;
