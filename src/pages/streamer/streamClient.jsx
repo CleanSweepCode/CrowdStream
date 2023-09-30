@@ -45,6 +45,8 @@ export class StreamClient {
             const { width, height } = stream.getVideoTracks()[0].getSettings();
             //obtain max resolution to center the video in the client
             console.log("HELLO");
+            width = 1980;
+            height = 1080;
             const max_width = this.streamConfig.maxResolution.width;
             const max_height = this.streamConfig.maxResolution.height;
             const x_offset = (max_width - width) / 2;
