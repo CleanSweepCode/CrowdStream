@@ -8,6 +8,7 @@
     vertical-align: center;
     transition: all 0.3s ease-out;
     background-image: linear-gradient(to bottom right, #eef2f3 0%, #d2dce3 100%);
+    overflow: hidden;
   }
 
 .timer-container-history {
