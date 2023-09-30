@@ -43,6 +43,8 @@ export class StreamClient {
 
         try {
             const { width, height } = stream.getVideoTracks()[0].getSettings();
+            console.log("WIDTH: " + width);
+            console.log("HEIGHT: " + height);
             //obtain max resolution to center the video in the client
             console.log("HELLO");
             const forced_width = 1920;
@@ -51,8 +53,8 @@ export class StreamClient {
             console.log("MAX WIDTH: " + max_width);
             const max_height = this.streamConfig.maxResolution.height;
             console.log("MAX HEIGHT: " + max_height);
-            const x_offset = (max_width - width) / 2;
-            const y_offset = (max_height - height) / 2;
+            const x_offset = 0//(max_width - width) / 2;
+            const y_offset = 0//(max_height - height) / 2;
             await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0, x: x_offset, y: y_offset, width: forced_width, height: forced_height });
         }
         catch (error) {
