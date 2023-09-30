@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { fetchGeolocationData } from './locationManagement.jsx'
 import { getCameraDevices, handlePermissions, getMicrophoneStream } from './deviceManagement.jsx'
+import { getEvents } from '../../components/Helpers/APIUtils.jsx'
 
 const REFRESH_INTERVAL = 10000; // 10 seconds
 
@@ -26,6 +27,23 @@ const Streamer = () => {
   const [readyToStream, setReadyToStream] = useState(false);
   const [startStreamErrors, setStartStreamErrors] = useState([]);
   const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
+  const [eventId, setEventId] = useState(''); // State variable for selected event ID
+  const [eventOptions, setEventOptions] = useState([]);
+
+
+  const getEventsData = async () => {
+    try {
+      const data = await getEvents(); // Call your getEvents function
+      // Extract event keys and labels from the JSON data
+      const options = Object.keys(data.events).map((key) => ({
+        value: key,
+        label: data.events[key].name,
+      }));
+      setEventOptions(options);
+    } catch (error) {
+      console.error('Error fetching events data', error);
+    }
+  };
 
   const handleRemoveError = (errorName) => {
     const newStartStreamErrors = startStreamErrors.filter(item => item !== errorName);
@@ -45,9 +63,8 @@ const Streamer = () => {
     };
 
     client.updateTags(tags);
-    console.log('Updated location to: ', position.coords.latitude, position.coords.longitude)
-  }
-  
+    console.log('Updated location to: ', position.coords.latitude, position.coords.longitude);
+  }  
 
   // Initialize the streamer
   useEffect(async () => {
@@ -56,6 +73,7 @@ const Streamer = () => {
 
   async function Initialize() {
     const position = await fetchGeolocationData();
+    getEventsData();
 
     if (position) {
       handleRemoveError('noGeoLocation');
@@ -156,6 +174,17 @@ const Streamer = () => {
   const delay = (milliseconds) => {
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
   };
+
+  const handleSetEventId = (eventId) => {
+    setEventId(eventId);
+    const tags = {
+      "eventId": eventId,
+    };
+
+    client.updateTags(tags);
+    console.log('event ID tag updated to:', eventId);
+  };
+
 
   async function toggleCamera() {
     setHasMultipleCameras(false)
@@ -267,6 +296,23 @@ const Streamer = () => {
         <button className="button" onClick={toggleCamera} disabled={!hasMultipleCameras}>
           Toggle Camera
         </button>
+
+        {/* Add a dropdown menu for selecting the event ID */}
+        <div className="event-id-input">
+          {/* <label htmlFor="eventIdSelect">Select Event:</label> */
+          }
+          <select
+            id="eventIdSelect"
+            value={eventId}
+            onChange={(e) => handleSetEventId(e.target.value)}
+          >
+            {eventOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
       </div>
     </div>
