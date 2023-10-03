@@ -334,9 +334,9 @@ function MapWithMarker() {
                 </button>
 
                 {/* TIMER object */}
-                <div className="map-timercontainer">
+                {/* <div className="map-timercontainer">
                     <Timer />
-                </div>
+                </div> */}
 
                 <div className="map-titlecontainer">
                     <span className="CSFont">
