@@ -349,12 +349,12 @@ function MapWithMarker() {
                     Click on a marker to view an event
                 </div>
 
-                <div className="map-refreshStreamButtonDiv">
+                {/* <div className="map-refreshStreamButtonDiv">
                     <button className="map-refreshStreamButton"
                         onClick={handleRefreshStreams}>
                         &#8635;
                     </button>
-                </div>
+                </div> */}
 
 
                 <div className='map-MenuButtonDiv'>
