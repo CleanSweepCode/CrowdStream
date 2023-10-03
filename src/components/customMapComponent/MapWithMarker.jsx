@@ -467,11 +467,11 @@ function MapWithMarker() {
                 {
                     showMenu && (
                         <div className="menu-container">
-                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/about`)}>About <span className="CSBlack">Crowd</span><span className="CSRed">Stream</span></button>
+                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/about`)}><span className="CSBlack">About Crowd</span><span className="CSRed">Stream</span></button>
                             {/* 
                             <button className="menu-option" onClick={() => navigateAndClearInterval(`/newevent`)}>Create an Event</button>
                             */}
-                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/streamer`)}>Start Broadcasting</button>
+                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/streamer`)}><span className="CSBlack">Start Broadcasting</span></button>
                         </div>
                     )
                 }
