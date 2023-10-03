@@ -53,7 +53,6 @@ function MapWithMarker() {
     const [selectedChannel, setSelectedChannel] = useState(null);
     const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
-    const [dragData, setDragData] = React.useState({ startX: 0, startY: 0, offsetX: 0, offsetY: 0 });
     const [eventIDs, setEventIDs] = useState([]);
     const [eventInfo, setEventInfo] = useState({});
     const [eventRouteInfo, setEventRouteInfo] = useState({});
@@ -224,45 +223,7 @@ function MapWithMarker() {
         navigate(url);
     }
 
-    const handleDragStart = (e) => {
-        setDragData({
-            ...dragData,
-            startX: e.clientX,
-            startY: e.clientY
-        });
-    }
-
-    const handleDrag = (e) => {
-        if (e.clientX === 0 && e.clientY === 0) return; // This prevents the drag event firing when the mouse isn't moving
-        if (isFullScreen) return; // This prevents the drag event firing when the video is fullscreen
-
-        const dx = e.clientX - dragData.startX + dragData.offsetX;
-        const dy = e.clientY - dragData.startY + dragData.offsetY;
-
-        e.target.style.transform = `translate(${dx}px, ${dy}px)`;
-    }
-
-    const handleDragEnd = (e) => {
-        const dx = e.clientX - dragData.startX + dragData.offsetX;
-        const dy = e.clientY - dragData.startY + dragData.offsetY;
-
-        setDragData({
-            ...dragData,
-            offsetX: dx,
-            offsetY: dy
-        });
-    }
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-    };
-
-
     const displayedChannels = channelList.filterActive(includePastStreams);
-
-    const handleDragOver = (e) => {
-        e.preventDefault(); // Prevent default to allow drop
-    };
 
     const onVideoClose = () => {
         setShowVideoPlayer(false)
@@ -517,8 +478,7 @@ function MapWithMarker() {
             </div>
             {
                 showVideoPlayer && selectedChannel &&
-                <div className="video-player-container" ref={videoPlayerRef} draggable="true" onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd} onDrop={handleDrop} onDragOver={handleDragOver} >
-                    {/* <div className="drag-handle">Drag Me</div> */}
+                <div className="video-player-container" ref={videoPlayerRef}>
                     <XSquare onClick={onVideoClose} className="map-closebutton" />
                     <ArrowLeft onClick={backChannel} className="map-leftbutton" />
                     <ArrowRight onClick={forwardChannel} className="map-rightbutton" />
