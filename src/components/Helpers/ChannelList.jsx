@@ -59,28 +59,44 @@ class ChannelList {
 
     getNextByLongitude(currentChannel, includePastStreams) {
         const sortedByLongitude = this.sortByLongitude(this.filterActive(includePastStreams));
-        var curIdx = sortedByLongitude.findIndex(channel => channel.name === currentChannel.name);
+        const curIdx = sortedByLongitude.findIndex(channel => channel.name === currentChannel.name);
+    
         if (curIdx === -1) {
             return null;
         }
-        if (curIdx === sortedByLongitude.length - 1) {
-            return sortedByLongitude[0];
+        
+        const currentEventId = currentChannel.eventId; // maybe "undefined"
+        const channelsWithSameEventId = sortedByLongitude.filter(channel => channel.eventId === currentEventId);
+    
+        let nextChannel = channelsWithSameEventId[curIdx];
+    
+        while (nextChannel.eventId !== currentEventId) {
+            nextChannelIndex = (nextChannelIndex + 1) % channelsWithSameEventId.length;
+            nextChannel = channelsWithSameEventId[nextChannelIndex];
         }
-
-        return sortedByLongitude[curIdx + 1];
+    
+        return nextChannel;
     }
+    
 
     getPreviousByLongitude(currentChannel, includePastStreams) {
         const sortedByLongitude = this.sortByLongitude(this.filterActive(includePastStreams));
-        var curIdx = sortedByLongitude.findIndex(channel => channel.name === currentChannel.name);
+        const curIdx = sortedByLongitude.findIndex(channel => channel.name === currentChannel.name);
+    
         if (curIdx === -1) {
             return null;
         }
-        if (curIdx === 0) {
-            return sortedByLongitude[sortedByLongitude.length - 1];
-        }
+        const currentEventId = currentChannel.eventId; // maybe "undefined"
+        const channelsWithSameEventId = sortedByLongitude.filter(channel => channel.eventId === currentEventId);
 
-        return sortedByLongitude[curIdx - 1];
+        let nextChannel = channelsWithSameEventId[curIdx];
+    
+        while (nextChannel.eventId !== currentEventId) {
+            nextChannelIndex = (nextChannelIndex - 1) % channelsWithSameEventId.length;
+            nextChannel = channelsWithSameEventId[nextChannelIndex];
+        }
+    
+        return nextChannel;
     }
 
 }
