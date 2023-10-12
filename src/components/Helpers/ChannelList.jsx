@@ -58,44 +58,34 @@ class ChannelList {
     }
 
     getNextByLongitude(currentChannel, includePastStreams) {
-        const sortedByLongitude = this.sortByLongitude(this.filterActive(includePastStreams));
-        const curIdx = sortedByLongitude.findIndex(channel => channel.name === currentChannel.name);
-    
+        const sortedByLongitude = this.sortByLongitude(this.filterActive(includePastStreams));        
+        const currentEventId = currentChannel.tags.eventId; // maybe "undefined"
+        const channelsWithSameEventId = sortedByLongitude.filter(channel => channel.tags.eventId === currentEventId);
+        const curIdx = channelsWithSameEventId.findIndex(channel => channel.name === currentChannel.name);
+
         if (curIdx === -1) {
             return null;
         }
-        
-        const currentEventId = currentChannel.eventId; // maybe "undefined"
-        const channelsWithSameEventId = sortedByLongitude.filter(channel => channel.eventId === currentEventId);
     
-        let nextChannel = channelsWithSameEventId[curIdx];
-    
-        while (nextChannel.eventId !== currentEventId) {
-            nextChannelIndex = (nextChannelIndex + 1) % channelsWithSameEventId.length;
-            nextChannel = channelsWithSameEventId[nextChannelIndex];
-        }
-    
+        let nextChannel = channelsWithSameEventId[(curIdx + 1) % channelsWithSameEventId.length];
+
         return nextChannel;
     }
     
 
     getPreviousByLongitude(currentChannel, includePastStreams) {
-        const sortedByLongitude = this.sortByLongitude(this.filterActive(includePastStreams));
-        const curIdx = sortedByLongitude.findIndex(channel => channel.name === currentChannel.name);
-    
+        const sortedByLongitude = this.sortByLongitude(this.filterActive(includePastStreams));        
+        const currentEventId = currentChannel.tags.eventId; // maybe "undefined"
+        const channelsWithSameEventId = sortedByLongitude.filter(channel => channel.tags.eventId === currentEventId);
+        const curIdx = channelsWithSameEventId.findIndex(channel => channel.name === currentChannel.name);
+
         if (curIdx === -1) {
             return null;
         }
-        const currentEventId = currentChannel.eventId; // maybe "undefined"
-        const channelsWithSameEventId = sortedByLongitude.filter(channel => channel.eventId === currentEventId);
 
-        let nextChannel = channelsWithSameEventId[curIdx];
-    
-        while (nextChannel.eventId !== currentEventId) {
-            nextChannelIndex = (nextChannelIndex - 1) % channelsWithSameEventId.length;
-            nextChannel = channelsWithSameEventId[nextChannelIndex];
-        }
-    
+        const channelsWithSameEventIdLength = channelsWithSameEventId.length
+        let nextChannel = channelsWithSameEventId[(curIdx + channelsWithSameEventIdLength - 1) % channelsWithSameEventIdLength];
+
         return nextChannel;
     }
 
