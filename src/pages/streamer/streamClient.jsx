@@ -43,19 +43,10 @@ export class StreamClient {
 
         try {
             const { width, height } = stream.getVideoTracks()[0].getSettings();
-            console.log("WIDTH: " + width);
-            console.log("HEIGHT: " + height);
             //obtain max resolution to center the video in the client
-            console.log("HELLO");
             const forced_width = 1920;
             const forced_height = 1080;
-            const max_width = this.streamConfig.maxResolution.width;
-            console.log("MAX WIDTH: " + max_width);
-            const max_height = this.streamConfig.maxResolution.height;
-            console.log("MAX HEIGHT: " + max_height);
-            const x_offset = 0;
-            const y_offset = 0;
-            await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0, x: x_offset, y: y_offset, width: forced_width, height: forced_height });
+            await this.client.addVideoInputDevice(stream, 'cam 1', { index: 0, x: 0, y: 0, width: forced_width, height: forced_height });
         }
         catch (error) {
             console.warn('Error adding video input device to IVS: ', error);
@@ -88,6 +79,37 @@ export class StreamClient {
             tags: tags
         };
         await tagChannel(params);
+    }
+
+}
+
+// dummy client for testing, doesn't do any channel creation or streaming
+export class StreamClientDummy {
+    constructor(tags, streamConfig) {
+        this.streamConfig = streamConfig;
+        this.tags = tags;
+        this.has_stream = false;
+    }
+
+    async setStream(stream) {
+        if (!stream) {
+            console.error("Camera stream for client is null");
+        }
+    }
+
+    async addAudioInputDevice(microphoneStream) {
+    }
+
+    async start() {
+    }
+
+    async stop() {
+    }
+
+    async sendHeartbeat() {
+    }
+
+    async updateTags(tags) {
     }
 
 }
