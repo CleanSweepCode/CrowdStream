@@ -1,12 +1,17 @@
+import {zoomStream} from './zoom.jsx';
+
 const VIDEO_INPUT = 'videoinput';
 const AUDIO_INPUT = 'audioinput';
 const REAR_KEYS = ['rear', 'back', 'environment'];
 
 class DeviceList {
-  constructor(arr) {
+  constructor(arr, canvasElement) {
     this.array = arr;
     this.index = 0;
     this.size = arr.length;
+    this.canvasElement = canvasElement;
+    this.canvasContext = this.canvasElement.getContext('2d');
+    this.zoomFactor = 1.0;
   }
 
   active() {
@@ -21,13 +26,37 @@ class DeviceList {
     this.index = (this.index + 1) % this.array.length;
   }
 
+  setZoom(newZoomFactor) {
+    this.zoomFactor = newZoomFactor;
+  }
+
+  draw(videoElement) {
+    this.canvasContext.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+    let cropWidth = this.canvasElement.width / this.zoomFactor;
+    let cropHeight = this.canvasElement.height / this.zoomFactor;
+    let cropX = (this.canvasElement.width - cropWidth) / 2;
+    let cropY = (this.canvasElement.height - cropHeight) / 2;
+
+    this.canvasContext.drawImage(
+      videoElement,
+      cropX, cropY, cropWidth, cropHeight,
+      0, 0, this.canvasElement.width, this.canvasElement.height
+    );
+
+    requestAnimationFrame(() => this.draw(videoElement));
+
+    
+  }
+
   async activeStream(previousStream = null) {
     if (previousStream) {
+      // Assuming stopTracks is a function that stops all tracks in a MediaStream
       stopTracks(previousStream);
     }
 
+    let stream;
     try {
-      return await navigator.mediaDevices.getUserMedia({
+      stream = await navigator.mediaDevices.getUserMedia({
         video: { deviceId: { exact: this.active().deviceId } },
         audio: false,
       });
@@ -35,6 +64,23 @@ class DeviceList {
       console.error('Error accessing camera:', err);
       throw err;
     }
+
+    let videoElement = document.createElement('video');
+    videoElement.srcObject = stream;
+    videoElement.play();
+
+    await new Promise((resolve) => {
+      videoElement.onloadedmetadata = () => {
+        this.canvasElement.width = videoElement.videoWidth;
+        this.canvasElement.height = videoElement.videoHeight;
+        resolve();
+      };
+    });
+
+    this.draw(videoElement);
+    
+
+    return this.canvasElement.captureStream();
   }
 }
 
@@ -57,7 +103,12 @@ export async function getCameraDevices() {
     return 0;
   });
 
-  const deviceList = new DeviceList(videoDevices);
+  const canvasElement = document.createElement('canvas');
+  canvasElement.width = 1920;  
+  canvasElement.height = 1080;
+  document.body.appendChild(canvasElement);
+
+  const deviceList = new DeviceList(videoDevices, canvasElement);
   return deviceList;
 }
 

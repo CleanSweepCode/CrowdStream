@@ -10,6 +10,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { fetchGeolocationData } from './locationManagement.jsx'
 import { getCameraDevices, handlePermissions, getMicrophoneStream } from './deviceManagement.jsx'
 import { getEvents } from '../../components/Helpers/APIUtils.jsx'
+import { ZoomSlider } from './zoom.jsx';
 
 const REFRESH_INTERVAL = 10000; // 10 seconds
 
@@ -18,7 +19,7 @@ var cameraDevices = null;
 var cameraStream = null;
 var microphoneStream = null;
 
-var AWS_ENABLED = true; // set to false to avoid channel creation
+var AWS_ENABLED = false; // set to false to avoid channel creation
 
 const Streamer = () => {
   const ref = useRef();
@@ -31,6 +32,18 @@ const Streamer = () => {
   const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
   const [eventId, setEventId] = useState(''); // State variable for selected event ID
   const [eventOptions, setEventOptions] = useState([]);
+
+  const handleZoomChange = async (newZoomLevel) => {
+    if (cameraDevices){
+      cameraDevices.setZoom(newZoomLevel)
+    }
+
+    // redo camera stream
+    cameraStream = await getCameraStream();  // Setup the new camera stream
+    if (client.has_stream) {
+      client.setStream(cameraStream);
+    }
+  };
 
 
   const getEventsData = async () => {
@@ -266,6 +279,7 @@ const Streamer = () => {
       </div>
 
 
+      <ZoomSlider min={1} max={5} step={0.1} onChange={handleZoomChange} />
 
       <StreamerPlayer
         ref={ref}
