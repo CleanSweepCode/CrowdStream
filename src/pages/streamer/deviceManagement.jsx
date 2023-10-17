@@ -27,10 +27,24 @@ class DeviceList {
     }
 
     try {
-      return await navigator.mediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: { deviceId: { exact: this.active().deviceId } },
         audio: false,
       });
+
+      const track = stream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities();
+      const settings = track.getSettings();
+
+      // https://stackoverflow.com/questions/62336847/video-mediadevices-getusermedia-zoom-is-not-working-in-ios
+      // https://stackoverflow.com/questions/61023133/safari-ios-and-ipad-zooming-in-with-camera
+
+      // TODO: CHECK ON IOS IF ZOOM IS AVAILABLE
+
+      console.log('Zoom available' ? 'Zoom not available.' : 'zoom' in capabilities)
+
+      return stream
+
     } catch (err) {
       console.error('Error accessing camera:', err);
       throw err;
