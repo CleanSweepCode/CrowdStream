@@ -27,6 +27,13 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
       preload: 'auto',
       controlBar: {
         pictureInPictureToggle: false // Hide PiP button
+      },
+      userActions: {
+        doubleClick: function(eventdbl) {
+          // Prevent default action and stop the event propagation
+          eventdbl.preventDefault();
+          eventdbl.stopPropagation();
+        }
       }
     }, async () => {
       const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
@@ -52,8 +59,9 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
     }
     
 
+
     return () => {};
-  }, [channel_name]);
+}, [channel_name]);
 
   return (
     <video 

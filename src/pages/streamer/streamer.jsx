@@ -3,7 +3,7 @@ import StreamerPlayer from './streamerPlayer.jsx';
 import IVSBroadcastClient from 'amazon-ivs-web-broadcast';
 import '../../App.css';
 import './streamerPlayer.css';
-import { StreamClient } from './streamClient.jsx'
+import { StreamClient, StreamClientDummy } from './streamClient.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -17,6 +17,8 @@ var client = null;
 var cameraDevices = null;
 var cameraStream = null;
 var microphoneStream = null;
+
+var AWS_ENABLED = true; // set to false to avoid channel creation
 
 const Streamer = () => {
   const ref = useRef();
@@ -115,7 +117,16 @@ const Streamer = () => {
       "record": "true", // Uncomment this to enable recording
     };
 
-    client = await StreamClient.create(tags, streamConfig);
+    if (AWS_ENABLED) {
+      client = await StreamClient.create(tags, streamConfig);
+    }
+    else {
+      console.log("AWS is disabled - using dummy stream client")
+      client = new StreamClientDummy(tags, streamConfig);
+    }
+
+
+
     await setupMicrophoneStream();
 
     if (!intervalId) {

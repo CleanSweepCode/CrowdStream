@@ -53,7 +53,6 @@ function MapWithMarker() {
     const [selectedChannel, setSelectedChannel] = useState(null);
     const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
-    const [dragData, setDragData] = React.useState({ startX: 0, startY: 0, offsetX: 0, offsetY: 0 });
     const [eventIDs, setEventIDs] = useState([]);
     const [eventInfo, setEventInfo] = useState({});
     const [eventRouteInfo, setEventRouteInfo] = useState({});
@@ -104,7 +103,7 @@ function MapWithMarker() {
             lng: centreLng
         });
 
-        setZoom(zoom_);
+        map.setZoom(zoom_)
         
         return;
     };
@@ -224,45 +223,7 @@ function MapWithMarker() {
         navigate(url);
     }
 
-    const handleDragStart = (e) => {
-        setDragData({
-            ...dragData,
-            startX: e.clientX,
-            startY: e.clientY
-        });
-    }
-
-    const handleDrag = (e) => {
-        if (e.clientX === 0 && e.clientY === 0) return; // This prevents the drag event firing when the mouse isn't moving
-        if (isFullScreen) return; // This prevents the drag event firing when the video is fullscreen
-
-        const dx = e.clientX - dragData.startX + dragData.offsetX;
-        const dy = e.clientY - dragData.startY + dragData.offsetY;
-
-        e.target.style.transform = `translate(${dx}px, ${dy}px)`;
-    }
-
-    const handleDragEnd = (e) => {
-        const dx = e.clientX - dragData.startX + dragData.offsetX;
-        const dy = e.clientY - dragData.startY + dragData.offsetY;
-
-        setDragData({
-            ...dragData,
-            offsetX: dx,
-            offsetY: dy
-        });
-    }
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-    };
-
-
     const displayedChannels = channelList.filterActive(includePastStreams);
-
-    const handleDragOver = (e) => {
-        e.preventDefault(); // Prevent default to allow drop
-    };
 
     const onVideoClose = () => {
         setShowVideoPlayer(false)
@@ -284,7 +245,7 @@ function MapWithMarker() {
       };
 
     const zoomOnEventUrl = () => {
-        // Perhaps not the most robus, waits a second after map has loaded, zooms in on event if given
+        // Perhaps not the most robust, waits a second after map has loaded, zooms in on event if given
         setTimeout(() => {
             if (URLEventID) {
                 calculateCenterEvent(URLEventID);
@@ -373,9 +334,9 @@ function MapWithMarker() {
                 </button>
 
                 {/* TIMER object */}
-                <div className="map-timercontainer">
+                {/* <div className="map-timercontainer">
                     <Timer />
-                </div>
+                </div> */}
 
                 <div className="map-titlecontainer">
                     <span className="CSFont">
@@ -388,12 +349,12 @@ function MapWithMarker() {
                     Click on a marker to view an event
                 </div>
 
-                <div className="map-refreshStreamButtonDiv">
+                {/* <div className="map-refreshStreamButtonDiv">
                     <button className="map-refreshStreamButton"
                         onClick={handleRefreshStreams}>
                         &#8635;
                     </button>
-                </div>
+                </div> */}
 
 
                 <div className='map-MenuButtonDiv'>
@@ -506,9 +467,11 @@ function MapWithMarker() {
                 {
                     showMenu && (
                         <div className="menu-container">
-                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/about`)}>About <span className="CSBlack">Crowd</span><span className="CSRed">Stream</span></button>
+                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/about`)}><span className="CSBlack">About Crowd</span><span className="CSRed">Stream</span></button>
+                            {/* 
                             <button className="menu-option" onClick={() => navigateAndClearInterval(`/newevent`)}>Create an Event</button>
-                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/streamer`)}>Start Broadcasting</button>
+                            */}
+                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/streamer`)}><span className="CSBlack">Start Broadcasting</span></button>
                         </div>
                     )
                 }
@@ -517,8 +480,7 @@ function MapWithMarker() {
             </div>
             {
                 showVideoPlayer && selectedChannel &&
-                <div className="video-player-container" ref={videoPlayerRef} draggable="true" onDragStart={handleDragStart} onDrag={handleDrag} onDragEnd={handleDragEnd} onDrop={handleDrop} onDragOver={handleDragOver} >
-                    {/* <div className="drag-handle">Drag Me</div> */}
+                <div className="video-player-container" ref={videoPlayerRef}>
                     <XSquare onClick={onVideoClose} className="map-closebutton" />
                     <ArrowLeft onClick={backChannel} className="map-leftbutton" />
                     <ArrowRight onClick={forwardChannel} className="map-rightbutton" />
