@@ -103,7 +103,7 @@ function MapWithMarker() {
             lng: centreLng
         });
 
-        setZoom(zoom_);
+        map.setZoom(zoom_)
         
         return;
     };
@@ -245,7 +245,7 @@ function MapWithMarker() {
       };
 
     const zoomOnEventUrl = () => {
-        // Perhaps not the most robus, waits a second after map has loaded, zooms in on event if given
+        // Perhaps not the most robust, waits a second after map has loaded, zooms in on event if given
         setTimeout(() => {
             if (URLEventID) {
                 calculateCenterEvent(URLEventID);
