@@ -5,7 +5,7 @@ const REMOTETEST = 'https://livestreamapp-backend-7r4nlien6a-od.a.run.app';
 const LOCALTEST2 = 'https://10.248.151.179:8080';
 
 
-const BACKEND_URL = REMOTETEST;
+const BACKEND_URL = LOCALTEST;
 
 
 export const listChannels = async () => {
@@ -178,4 +178,18 @@ export async function channelHeartbeat(channelName) {
         console.error('Error in channelHeartbeat:', error);
     }
 
+}
+
+export async function getChannelByARN(arn) {
+    // call channels/getByARN, which is a GET request
+    // arn is a string in URL
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/channels/getByArn?channelArn=${arn}`);
+        const responseData = await response.json();
+        return responseData;
+    }
+    catch (error) {
+        console.error('Error in getChannelByARN:', error);
+    }
 }

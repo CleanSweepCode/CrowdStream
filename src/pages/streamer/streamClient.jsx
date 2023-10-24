@@ -5,17 +5,23 @@ import {
     channelHeartbeat,
     tagChannelInactive,
     tagChannelActive,
-    tagChannel
+    tagChannel,
+    getChannelByARN,
+    createStreamKey
 } from '../../components/Helpers/APIUtils.jsx'
 import IVSBroadcastClient, {
     Errors,
     BASIC_LANDSCAPE
 } from 'amazon-ivs-web-broadcast';
 
+
+const debug_arn = "arn:aws:ivs:eu-west-1:449365895007:channel/n6zGicg3Q28G";
+const debug_stream_key = "sk_eu-west-1_Zxwigvkh9pOA_dnK9y3mmUFPpaoz4CzxA9oUDptlcH8"
+
+
 export class StreamClient {
     constructor(stream_info, streamConfig) {
         this.stream_info = stream_info;
-        this.streamConfig = streamConfig;
         this.client = IVSBroadcastClient.create({
             streamConfig: streamConfig,
             ingestEndpoint: stream_info.channel.ingestEndpoint,
@@ -31,6 +37,12 @@ export class StreamClient {
         const stream_info = stream_api_call.data;
         return new StreamClient(stream_info, streamConfig);
     }
+
+    static async create_debug(tags, streamConfig) {
+        const channel = await getChannelByARN(debug_arn);
+        const streamKey = {value: debug_stream_key}
+        return new StreamClient({channel: channel, streamKey: streamKey}, streamConfig);
+        }
 
     async setStream(stream) {
         if (!stream) {
@@ -79,37 +91,6 @@ export class StreamClient {
             tags: tags
         };
         await tagChannel(params);
-    }
-
-}
-
-// dummy client for testing, doesn't do any channel creation or streaming
-export class StreamClientDummy {
-    constructor(tags, streamConfig) {
-        this.streamConfig = streamConfig;
-        this.tags = tags;
-        this.has_stream = false;
-    }
-
-    async setStream(stream) {
-        if (!stream) {
-            console.error("Camera stream for client is null");
-        }
-    }
-
-    async addAudioInputDevice(microphoneStream) {
-    }
-
-    async start() {
-    }
-
-    async stop() {
-    }
-
-    async sendHeartbeat() {
-    }
-
-    async updateTags(tags) {
     }
 
 }
