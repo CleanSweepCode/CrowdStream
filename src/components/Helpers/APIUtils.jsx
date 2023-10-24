@@ -1,7 +1,7 @@
 //For testing locally, use http://localhost:8080
 const LOCALTEST = 'http://localhost:8080';
 //For production, use https://csc-node-rds-env.eba-qwi2z4cb.eu-west-2.elasticbeanstalk.com  https://livestreamapp-backend-7r4nlien6a-od.a.run.app
-const REMOTETEST = 'http://csc-node-rds-env.eba-qwi2z4cb.eu-west-2.elasticbeanstalk.com';
+const REMOTETEST = 'https://livestreamapp-backend-7r4nlien6a-od.a.run.app';
 const LOCALTEST2 = 'https://10.248.151.179:8080';
 
 
