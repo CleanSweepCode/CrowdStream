@@ -33,16 +33,23 @@ const Streamer = () => {
   const [eventId, setEventId] = useState(''); // State variable for selected event ID
   const [eventOptions, setEventOptions] = useState([]);
 
+  let debounceTimer; // Add a debounce timer to prevent multiple calls to the IVS on zoom change
+
   const handleZoomChange = async (newZoomLevel) => {
     if (cameraDevices){
       cameraDevices.setZoom(newZoomLevel)
     }
 
-    // redo camera stream
-    cameraStream = await getCameraStream();  // Setup the new camera stream
-    if (client.has_stream) {
-      client.setStream(cameraStream);
-    }
+    // redo camera stream, but with a debouncer to prevent multiple calls
+    clearTimeout(debounceTimer); // Clear any previous timer
+
+    debounceTimer = setTimeout(async () => {
+      cameraStream = await getCameraStream();  // Setup the new camera stream
+      if (client.has_stream) {
+        client.setStream(cameraStream);
+      }
+    }, 1000); // 1000 ms delay for setStream
+
   };
 
 
@@ -279,7 +286,7 @@ const Streamer = () => {
       </div>
 
 
-      <ZoomSlider min={1} max={5} step={0.1} onChange={handleZoomChange} />
+      <ZoomSlider min={1} max={5} step={0.1} value={1} onChange={handleZoomChange} />
 
       <StreamerPlayer
         ref={ref}
