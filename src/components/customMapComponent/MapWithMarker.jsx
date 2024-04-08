@@ -45,7 +45,7 @@ var isFullScreen = false;
 function MapWithMarker() {
     const navigate = useNavigate();
     const mapRef = useRef(null); // Create a ref for the map instance
-    const [includePastStreams, setIncludePastStreams] = useState(true);  // This is the new piece of state
+    const [includePastStreams, setIncludePastStreams] = useState(true);
     includePastStreams == 1;
     // const [channelInfo, setChannelInfo] = useState([]);
     const [center, setCenter] = useState(defaultCenter);
@@ -412,10 +412,16 @@ function MapWithMarker() {
                         <Marker
                             key={index}
                             icon={{
+                                // If the channel is active, use the liveStreamMarker, otherwise use the pastStreamMarker
                                 url: channel.tags.active === "true"
-                                    ? (channel === selectedChannel ? liveStreamWatchingMarker : liveStreamMarker)
+                                    ? (channel === selectedChannel ? liveStreamWatchingMarker : liveStreamMarker) // If the channel is selected, switch to the 'watching' marker
                                     : (channel === selectedChannel ? pastStreamWatchingMarker : pastStreamMarker),
-                                scaledSize: new window.google.maps.Size(64, 64)
+                                    
+                                    // Adjust scaledSize based on whether the channel is the selectedChannel
+                                    scaledSize: new window.google.maps.Size(
+                                        channel === selectedChannel ? 86 : 64, // Width
+                                        channel === selectedChannel ? 86 : 64  // Height
+                                    )
                             }}
                             position={{
                                 lat: parseFloat(channel.tags.latitude),
