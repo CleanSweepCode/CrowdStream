@@ -5,23 +5,23 @@ import { GoogleMap, Marker, Polygon, Polyline } from '@react-google-maps/api';
 
 import './MapWithMarker.css';
 import '../videoJS/videojs.css';
-import { listChannels, getEvents } from '../Helpers/APIUtils.jsx'
-import { getChannelList } from '../Helpers/ChannelList.jsx';
+import { listChannels, getEvents } from '../Helpers/APIUtils.jsx' //interacts with backend via API
+import { getChannelList } from '../Helpers/ChannelList.jsx'; // sorts available channels in variety of ways
 
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
 
+// Assets
 import liveStreamMarker from '../../assets/markers/cameralive.svg';
 import pastStreamMarker from '../../assets/markers/paststreamlive.svg';
 import liveStreamWatchingMarker from '../../assets/markers/cameralivewatching.svg';
 import pastStreamWatchingMarker from '../../assets/markers/pastStreamWatching.svg';
+import finishMarker from '../../assets/finishMarker64.png';
+import { XSquare, ArrowLeft, ArrowRight } from 'lucide-react';
+import MenuIcon from '@material-ui/icons/Menu';
 
 import Timer from '../Timer/Timer.jsx'
 
-
-import finishMarker from '../../assets/finishMarker64.png';
 import VideoJSPlayer from '../videoJS/videojs.jsx';
-import { XSquare, ArrowLeft, ArrowRight } from 'lucide-react';
-import MenuIcon from '@material-ui/icons/Menu';
 
 
 
@@ -245,12 +245,12 @@ function MapWithMarker() {
       };
 
     const zoomOnEventUrl = () => {
-        // Perhaps not the most robust, waits a second after map has loaded, zooms in on event if given
+        // Perhaps not the most robust, waits 0.1s after map has loaded, zooms in on event if given
         setTimeout(() => {
             if (URLEventID) {
                 calculateCenterEvent(URLEventID);
             };
-          }, 1000);
+          }, 100);
     };
 
     const backChannel = () => {
@@ -328,11 +328,11 @@ function MapWithMarker() {
     
                 <div className="map-top-bar"></div>
 
-                <button className="map-StartStreamButton"
-                    onClick={() => navigateAndClearInterval(`/streamer`)}>
-                    Start <br /> Broadcasting
-                </button>
-
+                <div className="map-StartStreamButtonDiv">
+                    <button className="map-StartStreamButton" onClick={() => navigateAndClearInterval(`/youtubeStreamer`)}>
+                        Start <br /> Broadcasting
+                    </button>
+                </div>
                 {/* TIMER object */}
                 {/* <div className="map-timercontainer">
                     <Timer />
@@ -477,7 +477,7 @@ function MapWithMarker() {
                             {/* 
                             <button className="menu-option" onClick={() => navigateAndClearInterval(`/newevent`)}>Create an Event</button>
                             */}
-                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/streamer`)}><span className="CSBlack">Start Broadcasting</span></button>
+                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/youtubeStreamer`)}><span className="CSBlack">Start Broadcasting</span></button>
                         </div>
                     )
                 }
