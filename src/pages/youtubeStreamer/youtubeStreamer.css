@@ -1,0 +1,98 @@
+/* Main styling */
+.youtubeStreamer {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    margin: 0 auto;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    max-width: 70vw;
+  }
+  
+  /* Common section styling */
+  section {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2em;
+    transition: background-color 0.3s ease;
+  }
+  
+  section:nth-child(odd) {
+    background-color: #fafafa;
+  }
+  
+  /* Header styling */
+  h1 {
+    font-size: 3em;
+    margin-bottom: -0.3em;
+    margin-top: 0em;
+    color: #14110F;
+    /* Feel free to pick your own color */
+    max-width: 800px;
+  }
+  
+  /* Paragraph styling */
+  p {
+    font-size: 1.2em;
+    max-width: 100%;
+    text-align: justify;
+    line-height: 1.4;
+    margin: 0;
+    padding: 0.2em;
+  }
+  
+  
+  /* Smooth scroll */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  
+  #team {
+    color: #333;
+  }
+  
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1em;
+    padding: 1em;
+    min-width: 100%;
+    background-color: #f1f1f1;
+  
+  }
+  
+  .team-member {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .team-member img {
+    width: 100px;
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1em;
+  }
+  
+  .team-member strong {
+    margin-bottom: 0.5em;
+  }
+  
+  .team-member p {
+    font-size: 1em;
+    text-align: center;
+  }
+  
+  
+  /* Bold text */
+  b {
+    font-weight: 600;
+  }
