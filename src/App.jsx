@@ -6,12 +6,12 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Streamer from "./pages/streamer/streamer.jsx";
 import HomePage from "./pages/HomePage/HomePage.jsx";
 import InfoPage from "./pages/info/infoPage.jsx";
-import youtubeStreamer from "./pages/youtubeStreamer/youtubeStreamer.jsx";
+import YoutubeStreamer from "./pages/YoutubeStreamer/YoutubeStreamer.jsx";
 import Timer from './components/Timer/Timer.jsx';
 import './App.css';
 
 
-// For now, streamer will go to youtubeStreamer
+// For now, streamer will go to YoutubeStreamer
 const App = () => {
   return (
     <div className="App">
@@ -19,7 +19,7 @@ const App = () => {
         <Route path="/*" element={<HomePage />} />
         <Route path="/event/:URLEventID" element={<HomePage />} />
         <Route path="/streamer" element={<Streamer />} />
-        <Route path="/youtubeStreamer" element={<youtubeStreamer />} />
+        <Route path="/YoutubeStreamer" element={<YoutubeStreamer />} />
         <Route path="/about" element={<InfoPage />} />
         <Route path="/timer" element={<Timer />} />
       </Routes>

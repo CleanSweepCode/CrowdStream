@@ -329,7 +329,7 @@ function MapWithMarker() {
                 <div className="map-top-bar"></div>
 
                 <div className="map-StartStreamButtonDiv">
-                    <button className="map-StartStreamButton" onClick={() => navigateAndClearInterval(`/youtubeStreamer`)}>
+                    <button className="map-StartStreamButton" onClick={() => navigateAndClearInterval(`/Streamer`)}>
                         Start <br /> Broadcasting
                     </button>
                 </div>
@@ -477,7 +477,7 @@ function MapWithMarker() {
                             {/* 
                             <button className="menu-option" onClick={() => navigateAndClearInterval(`/newevent`)}>Create an Event</button>
                             */}
-                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/youtubeStreamer`)}><span className="CSBlack">Start Broadcasting</span></button>
+                            <button className="menu-option" onClick={() => navigateAndClearInterval(`/Streamer`)}><span className="CSBlack">Start Broadcasting</span></button>
                         </div>
                     )
                 }
