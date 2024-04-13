@@ -357,9 +357,9 @@ function MapWithMarker() {
                 </div> */}
 
 
-                <div className='map-MenuButtonDiv'>
+                <div className='map-MenuButtonDiv'>                
                     <button className="map-MenuButton" onClick={() => setShowMenu(!showMenu)}>
-                        <MenuIcon style={{ fontSize: '37px' }} />
+                        <MenuIcon style={{ fontSize: '37px', color: 'black' }} />
                     </button>
                 </div>
 

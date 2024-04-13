@@ -105,7 +105,7 @@ const InfoPage = () => {
       <h1>Questions?</h1>
       <section id="questions">
         <p>
-          If you have any questions or feedback, please email us at <a href="mailto: lyncht248@gmail.com">CleanSweepCode@gmail.com</a> or call at +44 7576 106282.
+          If you have any questions or feedback, please email us at <a href="mailto: lyncht248@gmail.com">lyncht248@gmail.com</a> or call at +44 7576 106282.
         </p>
       </section>
       <br /> <br />
