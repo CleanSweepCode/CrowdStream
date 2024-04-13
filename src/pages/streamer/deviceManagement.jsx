@@ -57,11 +57,17 @@ export async function getCameraDevices() {
     return 0;
   });
 
+  // Function to detect if the current device is a mobile device
+  const isMobileDevice = () => /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  if (isMobileDevice()) {
+    // If it's a mobile device, filter the video devices to only include those with labels indicating they are rear-facing
+    videoDevices = videoDevices.filter((device) => REAR_KEYS.some((key) => device.label.toLowerCase().includes(key)));
+  }
+
   const deviceList = new DeviceList(videoDevices);
   return deviceList;
 }
-
-
 
 
 export async function getMicrophoneStream() {

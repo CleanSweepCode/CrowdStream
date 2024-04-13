@@ -126,6 +126,22 @@ const Streamer = () => {
     }
 
 
+    async function enforceLandscapeOrientation() {
+      // Check if the screen orientation API is available
+      if (screen.orientation && screen.orientation.lock) {
+        try {
+          await screen.orientation.lock('landscape');
+          console.log('Orientation locked to landscape.');
+        } catch (error) {
+          console.warn('Could not lock the orientation: ', error);
+          // Optionally, show a UI element asking users to switch to landscape mode manually
+        }
+      } else {
+        // Screen Orientation API not available
+        // Optionally, show a UI element asking users to switch to landscape mode manually
+      }
+    }
+    
 
     await setupMicrophoneStream();
 
@@ -167,6 +183,10 @@ const Streamer = () => {
     if (!microphoneStream) {
       await setupMicrophoneStream();
     }
+  
+    // Attempt to enforce landscape orientation
+    await enforceLandscapeOrientation();
+
     if (!client.has_stream) {
       await client.setStream(cameraStream);
     }
