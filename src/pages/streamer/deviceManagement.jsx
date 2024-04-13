@@ -22,9 +22,9 @@ class DeviceList {
   }
 
   async activeStream(previousStream = null) {
-    // if (previousStream) {
-    //   stopTracks(previousStream);
-    // }
+    if (previousStream) {
+      stopTracks(previousStream);
+    }
 
     try {
       return await navigator.mediaDevices.getUserMedia({
@@ -65,8 +65,8 @@ export async function getCameraDevices() {
 //     videoDevices = videoDevices.filter((device) => REAR_KEYS.some((key) => device.label.toLowerCase().includes(key)));
 //   }
 
-//   const deviceList = new DeviceList(videoDevices);
-//   return deviceList;
+  const deviceList = new DeviceList(videoDevices);
+  return deviceList;
 }
 
 
@@ -84,32 +84,6 @@ export async function getMicrophoneStream() {
   }
 }
 
-// export async function handlePermissions() {
-//   let permissions = {
-//     audio: false,
-//     video: false,
-//   };
-//   try {
-//     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-//     for (const track of stream.getTracks()) {
-//       track.stop();
-//     }
-//     permissions = { video: true, audio: true };
-//     return true;
-//   } catch (err) {
-//     permissions = { video: false, audio: false };
-//     console.error(err.message);
-//   }
-//   // If we still don't have permissions after requesting them display the error message
-//   if (!permissions.video) {
-//     console.error('Failed to get video permissions.');
-//     return false;
-//   } else if (!permissions.audio) {
-//     console.error('Failed to get audio permissions.');
-//     return false;
-//   }
-// }
-
 export async function handlePermissions() {
   let permissions = {
     audio: false,
@@ -117,16 +91,42 @@ export async function handlePermissions() {
   };
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    for (const track of stream.getTracks()) {
+      track.stop();
+    }
     permissions = { video: true, audio: true };
-
-    // Stop tracks immediately only if checking permissions, but don't return this stream.
-    stream.getTracks().forEach(track => track.stop());
-
     return true;
   } catch (err) {
-    console.error('Failed to obtain permissions:', err);
     permissions = { video: false, audio: false };
+    console.error(err.message);
+  }
+  // If we still don't have permissions after requesting them display the error message
+  if (!permissions.video) {
+    console.error('Failed to get video permissions.');
+    return false;
+  } else if (!permissions.audio) {
+    console.error('Failed to get audio permissions.');
     return false;
   }
 }
+
+// export async function handlePermissions() {
+//   let permissions = {
+//     audio: false,
+//     video: false,
+//   };
+//   try {
+//     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+//     permissions = { video: true, audio: true };
+
+//     // Stop tracks immediately only if checking permissions, but don't return this stream.
+//     stream.getTracks().forEach(track => track.stop());
+
+//     return true;
+//   } catch (err) {
+//     console.error('Failed to obtain permissions:', err);
+//     permissions = { video: false, audio: false };
+//     return false;
+//   }
+// }
 
