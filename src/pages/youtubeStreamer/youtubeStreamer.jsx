@@ -4,7 +4,7 @@
 // and then open an embedded Youtube player instead of the StreamerPlayer component.
 
 import React, { useState } from 'react';
-import './YoutubeStreamer.css'; // Importing your CSS
+import './youtubeStreamer.css'; // Importing your CSS
 import { useNavigate } from "react-router-dom";
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
