@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Streamer from "./pages/streamer/streamer.jsx";
 import HomePage from "./pages/HomePage/HomePage.jsx";
 import InfoPage from "./pages/info/infoPage.jsx";
-import YoutubeStreamer from "./pages/YoutubeStreamer/YoutubeStreamer.jsx";
+import YoutubeStreamer from "./pages/youtubeStreamer/youtubeStreamer.jsx";
 import Timer from './components/Timer/Timer.jsx';
 import './App.css';
 
