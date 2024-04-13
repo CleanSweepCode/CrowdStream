@@ -67,22 +67,22 @@ const Streamer = () => {
     client.updateTags(tags);
     console.log('Updated location to: ', position.coords.latitude, position.coords.longitude);
   }  
-  
-  async function enforceLandscapeOrientation() {
-    // Check if the screen orientation API is available
-    if (screen.orientation && screen.orientation.lock) {
-      try {
-        await screen.orientation.lock('landscape');
-        console.log('Orientation locked to landscape.');
-      } catch (error) {
-        console.warn('Could not lock the orientation: ', error);
-        // Optionally, show a UI element asking users to switch to landscape mode manually
-      }
-    } else {
-      // Screen Orientation API not available
-      // Optionally, show a UI element asking users to switch to landscape mode manually
-    }
-  }
+
+  // async function enforceLandscapeOrientation() {
+  //   // Check if the screen orientation API is available
+  //   if (screen.orientation && screen.orientation.lock) {
+  //     try {
+  //       await screen.orientation.lock('landscape');
+  //       console.log('Orientation locked to landscape.');
+  //     } catch (error) {
+  //       console.warn('Could not lock the orientation: ', error);
+  //       // Optionally, show a UI element asking users to switch to landscape mode manually
+  //     }
+  //   } else {
+  //     // Screen Orientation API not available
+  //     // Optionally, show a UI element asking users to switch to landscape mode manually
+  //   }
+  // }
 
   // Initialize the streamer
   useEffect(async () => {
@@ -182,8 +182,8 @@ const Streamer = () => {
       await setupMicrophoneStream();
     }
   
-    // Attempt to enforce landscape orientation
-    await enforceLandscapeOrientation();
+    // // Attempt to enforce landscape orientation
+    // await enforceLandscapeOrientation();
 
     if (!client.has_stream) {
       await client.setStream(cameraStream);
