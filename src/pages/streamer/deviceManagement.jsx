@@ -26,6 +26,24 @@ class DeviceList {
       stopTracks(previousStream);
     }
 
+
+    const constraints = {
+      video: { 
+        deviceId: { exact: this.active().deviceId },
+        aspectRatio: 16/9  // Explicitly request a 16:9 aspect ratio
+      },
+      audio: false
+    };
+
+    try {
+      return await navigator.mediaDevices.getUserMedia(constraints);
+    } catch (err) {
+      console.error('Error accessing camera with specified constraints:', err);
+      throw err;
+    }
+
+
+
     try {
       return await navigator.mediaDevices.getUserMedia({
         video: { deviceId: { exact: this.active().deviceId } },
