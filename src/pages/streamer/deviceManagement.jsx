@@ -47,13 +47,14 @@ export async function getCameraDevices() {
   const devices = await navigator.mediaDevices.enumerateDevices();
   const videoDevices = devices.filter((device) => device.kind === VIDEO_INPUT);
 
+  // Sort the video devices to prioritize rear-facing cameras (key = "rear", "back", "environment")
   videoDevices.sort((a, b) => {
-    const aContainsKey = REAR_KEYS.some((key) => a.label.toLowerCase().includes(key));
-    const bContainsKey = REAR_KEYS.some((key) => b.label.toLowerCase().includes(key));
+    const aContainsKey = REAR_KEYS.some((key) => a.label.toLowerCase().includes(key)); // Check if the label contains any of the rear-facing keywords
+    const bContainsKey = REAR_KEYS.some((key) => b.label.toLowerCase().includes(key)); // Check if the label contains any of the rear-facing keywords
 
-    if (aContainsKey && bContainsKey) return 0;
-    if (aContainsKey) return -1;
-    if (bContainsKey) return 1;
+    if (aContainsKey && bContainsKey) return 0; // If both contain the keyword, don't change the order
+    if (aContainsKey) return -1; // If only a contains the keyword, move it to the front
+    if (bContainsKey) return 1;  
     return 0;
   });
 
@@ -90,7 +91,10 @@ export async function handlePermissions() {
     video: false,
   };
   try {
+    // Get the media
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+
+    // Stop the tracks immediately (we want to wait until 'start streaming')
     for (const track of stream.getTracks()) {
       track.stop();
     }
