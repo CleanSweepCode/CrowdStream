@@ -30,6 +30,7 @@ export const getEvents = async () => {
     }
 }
 
+
 export async function tagChannelInactive(channelName) {
     const data = {
         channelName: channelName

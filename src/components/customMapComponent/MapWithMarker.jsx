@@ -6,7 +6,7 @@ import { GoogleMap, Marker, Polygon, Polyline } from '@react-google-maps/api';
 import './MapWithMarker.css';
 import '../videoJS/videojs.css';
 import { listChannels, getEvents } from '../Helpers/APIUtils.jsx' //interacts with backend via API
-import { getChannelList } from '../Helpers/ChannelList.jsx'; // sorts available channels in variety of ways
+import { getChannelList} from '../Helpers/ChannelList.jsx'; // sorts available channels in variety of ways
 
 import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
 
@@ -137,7 +137,7 @@ function MapWithMarker() {
     useEffect(() => {
         const fetchChannelInfo = async () => {
             await channelList.loadChannels();
-
+            await channelList.loadEvents();
             const mapCentre = channelList.averagePosition(includePastStreams);
             setCenter(mapCentre || defaultCenter);
 
@@ -210,6 +210,7 @@ function MapWithMarker() {
     const handleRefreshStreams = async () => {
         try {
             await channelList.loadChannels(); // Call your API to get new channel data
+            await channelList.loadEvents();
             console.log('Streams refreshed');
 
         } catch (error) {
@@ -253,13 +254,42 @@ function MapWithMarker() {
           }, 100);
     };
 
+    // TODO: This should work based on event tagging, NOT on proximity to route (to deal with overlapping events)
     const backChannel = () => {
-        var newChannel = channelList.getPreviousByLongitude(selectedChannel, includePastStreams);
-        setSelectedChannel(newChannel);
+        // Gets the eventID of the route associated with the selected channel
+        const nearbyEvent = channelList.whichEventNear(selectedChannel, 0.4, includePastStreams);
+        console.log(nearbyEvent);
+
+       // If the channel is near a route, go to the nearest point on the route
+        if(nearbyEvent){
+            console.log("channel is near route");
+            var newChannel = channelList.getPreviousByRoute(selectedChannel, nearbyEvent, includePastStreams);
+            setSelectedChannel(newChannel);
+        }
+        // Otherwise, go to the previous channel by longitude
+        else{
+            console.log("channel is not near route");
+            var newChannel = channelList.getPreviousByLongitude(selectedChannel, includePastStreams);
+            setSelectedChannel(newChannel);
+        }
     }
     const forwardChannel = () => {
-        var newChannel = channelList.getNextByLongitude(selectedChannel, includePastStreams);
-        setSelectedChannel(newChannel);
+        // Gets the route associated with the selected channel
+        const route = channelList.whichEventNear(selectedChannel, 0.4, includePastStreams);
+        console.log(route);
+
+        // If the channel is near a route, go to the nearest point on the route
+        if(route){
+            console.log("channel is near route");
+            var newChannel = channelList.getNextByRoute(selectedChannel, route, includePastStreams);
+            setSelectedChannel(newChannel);
+        }
+        // Otherwise, go to the next channel by longitude
+        else{
+            console.log("channel is not near route");
+            var newChannel = channelList.getNextByLongitude(selectedChannel, includePastStreams);
+            setSelectedChannel(newChannel);
+        }
     }
 
     const getVideoPlayerBoundingBox = () => {
