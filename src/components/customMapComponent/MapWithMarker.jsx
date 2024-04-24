@@ -8,7 +8,7 @@ import '../videoJS/videojs.css';
 import { listChannels, getEvents } from '../Helpers/APIUtils.jsx' //interacts with backend via API
 import { getChannelList} from '../Helpers/ChannelList.jsx'; // sorts available channels in variety of ways
 
-import { Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
+import { Tooltip, Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
 
 // Assets
 import liveStreamMarker from '../../assets/markers/cameralive.svg';
@@ -57,6 +57,8 @@ function MapWithMarker() {
     const [eventInfo, setEventInfo] = useState({});
     const [eventRouteInfo, setEventRouteInfo] = useState({});
     const [routeLines, setRouteLines] = useState([]);
+    const [showTooltip, setShowTooltip] = useState(false);
+    const [tooltipFade, setTooltipFade] = useState(false);
 
 
     const [map, setMap]= useState( /** @type google.maps.GoogleMap */ (null))
@@ -106,6 +108,14 @@ function MapWithMarker() {
         map.setZoom(zoom_)
         
         return;
+    };
+    // Function to hide the tooltip with a fade
+    const hideTooltip = () => {
+        setTooltipFade(true); // Start fading out
+        setTimeout(() => {
+            setShowTooltip(false); // Completely hide after the fade
+            setTooltipFade(false); // Reset fade state
+        }, 600); // Match this delay with your CSS transition duration
     };
 
     const getPolygonByEventID = (eventID) => {
@@ -372,6 +382,7 @@ function MapWithMarker() {
                     <span className="CSFont">
                         <span className="CSBlack">Crowd</span>
                         <span className="CSRed">Stream</span>
+                        <sup>v0.1</sup>
                     </span>
                 </div>
 
@@ -440,6 +451,7 @@ function MapWithMarker() {
 
                     {displayedChannels.map((channel, index) => (
                         <Marker
+                            zIndex={2}
                             key={index}
                             icon={{
                                 // If the channel is active, use the liveStreamMarker, otherwise use the pastStreamMarker
@@ -464,6 +476,7 @@ function MapWithMarker() {
                                 })
                                 setSelectedChannel(channel);
                                 setShowVideoPlayer(true);
+                                setShowTooltip(true);
                                 moveCentreOutsideVideoBox();
                             }}
 
@@ -486,6 +499,7 @@ function MapWithMarker() {
                         const polygonCoords = getPolygonByEventID(eventID);
                         return (
                         <Polygon
+                            zIndex={1}
                             paths={polygonCoords}
                             options={{
                             strokeColor: "#FF0000",
@@ -525,6 +539,13 @@ function MapWithMarker() {
                         onFullscreenToggle={handleFullscreenToggle}
                         className="map-videojsplayer"
                     />
+                    {showTooltip && 
+                        <div className={`tooltip ${tooltipFade ? 'fade-out' : ''}`}>
+                            <div>Use the left & right arrows
+                            to move up & down the course</div>
+                        </div>
+                    }
+
                 </div>
             }
 
