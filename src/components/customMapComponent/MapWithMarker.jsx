@@ -8,7 +8,7 @@ import '../videoJS/videojs.css';
 import { listChannels, getEvents } from '../Helpers/APIUtils.jsx' //interacts with backend via API
 import { getChannelList} from '../Helpers/ChannelList.jsx'; // sorts available channels in variety of ways
 
-import { Tooltip, Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
+//import { Tooltip, Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
 
 // Assets
 import liveStreamMarker from '../../assets/markers/cameralive.svg';
@@ -361,6 +361,46 @@ function MapWithMarker() {
         const offsetY = map.getDiv().offsetHeight / 2 - position.y;
         map.panBy(offsetX, offsetY);
     }
+    // Handler for keydown events
+    const handleKeyDown = (event) => {
+        if (showVideoPlayer && selectedChannel) {
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();  // Prevent the default action to avoid scrolling or other interference
+                console.log("left arrow pressed");
+                backChannel();
+            } else if (event.key === 'ArrowRight') {
+                event.preventDefault();  // Prevent the default action
+                console.log("right arrow pressed");
+                forwardChannel();
+            }
+        }
+    };
+
+    useEffect(() => {
+        // Add the event listener when the component mounts
+        window.addEventListener('keydown', handleKeyDown);
+
+        // Remove the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [selectedChannel, showVideoPlayer]);  // Adding dependencies ensures the listener is updated with the current state
+
+    useEffect(() => {
+        // Focus the video player container when it's shown
+        if (showVideoPlayer && videoPlayerRef.current) {
+            videoPlayerRef.current.focus(); // Set focus when the video player is displayed
+        }
+    }, [showVideoPlayer]); // Depend on showVideoPlayer to re-run this effect when it changes
+
+    useEffect(() => {
+        let timer;
+        if (showTooltip) {
+            timer = setTimeout(() => setShowTooltip(false), 2500); // Dismiss tooltip after 5 seconds
+        }
+        return () => clearTimeout(timer); // Clean up the timer
+    }, [showTooltip]);
+    
 
     return (
         <div>
@@ -418,6 +458,7 @@ function MapWithMarker() {
                         mapTypeControl: false,
                         streetViewControl: false,
                         fullscreenControl: false,
+                        keyboardShortcuts: false,  // Disable keyboard shortcuts
                         styles: [
                             {
                                 featureType: 'administrative',
@@ -530,7 +571,7 @@ function MapWithMarker() {
             </div>
             {
                 showVideoPlayer && selectedChannel &&
-                <div className="video-player-container" ref={videoPlayerRef}>
+                <div className="video-player-container" ref={videoPlayerRef} tabIndex="-1">
                     <XSquare onClick={onVideoClose} className="map-closebutton" />
                     <ArrowLeft onClick={backChannel} className="map-leftbutton" />
                     <ArrowRight onClick={forwardChannel} className="map-rightbutton" />
@@ -541,8 +582,7 @@ function MapWithMarker() {
                     />
                     {showTooltip && 
                         <div className={`tooltip ${tooltipFade ? 'fade-out' : ''}`}>
-                            <div>Use the left & right arrows
-                            to move up & down the course</div>
+                            <div>Use the left & right arrows to move up & down the course</div>
                         </div>
                     }
 
