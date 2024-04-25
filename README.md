@@ -4,7 +4,7 @@ This is the repo for CrowdStream. We host crowdsourced event livestreams.
 ### Current Tech Stack (2023-07-12)
 The web app is hosted on Vercel at this link:
 
-[livestream-app-swart.vercel.app](livestream-app-swart.vercel.app)
+[livestream-app-amber.vercel.app](livestream-app-amber.vercel.app)
 
 The frontend website is written in React JS, and is hosted on vercel. The backend server (ie. nodeJS) is hosted on Google Cloud Platform which makes calls to AWS. Video streaming is managed using the Amazon IVS API.
 
