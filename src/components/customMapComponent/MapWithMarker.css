@@ -261,6 +261,19 @@ sup {
     }
 }
 
+/* Below 400 pixels reduce the size of the logo, the hamburger menu, and the top bar */
+@media (max-width: 400px) {
+    .map-titlecontainer {
+        font-size: 32px;
+    }
+    .map-top-bar {
+        height: 63px;
+    }
+    .map-MenuButton {
+        width: 45px;
+        height: 45px;
+    }
+}
 
 /* timer css */
 .map-timercontainer {
