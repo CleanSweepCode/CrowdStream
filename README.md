@@ -10,8 +10,7 @@ The frontend website is written in React JS, and is hosted on vercel. The backen
 
 The website's backend nodeJS server is hosted on Google cloud. The following link should show "Hello World Google Cloud Integration!":
 
-[https://livestreamapp-backend-7r4nlien6a-od.a.run.app/
-](https://livestreamapp-backend-00001-jbn-menrb5vt7a-od.a.run.app)
+[https://livestreamapp-backend-qihkgbi3xa-od.a.run.app](https://livestreamapp-backend-qihkgbi3xa-od.a.run.app)
 
 If "Hello World Google Cloud Integration!" doesn't appear at the link above, the nodeJS server needs to be restarted. This can be done either locally or via Google Cloud by cloning the LivestreamApp-Backend repo and running `node aws_interfacing.js`.
 
