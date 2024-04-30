@@ -49,7 +49,7 @@ function MapWithMarker() {
     includePastStreams == 1;
     // const [channelInfo, setChannelInfo] = useState([]);
     const [center, setCenter] = useState(defaultCenter);
-    const [zoom, setZoom] = useState(10);
+    const [zoom, setZoom] = useState(13);
     const [selectedChannel, setSelectedChannel] = useState(null);
     const [intervalId, setIntervalId] = useState(null); // Add state for interval ID
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
@@ -261,7 +261,7 @@ function MapWithMarker() {
             if (URLEventID) {
                 calculateCenterEvent(URLEventID);
             };
-          }, 100);
+          }, 1000);
     };
 
     // TODO: This should work based on event tagging, NOT on proximity to route (to deal with overlapping events)
@@ -396,7 +396,7 @@ function MapWithMarker() {
     useEffect(() => {
         let timer;
         if (showTooltip) {
-            timer = setTimeout(() => setShowTooltip(false), 2500); // Dismiss tooltip after 5 seconds
+            timer = setTimeout(() => setShowTooltip(false), 1500); // Dismiss tooltip after 5 seconds
         }
         return () => clearTimeout(timer); // Clean up the timer
     }, [showTooltip]);
