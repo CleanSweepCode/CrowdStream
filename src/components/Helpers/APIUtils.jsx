@@ -1,7 +1,7 @@
 //For testing locally, use http://localhost:8080
 const LOCALTEST = 'http://localhost:8080';
 //For production, use http://csc-node-rds-env.eba-qwi2z4cb.eu-west-2.elasticbeanstalk.com  https://livestreamapp-backend-7r4nlien6a-od.a.run.app
-const REMOTETEST = 'https://livestreamapp-backend-menrb5vt7a-od.a.run.app';
+const REMOTETEST = 'https://livestreamapp-backend-qihkgbi3xa-od.a.run.app';
 const LOCALTEST2 = 'https://10.248.151.179:8080';
 
 
@@ -21,7 +21,7 @@ export const listChannels = async () => {
 
 export const getEvents = async () => {
     try {
-        const response = await fetch(`${BACKEND_URL}/events/getEvents`);
+        const response = await fetch(`${BACKEND_URL}/events/list`);
         const data = await response.json();
         return data;
     } catch (error) {
