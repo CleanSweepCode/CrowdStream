@@ -40,7 +40,7 @@
     .video-player-container {
         width: var(--calculated-width);
         height: calc(var(--calculated-width) * 9 / 16);
-        top: 0; /* Align to top */
+        top: 70px; /* Align to top */
         left: 50%; /* Center horizontally */
         transform: translateX(-50%); /* Adjust for exact centering */
         bottom: auto; /* Reset bottom property */
@@ -49,5 +49,12 @@
     .video-js {
         width: var(--calculated-width);
         height: calc(var(--calculated-width) * 9 / 16);
+    }
+}
+
+/* at 400 pixels drop the height to 65 pixels form the top */
+@media (max-width: 400px) {
+    .video-player-container {
+        top: 63px;
     }
 }
