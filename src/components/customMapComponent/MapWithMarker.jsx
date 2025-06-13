@@ -144,6 +144,7 @@ function MapWithMarker() {
         }
     };
 
+
     useEffect(() => {
         const fetchChannelInfo = async () => {
             await channelList.loadChannels();
