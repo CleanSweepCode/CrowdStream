@@ -254,7 +254,7 @@ sup {
     }
 }
 
-/* Below 550 pixels remove the startStream button */
+/* Below 550 pixels remove the startStream button. 550 pixels = mobile*/
 @media (max-width: 550px) {
     .map-StartStreamButton {
         display: none;

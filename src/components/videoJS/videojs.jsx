@@ -42,6 +42,17 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
 
     });
 
+    // This part is new - it handles resizing
+    function updateSize() {
+      const screenWidth = window.innerWidth;
+      const calculatedWidth = screenWidth < 550 ? screenWidth : 550; // Adjust as necessary
+      document.documentElement.style.setProperty('--calculated-width', `${calculatedWidth}px`);
+  }
+
+  window.addEventListener('resize', updateSize);
+  updateSize(); // Call immediately to set initial size
+
+
     const fullscreenBtn = document.querySelector('.vjs-fullscreen-control');
     const videoContainer = document.querySelector('.video-player-container');
     onFullscreenToggle(fullScreenManager.status);
