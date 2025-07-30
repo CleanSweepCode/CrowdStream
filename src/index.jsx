@@ -2,14 +2,16 @@
 /* Responsible for rendering the application to the DOM (Document Object Model). */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import './index.css';
 
+const container = document.getElementById('root');
+const root = createRoot(container);
 
-ReactDOM.render(
+root.render(
   <React.StrictMode>
     <Router>
       <Routes>
@@ -17,8 +19,7 @@ ReactDOM.render(
         </Route>
       </Routes>
     </Router>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
 
 serviceWorker.unregister();

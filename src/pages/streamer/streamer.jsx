@@ -4,9 +4,9 @@ import IVSBroadcastClient from 'amazon-ivs-web-broadcast';
 import '../../App.css';
 import './streamerPlayer.css';
 import { StreamClient, StreamClientDummy } from './streamClient.jsx'
-import IconButton from '@material-ui/core/IconButton';
+import IconButton from '@mui/material/IconButton';
 import { useNavigate } from 'react-router-dom';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { fetchGeolocationDataWithFallback } from './locationManagement.jsx'
 import { getCameraDevices, handlePermissions, getMicrophoneStream } from './deviceManagement.jsx'
 import { getEvents } from '../../components/Helpers/APIUtils.jsx'

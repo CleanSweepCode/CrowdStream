@@ -6,8 +6,8 @@
 import React, { useState } from 'react';
 import './youtubeStreamer.css'; // Importing your CSS
 import { useNavigate } from "react-router-dom";
-import IconButton from '@material-ui/core/IconButton';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const YoutubeStreamer = () => {
   const navigate = useNavigate();

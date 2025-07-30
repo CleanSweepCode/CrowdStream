@@ -15,6 +15,7 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
   const videoRef = useRef(null);
   const playerRef = useRef(null);
   const isPlayerInitialized = useRef(false);
+  const isPlayerReady = useRef(false);
 
   // Memoize the updateSize function
   const updateSize = useCallback(() => {
@@ -25,7 +26,9 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
 
   // Initialize player once when component mounts
   useEffect(() => {
-    if (!isPlayerInitialized.current && videoRef.current) {
+    // Small delay to ensure video element is properly in DOM for React 18
+    const timeoutId = setTimeout(() => {
+      if (!isPlayerInitialized.current && videoRef.current) {
       // Register IVS tech only once
       if (!ivsRegistered) {
         try {
@@ -69,6 +72,22 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
 
         // Handle fullscreen button after player is ready
         playerRef.current.ready(() => {
+          isPlayerReady.current = true;
+          
+          // Load initial source if channel_name is already set
+          if (channel_name) {
+            (async () => {
+              try {
+                const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
+                if (playerRef.current && STREAM_PLAYBACK_URL) {
+                  playerRef.current.src(STREAM_PLAYBACK_URL);
+                }
+              } catch (error) {
+                console.error('Error loading initial stream URL:', error);
+              }
+            })();
+          }
+
           setTimeout(() => {
             const fullscreenBtn = document.querySelector('.vjs-fullscreen-control');
             const videoContainer = document.querySelector('.video-player-container');
@@ -96,16 +115,19 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
         console.error('Error creating video.js player:', error);
         return;
       }
-    }
+        }
+    }, 100); // 100ms delay for React 18
 
     // Cleanup on unmount
     return () => {
+      clearTimeout(timeoutId);
       window.removeEventListener('resize', updateSize);
       if (playerRef.current && isPlayerInitialized.current) {
         try {
           playerRef.current.dispose();
           playerRef.current = null;
           isPlayerInitialized.current = false;
+          isPlayerReady.current = false;
         } catch (error) {
           console.error('Error disposing player:', error);
         }
@@ -115,7 +137,7 @@ const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
 
   // Handle channel changes by updating the source
   useEffect(() => {
-    if (playerRef.current && channel_name && isPlayerInitialized.current) {
+    if (playerRef.current && channel_name && isPlayerInitialized.current && isPlayerReady.current) {
       (async () => {
         try {
           const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);

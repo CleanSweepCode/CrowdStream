@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import './infoPage.css'; // Importing your CSS
 import { Lynch, Parish, Mayhew, Boyne } from '../../assets/images'
 import { useNavigate } from "react-router-dom";
-import IconButton from '@material-ui/core/IconButton';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const InfoPage = () => {
   const navigate = useNavigate();

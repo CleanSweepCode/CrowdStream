@@ -8,7 +8,7 @@ import '../videoJS/videojs.css';
 import { listChannels, getEvents } from '../Helpers/APIUtils.jsx' //interacts with backend via API
 import { getChannelList} from '../Helpers/ChannelList.jsx'; // sorts available channels in variety of ways
 
-//import { Tooltip, Switch, FormControlLabel } from '@material-ui/core';  // Importing Material UI Slider for this example
+//import { Tooltip, Switch, FormControlLabel } from '@mui/material';  // Importing Material UI Slider for this example
 
 // Assets
 import liveStreamMarker from '../../assets/markers/cameralive.svg';
@@ -17,7 +17,7 @@ import liveStreamWatchingMarker from '../../assets/markers/cameralivewatching.sv
 import pastStreamWatchingMarker from '../../assets/markers/pastStreamWatching.svg';
 import finishMarker from '../../assets/finishMarker64.png';
 import { XSquare, ArrowLeft, ArrowRight } from 'lucide-react';
-import MenuIcon from '@material-ui/icons/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
 
 import Timer from '../Timer/Timer.jsx'
 
@@ -38,7 +38,6 @@ var defaultCenter = {
     lng: -0.21997342925326427
 }; // if marker loading fails, default to London for map centre
 
-const channelList = await getChannelList(); // ChannelList object
 var isFullScreen = false;
 
 
@@ -59,6 +58,8 @@ function MapWithMarker() {
     const [routeLines, setRouteLines] = useState([]);
     const [showTooltip, setShowTooltip] = useState(false);
     const [tooltipFade, setTooltipFade] = useState(false);
+    const [channelList, setChannelList] = useState(null);
+    const [displayedChannels, setDisplayedChannels] = useState([]);
 
 
     const [map, setMap]= useState( /** @type google.maps.GoogleMap */ (null))
@@ -147,9 +148,10 @@ function MapWithMarker() {
 
     useEffect(() => {
         const fetchChannelInfo = async () => {
-            await channelList.loadChannels();
-            await channelList.loadEvents();
-            const mapCentre = channelList.averagePosition(includePastStreams);
+            const newChannelList = await getChannelList();
+            setChannelList(newChannelList);
+            
+            const mapCentre = newChannelList.averagePosition(includePastStreams);
             setCenter(mapCentre || defaultCenter);
 
             // Set up the interval for refreshing streams
@@ -188,6 +190,14 @@ function MapWithMarker() {
         fetchChannelInfo();
     }, [intervalId]);
 
+    // Update displayedChannels when channelList or includePastStreams changes
+    useEffect(() => {
+        if (channelList) {
+            const filtered = channelList.filterActive(includePastStreams);
+            setDisplayedChannels(filtered);
+        }
+    }, [channelList, includePastStreams]);
+
     const getEventInfo = async () => {
         try {
             const fetchedEvents = await getEvents();
@@ -220,8 +230,8 @@ function MapWithMarker() {
 
     const handleRefreshStreams = async () => {
         try {
-            await channelList.loadChannels(); // Call your API to get new channel data
-            await channelList.loadEvents();
+            const newChannelList = await getChannelList(); // Get fresh channel data
+            setChannelList(newChannelList);
             console.log('Streams refreshed');
 
         } catch (error) {
@@ -235,7 +245,7 @@ function MapWithMarker() {
         navigate(url);
     }
 
-    const displayedChannels = channelList.filterActive(includePastStreams);
+
 
     const onVideoClose = () => {
         setShowVideoPlayer(false)
@@ -267,6 +277,8 @@ function MapWithMarker() {
 
     // TODO: This should work based on event tagging, NOT on proximity to route (to deal with overlapping events)
     const backChannel = () => {
+        if (!channelList) return;
+        
         // Gets the eventID of the route associated with the selected channel
         const nearbyEvent = channelList.whichEventNear(selectedChannel, 0.4, includePastStreams);
 
@@ -282,6 +294,8 @@ function MapWithMarker() {
         }
     }
     const forwardChannel = () => {
+        if (!channelList) return;
+        
         // Gets the route associated with the selected channel
         const route = channelList.whichEventNear(selectedChannel, 0.4, includePastStreams);
 
@@ -306,6 +320,11 @@ function MapWithMarker() {
 
     const moveCentreOutsideVideoBox = () => {
         const bbox = getVideoPlayerBoundingBox();
+        
+        // If video player is not ready yet, skip repositioning
+        if (!bbox) {
+            return;
+        }
 
         // look for the most space in left/right/up/down
         // centre between edge and video in that direction
