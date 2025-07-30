@@ -45,7 +45,7 @@ const InfoPage = () => {
         </p>
         <p>
 
-        On-site spectators and event volunteers can broadcast their perspective of the event by using <span className="CSBlack">Crowd</span><span className="CSRed">Stream</span> on their phone.
+        On-site spectators and volunteers can broadcast their perspective of the event using <span className="CSBlack">Crowd</span><span className="CSRed">Stream</span> on their phone.
         </p>
         <p>
          Then, online viewers have a selection of perspectives to view on the <span className="CSBlack">Crowd</span>
@@ -68,7 +68,7 @@ const InfoPage = () => {
           <div className="team-member">
             <img src={Lynch} alt="Tom Lynch" />
             <strong>Tom Lynch</strong>
-            <p>PhD Student in Biomechanical Engineering at Cambridge</p>
+            <p>PhD Student in Optics & Computer Vision at Cambridge</p>
           </div>
 
           <div className="team-member">

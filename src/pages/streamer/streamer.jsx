@@ -7,7 +7,7 @@ import { StreamClient, StreamClientDummy } from './streamClient.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { fetchGeolocationData } from './locationManagement.jsx'
+import { fetchGeolocationDataWithFallback } from './locationManagement.jsx'
 import { getCameraDevices, handlePermissions, getMicrophoneStream } from './deviceManagement.jsx'
 import { getEvents } from '../../components/Helpers/APIUtils.jsx'
 
@@ -58,14 +58,18 @@ const Streamer = () => {
   };
 
   const handleRefreshLocation = async () => {
-    const position = await fetchGeolocationData();
-    const tags = {
-      "latitude": position.coords.latitude.toString(),
-      "longitude": position.coords.longitude.toString(),
-    };
+    const position = await fetchGeolocationDataWithFallback();
+    if (position) {
+      const tags = {
+        "latitude": position.coords.latitude.toString(),
+        "longitude": position.coords.longitude.toString(),
+      };
 
-    client.updateTags(tags);
-    console.log('Updated location to: ', position.coords.latitude, position.coords.longitude);
+      client.updateTags(tags);
+      console.log('Updated location to: ', position.coords.latitude, position.coords.longitude);
+    } else {
+      console.warn('Could not refresh location - no position available');
+    }
   }  
 
   // async function enforceLandscapeOrientation() {
@@ -90,7 +94,7 @@ const Streamer = () => {
   }, []);
 
   async function Initialize() {
-    const position = await fetchGeolocationData();
+    const position = await fetchGeolocationDataWithFallback();
     getEventsData();
 
     if (position) {
@@ -304,7 +308,28 @@ const Streamer = () => {
 
       {startStreamErrors.includes('noGeoLocation') && (
         <div className="error-message">
-          Geo-location permissions error. Make sure you have location permissions enabled to start streaming.
+          <strong>Location Access Required</strong><br/>
+          Unable to get your location. This could be due to:<br/>
+          • Location permissions being denied<br/>
+          • Location services being disabled on your device<br/>
+          • Poor GPS signal or being indoors<br/>
+          <br/>
+          <button 
+            className="button" 
+            onClick={async () => {
+              const position = await fetchGeolocationDataWithFallback();
+              if (position) {
+                handleRemoveError('noGeoLocation');
+                // Re-initialize if we now have location
+                if (!readyToStream) {
+                  Initialize();
+                }
+              }
+            }}
+            style={{ marginTop: '10px' }}
+          >
+            Retry Location
+          </button>
         </div>
       )}
 

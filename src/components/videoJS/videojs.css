@@ -1,7 +1,7 @@
 .video-player-container {
     position: fixed;
-    bottom: 20px;    
-    right: 20px;     
+    top: 70px;    /* Top positioning, leaving room for logo bar */
+    left: 0;      /* Flush left - no margin */     
     width: 845px;
     height: 480px;   
     z-index: 500;   
@@ -23,57 +23,49 @@
     margin-bottom: 5px; 
 }
 
+.video-js {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure video fills container without black bars */
+}
 
-/* when the screen width is smaller than 855px, use 640x360 dimensions for player container and video-js */
+/* Medium screens: reduce size but keep flush left */
 @media (max-width: 855px) {
     .video-player-container {
         width: 640px;
         height: 360px;
-    }
-    .video-js {
-        width: 640px;
-        height: 360px;
+        top: 70px; /* Explicitly maintain top bar alignment */
+        /* Keep flush left positioning */
     }
 }
 
+/* All mobile screens: fixed height to prevent overlap */
 @media (max-width: 640px) {
     .video-player-container {
-        width: var(--calculated-width);
-        height: calc(var(--calculated-width) * 9 / 16);
-        top: 70px; /* Align to top */
-        left: 50%; /* Center horizontally */
-        transform: translateX(-50%); /* Adjust for exact centering */
-        bottom: auto; /* Reset bottom property */
-        right: auto; /* Reset right property */
+        width: 100vw;
+        height: 280px; /* Fixed height to prevent top bar overlap */
+        top: 70px; /* Right under the logo bar */
+        left: 0;
+        transform: none;
     }
+    
     .video-js {
-        width: var(--calculated-width);
-        height: calc(var(--calculated-width) * 9 / 16);
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Fill container properly */
     }
 }
 
-/* at 550 pixels (so mobile) cut off the sides so the player ratio is 3:2 rather than 16:9 */
-/* do the same for the rendered image */ 
-
-@media (max-width: 550px) {
+/* Very small screens: use responsive sizing */
+@media (max-width: 450px) {
     .video-player-container {
-        width: var(--calculated-width); /* Adjust based on your layout needs */
-        height: calc(var(--calculated-width) * 2 / 3); /* Setting aspect ratio to 3:2 */
+        height: calc(100vw * 9 / 16); /* Responsive on small screens */
+        max-height: 35vh; /* Cap at 35% of viewport height */
         top: 70px;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: auto;
-        right: auto;
-    }
-    .video-js {
-        width: 100%; /* Ensure it spans the full width of the container */
-        height: 100%; /* Ensure it spans the full height of the container */
-        object-fit: cover; /* This will crop the video to fill the container */
     }
 }
 
-
-/* at 400 pixels drop the height to 65 pixels form the top */
+/* Very small screens: adjust top margin */
 @media (max-width: 400px) {
     .video-player-container {
         top: 63px;

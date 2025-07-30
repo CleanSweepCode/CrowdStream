@@ -152,18 +152,7 @@ sup {
     --calculated-width: calc(100vw); /* Remove the margin subtraction to take full width */
 }
 
-.video-js {
-    width: 845px;
-    height: 480px;
-}
-
-.video-player-container {
-    position: absolute;
-    top: 70px;
-    left: 0;
-}
-
-
+/* Removed conflicting video player CSS rules - these are now handled in videojs.css */
 
 .map-titlecontainer,
 .map-helpText {

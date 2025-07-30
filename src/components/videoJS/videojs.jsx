@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import videojs from 'video.js';
 import { registerIVSTech } from 'amazon-ivs-player';
 import 'video.js/dist/video-js.css';
@@ -8,71 +8,126 @@ import {FullscreenManager} from './fullscreenManager.jsx';
 
 const fullScreenManager = new FullscreenManager();
 
+// Track if IVS tech has been registered to avoid multiple registrations
+let ivsRegistered = false;
+
 const VideoJSPlayer = ({ channel_name, onFullscreenToggle}) => {
-  const videoRef = React.useRef(null);
+  const videoRef = useRef(null);
+  const playerRef = useRef(null);
+  const isPlayerInitialized = useRef(false);
 
+  // Memoize the updateSize function
+  const updateSize = useCallback(() => {
+    const screenWidth = window.innerWidth;
+    const calculatedWidth = screenWidth < 550 ? screenWidth : 550;
+    document.documentElement.style.setProperty('--calculated-width', `${calculatedWidth}px`);
+  }, []);
+
+  // Initialize player once when component mounts
   useEffect(() => {
-    const options = {
-      wasmWorker: '/amazon-ivs-wasmworker.min.js',
-      wasmBinary: '/amazon-ivs-wasmworker.min.wasm'
-    };
-
-    registerIVSTech(videojs, options);
-    
-    const player = videojs(videoRef.current, {
-      techOrder: ["AmazonIVS"],
-      controls: true,
-      autoplay: true,
-      draggable: true,
-      preload: 'auto',
-      controlBar: {
-        pictureInPictureToggle: false // Hide PiP button
-      },
-      userActions: {
-        doubleClick: function(eventdbl) {
-          // Prevent default action and stop the event propagation
-          eventdbl.preventDefault();
-          eventdbl.stopPropagation();
+    if (!isPlayerInitialized.current && videoRef.current) {
+      // Register IVS tech only once
+      if (!ivsRegistered) {
+        try {
+          const options = {
+            wasmWorker: '/amazon-ivs-wasmworker.min.js',
+            wasmBinary: '/amazon-ivs-wasmworker.min.wasm'
+          };
+          registerIVSTech(videojs, options);
+          ivsRegistered = true;
+        } catch (error) {
+          console.error('Error registering IVS tech:', error);
+          return;
         }
       }
-    }, async () => {
-      const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
-      console.log("Set URL to: " + STREAM_PLAYBACK_URL);
-      player.src(STREAM_PLAYBACK_URL);
-
-    });
-
-    // This part is new - it handles resizing
-    function updateSize() {
-      const screenWidth = window.innerWidth;
-      const calculatedWidth = screenWidth < 550 ? screenWidth : 550; // Adjust as necessary
-      document.documentElement.style.setProperty('--calculated-width', `${calculatedWidth}px`);
-  }
-
-  window.addEventListener('resize', updateSize);
-  updateSize(); // Call immediately to set initial size
-
-
-    const fullscreenBtn = document.querySelector('.vjs-fullscreen-control');
-    const videoContainer = document.querySelector('.video-player-container');
-    onFullscreenToggle(fullScreenManager.status);
-
-    if (fullscreenBtn) {
       
-      // clone the fullscreen button
-      const clonedBtn = fullscreenBtn.cloneNode(true);
-      fullscreenBtn.parentNode.replaceChild(clonedBtn, fullscreenBtn);
-  
-      clonedBtn.addEventListener('click', function() {
-        fullScreenManager.toggleFullscreen(videoContainer);
-        onFullscreenToggle(fullScreenManager.status);
-      });
+      // Create player once
+      try {
+        playerRef.current = videojs(videoRef.current, {
+          techOrder: ["AmazonIVS"],
+          controls: true,
+          autoplay: true,
+          draggable: true,
+          preload: 'auto',
+          controlBar: {
+            pictureInPictureToggle: false // Hide PiP button
+          },
+          userActions: {
+            doubleClick: function(eventdbl) {
+              // Prevent default action and stop the event propagation
+              eventdbl.preventDefault();
+              eventdbl.stopPropagation();
+            }
+          }
+        });
+
+        isPlayerInitialized.current = true;
+
+        // Set up resize handling
+        window.addEventListener('resize', updateSize);
+        updateSize();
+
+        // Handle fullscreen button after player is ready
+        playerRef.current.ready(() => {
+          setTimeout(() => {
+            const fullscreenBtn = document.querySelector('.vjs-fullscreen-control');
+            const videoContainer = document.querySelector('.video-player-container');
+            
+            if (onFullscreenToggle) {
+              onFullscreenToggle(fullScreenManager.status);
+            }
+
+            if (fullscreenBtn && videoContainer) {
+              // Remove existing event listeners to prevent duplicates
+              const clonedBtn = fullscreenBtn.cloneNode(true);
+              fullscreenBtn.parentNode.replaceChild(clonedBtn, fullscreenBtn);
+          
+              clonedBtn.addEventListener('click', function() {
+                fullScreenManager.toggleFullscreen(videoContainer);
+                if (onFullscreenToggle) {
+                  onFullscreenToggle(fullScreenManager.status);
+                }
+              });
+            }
+          }, 100);
+        });
+
+      } catch (error) {
+        console.error('Error creating video.js player:', error);
+        return;
+      }
     }
-    
 
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener('resize', updateSize);
+      if (playerRef.current && isPlayerInitialized.current) {
+        try {
+          playerRef.current.dispose();
+          playerRef.current = null;
+          isPlayerInitialized.current = false;
+        } catch (error) {
+          console.error('Error disposing player:', error);
+        }
+      }
+    };
+  }, []); // Empty dependency array - only run once
 
-    return () => {};
-}, [channel_name]);
+  // Handle channel changes by updating the source
+  useEffect(() => {
+    if (playerRef.current && channel_name && isPlayerInitialized.current) {
+      (async () => {
+        try {
+          const STREAM_PLAYBACK_URL = await getStreamLinkFromName(channel_name);
+          if (playerRef.current && STREAM_PLAYBACK_URL) {
+            playerRef.current.src(STREAM_PLAYBACK_URL);
+          }
+        } catch (error) {
+          console.error('Error loading stream URL:', error);
+        }
+      })();
+    }
+  }, [channel_name]); // Only depend on channel_name
 
   return (
     <video 

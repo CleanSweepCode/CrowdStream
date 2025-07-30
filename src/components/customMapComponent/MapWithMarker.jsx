@@ -269,17 +269,14 @@ function MapWithMarker() {
     const backChannel = () => {
         // Gets the eventID of the route associated with the selected channel
         const nearbyEvent = channelList.whichEventNear(selectedChannel, 0.4, includePastStreams);
-        console.log(nearbyEvent);
 
        // If the channel is near a route, go to the nearest point on the route
         if(nearbyEvent){
-            console.log("channel is near route");
             var newChannel = channelList.getPreviousByRoute(selectedChannel, nearbyEvent, includePastStreams);
             setSelectedChannel(newChannel);
         }
         // Otherwise, go to the previous channel by longitude
         else{
-            console.log("channel is not near route");
             var newChannel = channelList.getPreviousByLongitude(selectedChannel, includePastStreams);
             setSelectedChannel(newChannel);
         }
@@ -287,17 +284,14 @@ function MapWithMarker() {
     const forwardChannel = () => {
         // Gets the route associated with the selected channel
         const route = channelList.whichEventNear(selectedChannel, 0.4, includePastStreams);
-        console.log(route);
 
         // If the channel is near a route, go to the nearest point on the route
         if(route){
-            console.log("channel is near route");
             var newChannel = channelList.getNextByRoute(selectedChannel, route, includePastStreams);
             setSelectedChannel(newChannel);
         }
         // Otherwise, go to the next channel by longitude
         else{
-            console.log("channel is not near route");
             var newChannel = channelList.getNextByLongitude(selectedChannel, includePastStreams);
             setSelectedChannel(newChannel);
         }
@@ -541,6 +535,7 @@ function MapWithMarker() {
                         const polygonCoords = getPolygonByEventID(eventID);
                         return (
                         <Polygon
+                            key={eventID}
                             zIndex={1}
                             paths={polygonCoords}
                             options={{
