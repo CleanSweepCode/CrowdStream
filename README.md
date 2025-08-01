@@ -59,4 +59,4 @@ The following tags are supported for channel creation:
 
 ### Lambda function
 
-Lambda function in [this folder](lambda_func). Follow the steps in its readme to build the code onto our Lambda function on AWS.
+Lambda function in [this folder](https://github.com/CleanSweepCode/LivestreamApp-backend/tree/main/lambda_func). Follow the steps in its readme to build the code onto our Lambda function on AWS.
