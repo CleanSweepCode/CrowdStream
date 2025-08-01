@@ -27,6 +27,10 @@ coverage/
 # nyc test coverage
 .nyc_output
 
+# production builds
+/build
+/dist
+
 # Dependency directories
 node_modules/
 jspm_packages/
