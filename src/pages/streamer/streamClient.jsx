@@ -56,7 +56,10 @@ export class StreamClient {
     }
 
     async addAudioInputDevice(microphoneStream) {
-        this.client.addAudioInputDevice(microphoneStream, 'mic1');
+        // Use unique device name to prevent "Name is already registered" errors in React 18 Strict Mode
+        const deviceName = `mic_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        this.client.addAudioInputDevice(microphoneStream, deviceName);
+        this.microphoneDeviceName = deviceName; // Store for potential cleanup
     }
 
     async start() {
@@ -67,6 +70,24 @@ export class StreamClient {
     async stop() {
         this.client.stopBroadcast();
         tagChannelInactive(this.channel_name);
+    }
+
+    async dispose() {
+        try {
+            // Stop broadcast if still running
+            this.client.stopBroadcast();
+            
+            // Remove audio device if it was added
+            if (this.microphoneDeviceName) {
+                this.client.removeAudioInputDevice(this.microphoneDeviceName);
+            }
+            
+            // Clear references
+            this.client = null;
+            this.microphoneDeviceName = null;
+        } catch (error) {
+            console.warn('Error disposing StreamClient:', error);
+        }
     }
 
     async sendHeartbeat() {
@@ -110,6 +131,9 @@ export class StreamClientDummy {
     }
 
     async updateTags(tags) {
+    }
+
+    async dispose() {
     }
 
 }

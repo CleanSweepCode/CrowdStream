@@ -17,6 +17,7 @@ var client = null;
 var cameraDevices = null;
 var cameraStream = null;
 var microphoneStream = null;
+var microphoneAdded = false; // Track if microphone is already added to client
 
 var AWS_ENABLED = true; // set to false to avoid channel creation
 
@@ -58,6 +59,11 @@ const Streamer = () => {
   };
 
   const handleRefreshLocation = async () => {
+    // Safety check: Don't try to update if client is null (component may be unmounting)
+    if (!client) {
+      return;
+    }
+    
     const position = await fetchGeolocationDataWithFallback();
     if (position) {
       const tags = {
@@ -89,11 +95,34 @@ const Streamer = () => {
   // }
 
   // Initialize the streamer
-  useEffect(async () => {
+  useEffect(() => {
     Initialize();
+    
+    // Cleanup function
+    return () => {
+      // Clean up streams and client on unmount
+      onExit();
+    };
   }, []);
 
+  // Separate useEffect for interval cleanup to avoid stale closure issues
+  useEffect(() => {
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [intervalId]);
+
   async function Initialize() {
+    // Prevent double initialization (React 18 Strict Mode runs effects twice)
+    if (client !== null) {
+      console.log('Initialize already called, skipping... client exists:', !!client);
+      return;
+    }
+    
+    console.log('Starting Initialize...');
+    
     const position = await fetchGeolocationDataWithFallback();
     getEventsData();
 
@@ -153,19 +182,22 @@ const Streamer = () => {
     };
 
     setReadyToStream(true);
-    
-    // Clean up the interval when the component unmounts or when the effect is run again
-    return () => {
-        if (intervalId) {
-            clearInterval(intervalId);
-        }
-    };
+    console.log('Initialize completed successfully');
   }
 
   async function setupMicrophoneStream() {
     try {
+      // Prevent adding microphone device twice
+      if (microphoneAdded) {
+        console.log('Microphone already added, skipping...');
+        return;
+      }
+      
+      console.log('Adding microphone device to client...');
       microphoneStream = await getMicrophoneStream()
       client.addAudioInputDevice(microphoneStream);
+      microphoneAdded = true;
+      console.log('Microphone device added successfully');
     } catch (error) {
       console.warn('Error adding microphone stream to AWS:', error);
     }
@@ -173,7 +205,9 @@ const Streamer = () => {
 
   async function getCameraStream() {
     var stream = await cameraDevices.activeStream(cameraStream);
-    ref.current.setStream(stream);
+    if (ref.current) {
+      ref.current.setStream(stream);
+    }
     return stream
   }
 
@@ -194,7 +228,9 @@ const Streamer = () => {
     }
     client.start()
       .then((result) => {
-        ref.current.setIsBroadcasting(true);
+        if (ref.current) {
+          ref.current.setIsBroadcasting(true);
+        }
         client.has_stream = true;
         console.log("Started Streaming")
         setReadyToStream(false);
@@ -240,10 +276,12 @@ const Streamer = () => {
       cameraStream.getTracks().forEach((track) => track.stop());
       cameraStream = null;
     }
+    microphoneAdded = false; // Reset microphone flag
+    console.log('Microphone flag reset in clearCameraStreams');
   }
 
   const closeStream = async () => {
-    if (readyToStream || client) {
+    if (client) {
       client.stop(); // Stop the stream
       if (ref.current) {
         ref.current.setIsBroadcasting(false);
@@ -257,8 +295,16 @@ const Streamer = () => {
     // So creating a new channel each time
     clearCameraStreams();
     closeStream();
+    
+    // Properly dispose of the client
+    if (client && client.dispose) {
+      await client.dispose();
+    }
+    
     clearInterval(intervalId);
     client = null;
+    microphoneAdded = false; // Reset microphone flag
+    console.log('Client disposed and microphone flag reset in onExit');
   }
 
   window.addEventListener('popstate', function (event) {

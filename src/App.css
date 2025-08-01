@@ -18,14 +18,14 @@
   /* Width of .App set to 100% of viewport width. */
   height: 100svh;
   /* Height of .App set to 100% of SMALL viewport height. */
-  display: grid;
-  /* Using CSS Grid for layout inside .App. */
-  row-gap: 0px;
-  /* No gap between the rows in the grid. */
+  display: flex;
+  /* Changed from grid to flex for better layout control */
+  flex-direction: column;
+  /* Stack content vertically */
   padding: 0px;
   /* No padding around the .App element. */
-  place-items: center;
-  /* Centers grid items both vertically and horizontally. */
+  margin: 0px;
+  /* No margin around the .App element. */
   background-color: #ffffff;
   /* Sets background color of .App to white. */
 }

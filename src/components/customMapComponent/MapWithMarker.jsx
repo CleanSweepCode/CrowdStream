@@ -153,20 +153,6 @@ function MapWithMarker() {
             
             const mapCentre = newChannelList.averagePosition(includePastStreams);
             setCenter(mapCentre || defaultCenter);
-
-            // Set up the interval for refreshing streams
-            if (!intervalId) {
-                const id = setInterval(handleRefreshStreams, REFRESH_INTERVAL);
-                setIntervalId(id);
-            };
-
-            // Clean up the interval when the component unmounts or when the effect is run again
-            return () => {
-                if (intervalId) {
-                    clearInterval(intervalId);
-                }
-            };
-
         };
 
         const newRouteLines = eventIDs.map((eventID, index) => {
@@ -188,6 +174,21 @@ function MapWithMarker() {
         setRouteLines(newRouteLines);
         getEventInfo();
         fetchChannelInfo();
+    }, []);
+
+    // Separate useEffect for interval management
+    useEffect(() => {
+        if (!intervalId) {
+            const id = setInterval(handleRefreshStreams, REFRESH_INTERVAL);
+            setIntervalId(id);
+        }
+
+        // Clean up the interval when the component unmounts
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+        };
     }, [intervalId]);
 
     // Update displayedChannels when channelList or includePastStreams changes
