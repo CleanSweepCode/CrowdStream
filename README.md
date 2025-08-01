@@ -1,4 +1,3 @@
-### LivestreamApp
 This is the front-end repo for the CrowdStream MVP. We host crowdsourced event livestreams. 
 
 ### Current Tech Stack (2023-07-12)
