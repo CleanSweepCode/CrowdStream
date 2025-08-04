@@ -1,4 +1,10 @@
-This is the front-end repo for the CrowdStream MVP. We host crowdsourced event livestreams. 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/475a1aeb-cd66-4d30-9dda-95c88230f7fc" width="25%" style="margin-right: 20px;">
+  <img src="https://github.com/user-attachments/assets/4e1a00ae-804f-441c-8c0f-b7d53930cc3f" width="25%">
+</p>
+
+
+This is the front-end repo for the <b><span style="color:black">Crowd</span><span style="color:red">Stream</span></b> MVP. We host crowdsourced event livestreams. 
 
 ### Current Tech Stack (2023-07-12)
 The frontend website is written in React JS, and is hosted on vercel. The backend server (ie. nodeJS) is hosted on Google Cloud Platform which makes calls to AWS. Video streaming is managed using the Amazon IVS API.
